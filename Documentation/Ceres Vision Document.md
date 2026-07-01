@@ -1,616 +1,545 @@
 # Ceres
 
 Cultivate your academic life.
+
 Version: Vision 1.0
 
 ## Vision
 
-Ceres is an academic workspace designed to help university students organise, manage and collaborate
-throughout their degree.
-Rather than attempting to replace a single application, Ceres provides one cohesive environment where
-students can manage lectures, assignments, notes, revision, group projects and day-to-day academic life.
-The goal is not simply to increase productivity, but to reduce the mental overhead of university by giving
-every piece of academic work a logical place to live.
-Ceres should become the workspace students naturally open whenever they attend lectures, revise,
-complete coursework or collaborate with others.
+Ceres is an academic workspace designed to help university students organise, manage and collaborate throughout their degree.
+
+Rather than attempting to replace a single application, Ceres provides one cohesive environment where students can manage lectures, assignments, notes, revision, group projects and day-to-day academic life.
+
+The goal is not simply to increase productivity, but to reduce the mental overhead of university by giving every piece of academic work a logical place to live.
+
+Ceres should become the workspace students naturally open whenever they attend lectures, revise, complete coursework or collaborate with others.
 
 ## Name
 
 Ceres is named after both:
-The Roman goddess of agriculture, growth and cultivation.
-The largest dwarf planet in the asteroid belt.
-The name reflects the philosophy of the application.
-Students are not simply completing assignments-they are cultivating knowledge, skills and long-term
-growth.
+
+- The Roman goddess of agriculture, growth and cultivation.
+- The largest dwarf planet in the asteroid belt.
+
+The name reflects the philosophy of the application. Students are not simply completing assignments; they are cultivating knowledge, skills and long-term growth.
 
 ## Vision Statement
 
-Create the most intuitive academic workspace for students by bringing organisation, learning
-and collaboration into a single, thoughtfully designed experience.
+Create the most intuitive academic workspace for students by bringing organisation, learning and collaboration into a single, thoughtfully designed experience.
 
 ## Core Principles
 
-Cultivate, don't overwhelm
+### Cultivate, don't overwhelm
+
 The application should encourage progress rather than punish procrastination.
-Everything belongs somewhere
-Students should never wonder where information should be stored.
-Every lecture, assignment, note and file should have a natural home.
-Connected information
+
+### Everything belongs somewhere
+
+Students should never wonder where information should be stored. Every lecture, assignment, note and file should have a natural home.
+
+### Connected information
+
 Nothing exists in isolation.
-Lectures connect to notes.
-Notes connect to revision.
-Revision connects to assignments.
-Assignments connect to modules.
-Everything should naturally flow together .
-Calm by default
-The interface should reduce stress.
-Visual clutter should be avoided.
-Information should be prioritised.
-Animations should feel subtle rather than distracting.
-Collaboration first
-University is increasingly collaborative.
-Where appropriate, every academic object should support collaboration.
-Progressive complexity
-Essential features should be immediately accessible.
-Advanced features should reveal themselves naturally over time.
+
+- Lectures connect to notes.
+- Notes connect to revision.
+- Revision connects to assignments.
+- Assignments connect to modules.
+
+Everything should naturally flow together.
+
+### Calm by default
+
+The interface should reduce stress. Visual clutter should be avoided, information should be prioritised, and animations should feel subtle rather than distracting.
+
+### Collaboration first
+
+University is increasingly collaborative. Where appropriate, every academic object should support collaboration.
+
+### Progressive complexity
+
+Essential features should be immediately accessible. Advanced features should reveal themselves naturally over time.
 
 ## Target Users
 
-## Primary
+### Primary
 
-Undergraduate students
+- Undergraduate students
 
-## Secondary
+### Secondary
 
-Postgraduate students
+- Postgraduate students
 
-## Future
+### Future
 
-Colleges
-Sixth Forms
-Apprenticeships
-Independent learners
+- Colleges
+- Sixth forms
+- Apprenticeships
+- Independent learners
 
 ## Problems Ceres Solves
 
 Students currently juggle many disconnected applications.
 
-## Typical workflow
+### Typical workflow
 
+```text
 University Portal
-->
-Google Calendar
-->
-Notion
+-> Google Calendar
+-> Notion
+-> Word
+-> Discord
+-> Google Drive
+-> Email
+-> Quizlet
+-> GitHub
+```
 
-->
-Word
-->
-Discord
-->
-Google Drive
-->
-Email
-->
-Quizlet
-->
-GitHub
-Every context switch creates friction.
-Ceres aims to reduce these interruptions by creating a single academic workspace.
+Every context switch creates friction. Ceres aims to reduce these interruptions by creating a single academic workspace.
 
 ## Product Pillars
 
-## Organisation
+### Organisation
 
-Timetables
+- Timetables
+- Assignments
+- Tasks
+- Files
+- Calendar
+- Goals
 
-## Assignments
+### Learning
 
-## Tasks
+- Lecture notes
+- Revision
+- Flashcards
+- Study sessions
+- Confidence tracking
 
-## Files
+### Collaboration
 
-## Calendar
+- Group projects
+- Messaging
+- Shared notes
+- Study groups
+- Shared whiteboards
 
-## Goals
+### Personal Growth
 
-## Learning
-
-Lecture notes
-
-## Revision
-
-Flashcards
-Study sessions
-Confidence tracking
-
-## Collaboration
-
-Group projects
-
-## Messaging
-
-Shared notes
-Study groups
-Shared whiteboards
-
-## Personal Growth
-
-## Habits
-
-Progress
-Achievements
-Statistics
-Placement tracking
+- Habits
+- Progress
+- Achievements
+- Statistics
+- Placement tracking
 
 ## User Journey
 
-## First Launch
+### First Launch
 
+```text
 Create account
-->
-Choose university (optional)
-->
-Choose course
-->
-Import timetable (optional)
-->
-Complete onboarding
-->
+-> Choose university (optional)
+-> Choose course
+-> Import timetable (optional)
+-> Complete onboarding
+-> Dashboard
+```
 
-## Dashboard
+### Daily Flow
 
-## Daily Flow
-
+```text
 Open Ceres
-->
-View Dashboard
-->
-Attend Lecture
-->
-Take Notes
-->
-Review Assignment Progress
-->
-Complete Study Session
-->
-Update Progress
-->
-End of Day Summary
+-> View Dashboard
+-> Attend Lecture
+-> Take Notes
+-> Review Assignment Progress
+-> Complete Study Session
+-> Update Progress
+-> End of Day Summary
+```
 
 ## Core Modules
 
-## Dashboard
+### Dashboard
 
 A personalised overview of today's academic life.
 
-### Requirements
+Requirements:
 
-Daily schedule
-Upcoming deadlines
-Assignment progress
-Study reminders
-Recent notes
-Quick actions
-Calendar overview
+- Daily schedule
+- Upcoming deadlines
+- Assignment progress
+- Study reminders
+- Recent notes
+- Quick actions
+- Calendar overview
+- Goals
+- Activity summary
 
-## Goals
+### Calendar
 
-Activity summary
+Requirements:
 
-## Calendar
+- Day view
+- Week view
+- Month view
+- Recurring events
+- Colour categories
+- Academic events
+- Personal events
+- Shared calendars
+- Deadline integration
 
-### Requirements
+### Timetable
 
-Day
-Week
-Month
-Recurring events
+Requirements:
 
-Colour categories
-Academic events
-Personal events
-Shared calendars
-Deadline integration
+- Weekly timetable
+- Module grouping
+- Lecture information
+- Room information
+- Attendance tracking
+- Navigation to lecture pages
 
-## Timetable
-
-### Requirements
-
-Weekly timetable
-Module grouping
-Lecture information
-Room information
-Attendance tracking
-Navigation to lecture pages
-
-## Modules
+### Modules
 
 Each module should become its own workspace.
 
-### Requirements
+Requirements:
+
+- Lectures
+- Assignments
+- Notes
+- Resources
+- Revision
+- Discussions
 
-Lectures
+### Lecture Hub
+
+Requirements:
+
+- Notes
+- Attachments
+- Images
+- Recordings
+- Related assignments
+- Revision links
+- Discussion
 
-## Assignments
+### Assignments
+
+Each assignment should support:
+
+- Title
+- Module
+- Deadline
+- Progress
+- Priority
+- Status
+- Notes
+- Checklist
+- Attachments
+- Group members
+- Estimated workload
+
+Views:
+
+- Upcoming
+- Active
+- Completed
+- Overdue
 
-## Notes
+### Notes
+
+Requirements:
+
+- Rich text
+- Markdown
+- Images
+- Tables
+- Checklists
+- Mathematical notation
+- Code blocks
+- Search
+- Organisation
+
+### Revision
 
-Resources
+Requirements:
 
-## Revision
+- Topics
+- Confidence
+- Flashcards
+- Study sessions
+- Weak areas
+- Progress
+- Practice questions
+- Mock exams
 
-Discussions
+### Whiteboard
 
-## Lecture Hub
+Requirements:
 
-### Requirements
+- Infinite canvas
+- Drawing
+- Sticky notes
+- Shapes
+- Images
+- Collaboration
+- Export
 
-## Notes
+### Study Sessions
 
-Attachments
-Images
-Recordings
-Related assignments
-Revision links
-Discussion
+Students should be able to:
 
-## Assignments
+- Create sessions
+- Invite friends
+- Track study time
+- Share notes
+- Collaborate
 
-### Requirements
+### Friends
 
-Each assignment should support
-Title
-Module
-Deadline
-Progress
-Priority
-Status
+Requirements:
 
-## Notes
+- Profiles
+- Friend requests
+- Shared workspaces
+- Shared calendars
+- Shared revision
+- Study groups
 
-Checklist
-Attachments
-Group members
-Estimated workload
+### Messaging
 
-### Views
+Requirements:
 
-Upcoming
-Active
-Completed
-Overdue
+- Direct messages
+- Group conversations
+- Reactions
+- Replies
+- File sharing
+- Search
 
-## Notes
+### Group Projects
 
-### Requirements
+Requirements:
 
-### Support
+- Dedicated workspace
+- Shared files
+- Shared notes
+- Task boards
+- Meeting notes
+- Timeline
+- Progress tracking
 
-Rich text
-Markdown
-Images
-Tables
-Checklists
-Mathematical notation
-Code blocks
+### Tasks
 
-## Search
+Requirements:
 
-## Organisation
+- Quick creation
+- Priorities
+- Categories
+- Deadlines
+- Recurring tasks
+- Progress tracking
 
-## Revision
+### Files
 
-### Requirements
+Requirements:
 
-### Track
+- Organised storage
+- Tags
+- Search
+- Preview
+- Sharing
+- Recent files
 
-Topics
-Confidence
-Flashcards
-Study sessions
-Weak areas
-Progress
-Practice questions
-Mock exams
+### Goals
 
-## Whiteboard
+Requirements:
 
-### Requirements
+- Daily goals
+- Weekly goals
+- Semester goals
+- Progress tracking
+- Completion history
 
-Infinite canvas
-Drawing
-Sticky notes
-Shapes
-Images
+### Habits
 
-## Collaboration
+Examples:
 
-Export
+- Study
+- Sleep
+- Exercise
+- Reading
+- Hydration
 
-## Study Sessions
+Requirements:
 
-### Requirements
+- Daily tracking
+- Streaks
+- Statistics
+- History
 
-Students should be able to
-Create sessions
-Invite friends
-Track study time
-Share notes
-Collaborate
+### Placement Tracker
 
-## Friends
+Requirements:
 
-### Requirements
+- Applications
+- Companies
+- Interviews
+- Notes
+- Deadlines
+- Status
+- CV tracking
 
-Profiles
-Friend requests
-Shared workspaces
+### User Profiles
 
-Shared calendars
-Shared revision
-Study groups
+Requirements:
 
-## Messaging
+- Profile
+- Statistics
+- Achievements
+- Modules
+- Privacy settings
 
-### Requirements
+### Notifications
 
-Direct messages
-Group conversations
-Reactions
-Replies
-File sharing
+Requirements:
 
-## Search
+- Assignment reminders
+- Lecture reminders
+- Calendar reminders
+- Group updates
+- Friend requests
+- Configurable preferences
 
-## Group Projects
+### Search
 
-### Requirements
+Global search should locate:
 
-Dedicated workspace
-Shared files
-Shared notes
-Task boards
-Meeting notes
-Timeline
-Progress tracking
-
-## Tasks
-
-### Requirements
-
-Quick creation
-Priorities
-Categories
-Deadlines
-Recurring tasks
-Progress tracking
-
-## Files
-
-### Requirements
-
-Organised storage
-Tags
-
-## Search
-
-Preview
-Sharing
-Recent files
-
-## Goals
-
-### Requirements
-
-Daily
-Weekly
-Semester
-Progress tracking
-Completion history
-
-## Habits
-
-### Examples
-
-Study
-Sleep
-Exercise
-Reading
-Hydration
-
-### Requirements
-
-Daily tracking
-Streaks
-Statistics
-History
-
-## Placement Tracker
-
-### Requirements
-
-Applications
-Companies
-Interviews
-
-## Notes
-
-Deadlines
-Status
-CV tracking
-
-## User Profiles
-
-### Requirements
-
-Profile
-Statistics
-Achievements
-
-## Modules
-
-Privacy settings
-
-## Notifications
-
-### Requirements
-
-Assignment reminders
-Lecture reminders
-Calendar reminders
-Group updates
-Friend requests
-Configurable preferences
-
-## Search
-
-Global search should locate
-
-## Modules
-
-Lectures
-
-## Notes
-
-## Assignments
-
-## Files
-
-## Friends
-
-Messages
-
-## Tasks
-
-Events
+- Modules
+- Lectures
+- Notes
+- Assignments
+- Files
+- Friends
+- Messages
+- Tasks
+- Events
 
 ## Functional Requirements
 
-## User Management
+### User Management
 
-### The system shall allow users to
+The system shall allow users to:
 
-Create an account
-Sign in
-Edit profile information
-Manage privacy settings
-Delete their account
+- Create an account
+- Sign in
+- Edit profile information
+- Manage privacy settings
+- Delete their account
 
-## Academic Management
+### Academic Management
 
-### The system shall allow users to
+The system shall allow users to:
 
-Manage modules
-Organise lectures
-Create notes
-Track assignments
-Manage revision
-Store resources
+- Manage modules
+- Organise lectures
+- Create notes
+- Track assignments
+- Manage revision
+- Store resources
 
-## Productivity
+### Productivity
 
-### The system shall allow users to
+The system shall allow users to:
 
-Manage tasks
-Manage calendars
-Create reminders
-Set goals
-Track habits
+- Manage tasks
+- Manage calendars
+- Create reminders
+- Set goals
+- Track habits
 
-## Collaboration
+### Collaboration
 
-### The system shall allow users to
+The system shall allow users to:
 
-Communicate
-Collaborate on notes
-Share workspaces
-Create study groups
-Manage group projects
+- Communicate
+- Collaborate on notes
+- Share workspaces
+- Create study groups
+- Manage group projects
 
-## Personalisation
+### Personalisation
 
-### Users shall be able to
+Users shall be able to:
 
-Customise dashboards
-Change themes
-Reorder widgets
-Configure notifications
+- Customise dashboards
+- Change themes
+- Reorder widgets
+- Configure notifications
 
 ## Non-Functional Requirements
 
-## Performance
+### Performance
 
 The application should remain responsive during normal use.
 
-## Reliability
+### Reliability
 
 Student work should never be lost.
 
-## Accessibility
+### Accessibility
 
 The application should be usable by students with a wide range of accessibility requirements.
 
-## Security
+### Security
 
 Personal and academic information should remain protected.
 
-## Scalability
+### Scalability
 
 The platform should support future growth without requiring architectural redesign.
 
-## Maintainability
+### Maintainability
 
 Features should evolve independently without negatively impacting existing functionality.
 
-## Extensibility
+### Extensibility
 
 Future modules should integrate naturally into the existing workspace.
 
 ## User Stories
 
-## Dashboard
+### Dashboard
 
-As a student
-I want to immediately understand what requires my attention today
-so I can begin work without searching through multiple applications.
+As a student, I want to immediately understand what requires my attention today, so I can begin work without searching through multiple applications.
 
-## Assignments
+### Assignments
 
-As a student
-I want to monitor coursework progress
-so deadlines never become overwhelming.
+As a student, I want to monitor coursework progress, so deadlines never become overwhelming.
 
-## Notes
+### Notes
 
-As a student
-I want all lecture notes organised by module
-so revision becomes effortless.
+As a student, I want all lecture notes organised by module, so revision becomes effortless.
 
-## Revision
+### Revision
 
-As a student
-I want to identify my weakest topics
-so I can spend my revision time effectively.
+As a student, I want to identify my weakest topics, so I can spend my revision time effectively.
 
-## Collaboration
+### Collaboration
 
-As a student
-I want to work with classmates in shared spaces
-so group projects remain organised.
+As a student, I want to work with classmates in shared spaces, so group projects remain organised.
 
-## Habits
+### Habits
 
-As a student
-I want to build consistent study habits
-so I improve over the duration of my degree.
+As a student, I want to build consistent study habits, so I improve over the duration of my degree.
 
 ## Information Architecture
 
-## Dashboard
-
 ```text
-|
+Dashboard
 |-- Calendar
 |-- Timetable
 |-- Modules
@@ -618,15 +547,11 @@ so I improve over the duration of my degree.
 |   |-- Assignments
 |   |-- Notes
 |   `-- Revision
-|
 |-- Tasks
 |-- Files
 |-- Whiteboard
 |-- Study Sessions
 |-- Friends
-```
-
-```text
 |-- Messages
 |-- Group Projects
 |-- Goals
@@ -639,8 +564,7 @@ so I improve over the duration of my degree.
 ## Long-Term Vision
 
 Ceres should become more than an organisational tool.
-It should become the digital academic workspace students rely on throughout their education-a place
-where they think, learn, collaborate and grow.
-The product should be recognised not because it offers more features than competing applications, but
-because it provides a calmer , more coherent experience that genuinely helps students cultivate their
-academic journey.
+
+It should become the digital academic workspace students rely on throughout their education: a place where they think, learn, collaborate and grow.
+
+The product should be recognised not because it offers more features than competing applications, but because it provides a calmer, more coherent experience that genuinely helps students cultivate their academic journey.

@@ -1,203 +1,172 @@
-DASHBOARD
-
-daily schedule
-deadlines
-'assignment progress'
-'study reminders'
-notes
-quick actions ??
-calendar overview
-'goals'
-summary
-
-
-
-CALENDAR
-
-normal calendar stuff
-recurring events
-'colour categories'
-'academic events'
-personal events
-shared calendars
-deadline integration
-
-
-
-TIMETABLE
-
-weekly timetable
-modules
-lectures
-room info (basic)
-
-
-
-MODULES
-
-general module details
-lectures (linked list only — full content lives in Lecture Hub)
-assignments
-resources
-
-
-
-LECTURE HUB
-
-notes (linked from Notes, tagged to lecture)
-attachments (linked from Files, tagged to lecture)
-related assignments
-'discussions'
-
-
-
-ASSIGNMENTS
-
-general details
-checklist / general planner
-group members
-sort by e.g. upcoming, active, etc...
-(priority, status, and progress now inherited from Tasks engine — see TASKS)
-
-
-
-NOTES
-
-rich text
-markdown
-images
-tables
-checklists
-'maths notation'
-code blocks
-search
-organisation
-
-
-
-'REVISION'
-
-Topics
-Confidence
-Flashcards
-Study sessions
-Weak areas
-Progress
-Practice questions
-Mock exams
-
-
-
-WHITEBOARD
-
-canvas
-drawing
-sticky notes
-shapes
-images
-collaboration
-'exporting'
-
-
-
-STUDY SESSIONS
-
-create sessions
-invite
-track time
-share notes (links into Notes)
-collaborate
-location
-history + links to attachments (links into Files)
-
-
-
-FRIENDS
-
-profiles
-requests
-shared stuff
-study groups
-
-
-
-'MESSAGING'
-
-Direct messages
-Group conversations
-Reactions
-Replies
-File sharing
-Search
-
-
-
-GROUP PROJECTS
-
-workspace
-shared files (links into Files)
-shared notes (links into Notes)
-task boards
-meeting notes
-timeline
-progress
-job allocation
-
-
-
-TASKS
-
-quick creation
-priorities
-categories
-deadlines
-recurring
-progress
-job allocation
-(core engine — Assignments is a specialised view built on top of this)
-
-
-
-FILES
-
-storage
-organisation
-tags
-search
-preview
-sharing
-recent
-
-
-
-POTENTIAL MODULES
-
-Goals
-Habits
-Placement Tracker *
-User Profiles
-
-
-
-NOTIFICATIONS
-
-Assignment reminders
-Lecture reminders
-Calendar reminders
-Group updates
-Friend requests
-Configurable preferences
-
-
-
-GENERALISED SEARCH
-
-Modules
-Lectures
-Notes
-Assignments
-Files
-Friends
-Messages
-Tasks
-Events
+# Feature List
+
+## Dashboard
+
+- Daily schedule
+- Deadlines
+- Assignment progress
+- Study reminders
+- Notes
+- Quick actions
+- Calendar overview
+- Goals
+- Summary
+
+## Calendar
+
+- Normal calendar functionality
+- Recurring events
+- Colour categories
+- Academic events
+- Personal events
+- Shared calendars
+- Deadline integration
+
+## Timetable
+
+- Weekly timetable
+- Modules
+- Lectures
+- Basic room information
+
+## Modules
+
+- General module details
+- Lectures as a linked list; full lecture content lives in Lecture Hub
+- Assignments
+- Resources
+
+## Lecture Hub
+
+- Notes linked from Notes and tagged to the lecture
+- Attachments linked from Files and tagged to the lecture
+- Related assignments
+- Discussions
+
+## Assignments
+
+- General details
+- Checklist or general planner
+- Group members
+- Sorting, such as upcoming, active, and completed
+- Priority, status, and progress inherited from the Tasks engine
+
+## Notes
+
+- Rich text
+- Markdown
+- Images
+- Tables
+- Checklists
+- Mathematical notation
+- Code blocks
+- Search
+- Organisation
+
+## Revision
+
+- Topics
+- Confidence
+- Flashcards
+- Study sessions
+- Weak areas
+- Progress
+- Practice questions
+- Mock exams
+
+## Whiteboard
+
+- Canvas
+- Drawing
+- Sticky notes
+- Shapes
+- Images
+- Collaboration
+- Exporting
+
+## Study Sessions
+
+- Create sessions
+- Invite others
+- Track time
+- Share notes through links into Notes
+- Collaborate
+- Location
+- History and attachment links into Files
+
+## Friends
+
+- Profiles
+- Requests
+- Shared work
+- Study groups
+
+## Messaging
+
+- Direct messages
+- Group conversations
+- Reactions
+- Replies
+- File sharing
+- Search
+
+## Group Projects
+
+- Workspace
+- Shared files through links into Files
+- Shared notes through links into Notes
+- Task boards
+- Meeting notes
+- Timeline
+- Progress
+- Job allocation
+
+## Tasks
+
+- Quick creation
+- Priorities
+- Categories
+- Deadlines
+- Recurring tasks
+- Progress
+- Job allocation
+
+Tasks are the core planning engine. Assignments are a specialised view built on top of this.
+
+## Files
+
+- Storage
+- Organisation
+- Tags
+- Search
+- Preview
+- Sharing
+- Recent files
+
+## Potential Modules
+
+- Goals
+- Habits
+- Placement Tracker
+- User Profiles
+
+## Notifications
+
+- Assignment reminders
+- Lecture reminders
+- Calendar reminders
+- Group updates
+- Friend requests
+- Configurable preferences
+
+## Generalised Search
+
+- Modules
+- Lectures
+- Notes
+- Assignments
+- Files
+- Friends
+- Messages
+- Tasks
+- Events

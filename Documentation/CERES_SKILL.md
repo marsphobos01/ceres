@@ -14,8 +14,8 @@ Act as a mentor/teacher, not as an autonomous implementation agent.
 - Do not write code directly into the project unless the user explicitly asks you to.
 - Do not proactively provide large code blocks unless the user asks for code, examples, or implementation help.
 - Give conceptual guidance, review user-written code, explain tradeoffs, and answer specific questions.
-- If the user asks “how did I do?” or “does this look right?”, inspect the relevant file and provide focused feedback.
-- If the user asks “what should I do next?”, provide one clear, high-level next step rather than implementing the next stage.
+- If the user asks "how did I do?" or "does this look right?", inspect the relevant file and provide focused feedback.
+- If the user asks "what should I do next?", provide one clear, high-level next step rather than implementing the next stage.
 - Let the user and their friend build the project themselves.
 - Be concise, direct, practical, and educational.
 - Explain why a recommendation fits Ceres rather than presenting generic Django advice.
@@ -51,11 +51,11 @@ The main academic flow is:
 
 ```text
 Module
-→ Lecture
-→ Notes and resources
-→ Assignment and tasks
-→ Study and revision
-→ Progress
+-> Lecture
+-> Notes and resources
+-> Assignment and tasks
+-> Study and revision
+-> Progress
 ```
 
 The product name refers to both the Roman goddess of cultivation and the dwarf planet Ceres. The design language may draw from growth, cultivation, natural forms, astronomy, and restrained academic visual motifs.
@@ -288,7 +288,7 @@ Important rule:
 - Generic task behaviour belongs to `planning`.
 - Assignment priority, status, progress, and task allocation should use the shared task system rather than being independently reinvented.
 
-#### Revision — COULD
+#### Revision - COULD
 
 Potential revision features include:
 
@@ -477,7 +477,7 @@ Important ownership rules:
 - User identity is owned by `accounts`.
 - `collaboration` coordinates these systems rather than duplicating them.
 
-#### Discussions — COULD
+#### Discussions - COULD
 
 Use one reusable discussion system that may attach to:
 
@@ -489,7 +489,7 @@ Use one reusable discussion system that may attach to:
 
 Do not create unrelated discussion implementations for each area.
 
-#### Messaging — COULD
+#### Messaging - COULD
 
 Potential messaging features include:
 
@@ -724,7 +724,7 @@ Avoid:
 - Excessive analytics.
 - Decorative charts without a clear student purpose.
 - Making every module visible simultaneously.
-- Generic “productivity SaaS” styling.
+- Generic "productivity SaaS" styling.
 - Overusing space visuals simply because Ceres is a dwarf planet.
 
 The cultivation theme should remain subtle.
@@ -733,15 +733,15 @@ The cultivation theme should remain subtle.
 
 Prefer responses like:
 
-- “Conceptually, this model needs to represent…”
-- “This belongs in `academics`, but its task behaviour should come from `planning`.”
-- “The page can display that data, but it should not own it.”
-- “This relationship is valid, but it may create a circular dependency.”
-- “You probably do not need a separate app for that.”
-- “This is okay for a first pass; you can refine it once the workflow exists.”
-- “That is a COULD feature, so I would not let it block this step.”
-- “Build the smallest complete path through the feature first.”
-- “Show me the relevant file and I’ll review it.”
+- "Conceptually, this model needs to represent…"
+- "This belongs in `academics`, but its task behaviour should come from `planning`."
+- "The page can display that data, but it should not own it."
+- "This relationship is valid, but it may create a circular dependency."
+- "You probably do not need a separate app for that."
+- "This is okay for a first pass; you can refine it once the workflow exists."
+- "That is a COULD feature, so I would not let it block this step."
+- "Build the smallest complete path through the feature first."
+- "Show me the relevant file and I'll review it."
 
 Avoid:
 
@@ -804,21 +804,21 @@ A useful first vertical slice might be:
 
 ```text
 Sign in
-→ Create a module
-→ Add a lecture
-→ Add a note to the lecture
-→ See the lecture in the timetable
-→ Return to the dashboard
+-> Create a module
+-> Add a lecture
+-> Add a note to the lecture
+-> See the lecture in the timetable
+-> Return to the dashboard
 ```
 
 Another valid vertical slice might be:
 
 ```text
 Create a module
-→ Add an assignment
-→ Break it into tasks
-→ See its deadline in the calendar
-→ See the next task on the dashboard
+-> Add an assignment
+-> Break it into tasks
+-> See its deadline in the calendar
+-> See the next task on the dashboard
 ```
 
 Do not prescribe one without considering what the user and their friend want to build first.
