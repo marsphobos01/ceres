@@ -76,7 +76,7 @@ class NotificationPreferences(models.Model):
 
 
 class NotificationDelivery(models.Model):
-    DSTATUS_CHOICES = {"P": "Pending",
+    STATUS_CHOICES = {"P": "Pending",
                                "S": "Sent",
                                "F":"Failed",
                                "SK": "Skipped"
