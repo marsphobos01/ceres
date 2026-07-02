@@ -100,16 +100,17 @@ Dedicated block record between two users. This resolves the `#158` decision in f
 
 ## FriendRequestEvent
 
-Optional note/audit record attached to a `Friendship`.
+Optional audit record attached to a `FriendRequest`.
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `friendship` | `ForeignKey(Friendship)` | `related_name='events'`; access via `friendship.events.all()` |
+| `friend_request` | `ForeignKey(FriendRequest)` | `related_name='events'`; access via `friend_request.events.all()` |
 | `actor_user` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='friend_request_events'` |
+| `action` | `CharField(255)` | Choices: `sent`, `accepted`, `declined`, `cancelled` |
 | `note` | `CharField(255)`, nullable | Optional |
 | `created_at` | `DateTimeField` | Auto-set on create |
 
-**Validation:** `clean()` requires `actor_user` to be one of `friendship.user_one` or `friendship.user_two`; `save()` calls `full_clean()` so this is enforced on every save.
+**Validation:** `clean()` requires `actor_user` to be one of `friend_request.from_user` or `friend_request.to_user`; `save()` calls `full_clean()` so this is enforced on every save.
 
 ## UserContentPermission
 
@@ -140,6 +141,6 @@ User (Django auth)
   - friend_request_events -> FriendRequestEvent
   - content_permissions / granted_content_permissions -> UserContentPermission
 
-Friendship
+FriendRequest
   - events -> FriendRequestEvent
 ```

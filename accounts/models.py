@@ -47,22 +47,6 @@ class Friendship(models.Model):
             ),
         ]
 
-class FriendRequestEvent(models.Model):
-    friendship = models.ForeignKey(Friendship, on_delete=models.CASCADE, related_name='events')
-    actor_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='friend_request_events')
-    note = models.CharField(max_length=255, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def clean(self):
-        super().clean()
-        if self.actor_user not in [self.friendship.user_one, self.friendship.user_two]:
-            raise ValidationError("Actor user must be one of the users involved in the friendship.")
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
-
-
 class UserContentPermission(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='content_permissions')
     grantee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='granted_content_permissions')
@@ -140,3 +124,33 @@ class BlockedUser(models.Model):
                 name='no_self_blocking'
             ),
         ]
+
+class FriendRequestEvent(models.Model):
+    class Action(models.TextChoices):
+        SENT = 'sent', 'Sent'
+        ACCEPTED = 'accepted', 'Accepted'
+        DECLINED = 'declined', 'Declined'
+        CANCELLED = 'cancelled', 'Cancelled'
+
+    friend_request = models.ForeignKey(
+        FriendRequest,
+        on_delete=models.CASCADE,
+        related_name='events'
+    )
+    actor_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='friend_request_events'
+    )
+    action = models.CharField(max_length=255, choices=Action.choices)
+    note = models.CharField(max_length=255, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        super().clean()
+        if self.actor_user not in [self.friend_request.from_user, self.friend_request.to_user]:
+            raise ValidationError("Actor user must be one of the users involved in the friend request.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
