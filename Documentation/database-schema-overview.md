@@ -1,8 +1,8 @@
 # Database Schema Overview
 
-This is a loose planning chart for the Ceres database. It describes likely tables, fields, data types, and relationships without defining Django model code.
+This is a high-level planning reference for the Ceres database. It describes app ownership, cross-app rules, example flows, and constraint themes without defining Django model code.
 
-The most important boundary rule is that each app owns its own records. Other apps should link to those records rather than duplicating them.
+The most important boundary rule is that each app owns its own records. Other apps should link to those records rather than duplicating them. For detailed per-table field definitions, see the plan doc inside each app directory.
 
 ## App-owned table groups
 
@@ -18,63 +18,6 @@ The most important boundary rule is that each app owns its own records. Other ap
 | `search` | Search index entry, search access hint, search history item, saved search, search synonym | Search summaries, history, saved searches, suggestions, and optional access hints |
 | `core` | Dashboard layout, dashboard widget setting, quick action preference, user interface preference | Presentation preferences for the overall Ceres experience |
 | `config` | No product tables | Project configuration only |
-
-## Loose relationship chart
-
-| Source table | Relationship | Target table | Notes |
-| --- | --- | --- | --- |
-| User profile | belongs to | User | One profile per user |
-| Account preference | belongs to | User | One preference record per user |
-| Privacy preference | belongs to | User | One preference record per user; separated from account preference to keep concerns distinct |
-| Friendship | connects | User to User | Confirmed friendships only; lower user ID always stored first to prevent duplicate pairs |
-| Friend request | sent from | User to User | Tracks pending and resolved requests separately from confirmed friendships |
-| Blocked user | issued by | User against User | Kept separate from friendship so block checks never touch friendship records |
-| Friend request event | records action on | Friend request | Optional audit trail; actor must be one of the two users on the request |
-| User content permission | grants access from | User to User | Used as a default sharing rule, not a replacement for app-specific permissions |
-| Module | owned by | User | The user owns or manages the module record |
-| Module membership | connects | Module to User | Supports shared modules or future tutor/collaborator access |
-| Lecture | belongs to | Module | Lectures should not own notes or files directly |
-| Timetable entry | belongs to | Module or Lecture | Academic timetable stays in `academics` |
-| Assignment | belongs to | Module | Assignment planning details link into `planning` |
-| Revision topic | belongs to | Module | May link to study sessions, notes, and tasks |
-| Calendar event | owned by | User | May display academic records without owning them |
-| Task assignment | connects | Task to User | Allows responsibility and allocation |
-| Task link | connects | Task to any supported source object | Used for assignments, group projects, study sessions, notes, modules, and lectures |
-| Study session participant | connects | Study session to User | Tracks invitations and attendance |
-| Deadline | points to | Assignment, task, event, project, or revision plan | Central deadline behaviour lives in `planning` |
-| Goal | owned by | User | May be linked to tasks or revision later |
-| Note | owned by | User | Notes are reusable and should not be recreated in other apps |
-| Note link | connects | Note to module, lecture, assignment, study session, group project, or revision topic | Lets one note appear in several academic contexts |
-| Content collection | belongs to | User | Can nest inside another collection |
-| Tagged content | connects | Tag to note or whiteboard | Tag ownership stays with `content` |
-| Whiteboard | owned by | User | Can be linked from collaboration or academic contexts |
-| Note version | belongs to | Note | Optional edit history |
-| Study group | created by | User | Group identity lives in `collaboration` |
-| Group membership | connects | Study group to User | Roles and membership status live here |
-| Group invitation | connects | User to study group or group project | Recipient accepts or declines |
-| Group project | owned by | User or study group | Uses external tasks, notes, and files |
-| Project membership | connects | Group project to User | Project roles live here |
-| Discussion thread | points to | Module, lecture, assignment, group project, or study group | One discussion system for multiple contexts |
-| Discussion message | belongs to | Discussion thread | Replies use a parent message reference |
-| Conversation participant | connects | Conversation to User | Messaging membership lives here |
-| Chat message | belongs to | Conversation | File attachments should link to `files` |
-| Stored file | owned by | User | One reusable file record |
-| File version | belongs to | Stored file | Version number unique per file |
-| File link | connects | Stored file to module, lecture, assignment, note, study session, group project, or message | Attachments are links to reusable files |
-| File share | connects | Stored file to User | Direct file sharing permission |
-| File preview | belongs to | Stored file | Generated preview metadata |
-| Notification | sent to | User | May point back to any source app object |
-| Reminder | scheduled for | User and source object | Can remind about assignments, lectures, events, tasks, or projects; unique per (recipient, source_app_label, source_object_type, source_object_id, remind_at) |
-| Notification preference | belongs to | User | One preference per category and channel; unique per (user, category, channel) |
-| Notification delivery | belongs to | Notification | Tracks channel delivery attempts; unique per (notification, channel) |
-| Muted context | connects | User to source object | Used to suppress noisy groups, projects, or conversations; unique per (user, source_app_label, source_object_type, source_object_id) |
-| Search index entry | summarizes | Any supported source object | Search is not the source of truth |
-| Search access hint | connects | Search index entry to User or group | Optional cache that must respect source permissions |
-| Search history item | belongs to | User | Can be deleted independently |
-| Saved search | belongs to | User | Reusable search shortcut |
-| Dashboard layout | belongs to | User | Presentation only |
-| Dashboard widget setting | belongs to | User | References widget keys, not source records |
-| Quick action preference | belongs to | User | Presentation only |
 
 ## Cross-app ownership rules
 
