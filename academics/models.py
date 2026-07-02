@@ -21,3 +21,21 @@ class Module(models.Model):
     semester = models.CharField(max_length=10, choices=Semester.choices, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class ModuleMembership(models.Model):
+    class Role(models.TextChoices):
+        OWNER = 'owner', 'Owner'
+        MEMBER = 'member', 'Member'
+        VIEWER = 'viewer', 'Viewer'
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='module_memberships'
+    )
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='memberships')
+    role = models.CharField(max_length=10, choices=Role.choices, default=Role.MEMBER)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'module'], name='unique_user_module')
+        ]
