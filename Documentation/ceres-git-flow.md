@@ -47,6 +47,27 @@ Some teams use `git rebase origin/main` instead of `git merge origin/main`. Reba
 
 Before opening a pull request, update your branch from the latest `main`, fix conflicts if needed, run the project, and then push the updated branch. This helps catch integration problems before they reach `main`.
 
+## Dependency syncing
+
+Ceres uses a `requirements.txt` at the repo root to track Python packages. Each contributor should work inside their own virtual environment (`venv` locally, or PyCharm's interpreter settings) rather than a shared or global environment.
+
+- If you install a new package, run `pip freeze > requirements.txt` and commit the updated file as part of your branch/PR.
+- After pulling changes that touch `requirements.txt`, install the update before running the app: `pip install -r requirements.txt` (or, in PyCharm, right-click `requirements.txt` and choose "Install requirements").
+- Don't rely on PyCharm's automatic install prompt alone — make re-installing after a pull a habit.
+
+## Pre-PR checklist
+
+Before opening a pull request for schema or setup work, check all of these — they're easy to forget individually, but any one of them can break the app for the other person after they pull:
+
+- [ ] If you added a new app, is it registered in `INSTALLED_APPS` in `config/settings.py`?
+- [ ] If you installed a new package, did you regenerate `requirements.txt` (delete the old file first, then `pip freeze > requirements.txt` from a shell that writes UTF-8 — PowerShell's default redirection writes UTF-16, which breaks `pip install -r requirements.txt` for everyone else)?
+- [ ] Does `pip install -r requirements.txt` run cleanly from a fresh check of that file?
+- [ ] If you changed models, did you run `makemigrations` and actually read the generated migration file before applying it?
+- [ ] Did you run `migrate` locally and confirm it applies without errors?
+- [ ] Are the new migration files committed along with the model changes? Migrations are part of the code, not a generated artifact to ignore.
+- [ ] Are any secrets (DB passwords, API keys) coming from `.env` via `python-dotenv`, rather than hardcoded in `settings.py`? Check `.env` isn't accidentally un-ignored.
+- [ ] Does the app actually start and run without errors before you push?
+
 ## Suggested branch names
 
 - `feature/auth-pages`
@@ -64,6 +85,53 @@ Short, descriptive branch names make pull requests easier to understand and revi
 - No direct pushes to `main` unless both contributors explicitly agree.
 - Update your branch from latest `main` before merging.
 - Delete merged branches after the PR is complete.
+
+## Current workflow checklist
+
+Right now each person is building out the database schema for their own app(s). Once the schema work is merged, the same team will move on to building features on top of it. The steps below are the practical version of the rules above for each phase.
+
+### Schema phase
+
+```bash
+git checkout main
+git pull origin main
+git checkout -b accounts-db   # or your app's branch
+# ...write models...
+python manage.py makemigrations
+python manage.py migrate
+```
+
+Before opening the PR, sync with `main` again in case it moved on while you worked:
+
+```bash
+git fetch origin
+git merge origin/main
+# resolve conflicts if any, re-run makemigrations/migrate, retest
+```
+
+Then open the PR, get it reviewed, merge, and delete the branch.
+
+### Feature phase
+
+```bash
+git checkout main
+git pull origin main
+git checkout -b feature/your-feature
+# ...build the feature...
+# ...write/run tests...
+```
+
+Sync with `main` again before opening the PR:
+
+```bash
+git fetch origin
+git merge origin/main
+# resolve conflicts if any, retest
+```
+
+Then open the PR, get it reviewed, merge, and delete the branch.
+
+Because schema work is currently split by app, migrations from different branches land in different app directories and merge without conflict. Conflicts only become a risk once two people edit models in the same app at the same time.
 
 ## Example
 
