@@ -68,20 +68,19 @@ Dedicated lifecycle record for a friend request between two users. This resolves
 
 ## Friendship
 
-Relationship record for users who have moved beyond the request stage. Blocking is tracked separately in `BlockedUser`.
+Confirmed friendship between two users. Requests are tracked separately in `FriendRequest`; blocking is tracked separately in `BlockedUser`.
 
 | Field | Type | Notes |
 | --- | --- | --- |
 | `user_one` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='friendships_as_user_one'` |
 | `user_two` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='friendships_as_user_two'` |
-| `status` | `CharField(255)` | Choices: `accepted`, `removed`; default `accepted` |
-| `accepted_at`, `removed_at` | `DateTimeField`, nullable | Set by application code when the corresponding transition happens |
+| `created_at` | `DateTimeField` | Auto-set on create |
 
 **Constraints:**
 - `unique_friendship` is unique on `(user_one, user_two)`.
 - `user_one_before_user_two` requires `user_one_id < user_two_id`. Code creating a `Friendship` must sort the two users before saving.
 
-**Usage:** query for the sorted pair with `status='accepted'` to determine whether two users are friends. Pending and rejected requests live in `FriendRequest`, not here. Blocks live in `BlockedUser`, not here.
+**Usage:** query for the sorted pair to determine whether two users are friends. Pending and rejected requests live in `FriendRequest`, not here. Blocks live in `BlockedUser`, not here.
 
 ## BlockedUser
 

@@ -34,12 +34,7 @@ class Friendship(models.Model):
     user_two = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='friendships_as_user_two'
     )
-    status = models.CharField(max_length=255, choices=[
-        ('accepted', 'Accepted'),
-        ('removed', 'Removed'),
-    ], default='accepted')
-    accepted_at = models.DateTimeField(null=True, blank=True)
-    removed_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
