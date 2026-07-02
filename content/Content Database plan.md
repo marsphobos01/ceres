@@ -2,7 +2,7 @@
 
 Owns reusable user-created academic content.
 
-This app is the home for notes, whiteboards, content organisation, folders or collections, tags, note search, rich text or markdown content, images, tables, checklists, code blocks, and future mathematical notation support.
+This app is the home for notes, whiteboards, flashcards and flashcard decks, content organisation, folders or collections, tags, note search, rich text or markdown content, images, tables, checklists, code blocks, and future mathematical notation support.
 
 ## Does not own
 
@@ -17,8 +17,10 @@ Separate note systems for lectures, assignments, study sessions, or group projec
 | Content collection | A folder, notebook, or collection for notes and whiteboards | Owner user reference; name as short text; parent collection reference; colour as short text; sort order as positive integer | Name required; parent collection must belong to the same owner; prevent circular parent relationships |
 | Tag | A reusable content tag | Owner user reference; name as short text; colour as short text | Tag name unique per owner; name required |
 | Tagged content | A tag applied to a content object | Tag reference; content type as choice text; content identifier as positive integer | One tag per content object; content identifier must point to a supported content type |
-| Whiteboard | A reusable visual workspace | Owner user reference; title as short text; canvas data as structured JSON; thumbnail file reference; visibility as choice text; created and updated timestamps | Title required; canvas data should remain within accepted size limits |
+| Whiteboard | A reusable visual workspace | Owner user reference; title as short text; canvas data as structured JSON; optional linked context (generic FK, nullable); created and updated timestamps | Title required; canvas data holds the canvas library's serialised state — do not store binary data directly in it |
 | Note version | Optional history of note edits | Note reference; editor user reference; body snapshot as long text; change summary as short text; created timestamp | Version must belong to an existing note; editor must have edit access |
+| Flashcard | A single flashcard, optionally tied to a module or revision topic | Owner user reference; module reference (nullable); revision topic reference (nullable, `academics.RevisionTopic`); front as long text; back as long text; confidence as choice text (nullable) | Front and back required; confidence limited to red, amber, or green |
+| Flashcard deck | A named collection of flashcards | Owner user reference; module reference (nullable); title as short text; description as long text (nullable); created and updated timestamps | Title required; a flashcard belongs to a deck via a nullable FK on `Flashcard`, not a many-to-many relationship |
 
 ## Cross-app linking
 
