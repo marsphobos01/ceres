@@ -158,31 +158,25 @@ Open Ceres
 -> End of Day Summary
 ```
 
-## Core Modules
+## Features
+
+This section is the canonical feature reference. Each feature lists what it includes. Anything not listed here is out of scope for the current vision.
 
 ### Dashboard
 
-A personalised overview of today's academic life.
-
-Requirements:
-
 - Daily schedule
-- Upcoming deadlines
+- Deadlines
 - Assignment progress
 - Study reminders
-- Recent notes
+- Notes
 - Quick actions
 - Calendar overview
 - Goals
-- Activity summary
+- Summary
 
 ### Calendar
 
-Requirements:
-
-- Day view
-- Week view
-- Month view
+- Normal calendar functionality
 - Recurring events
 - Colour categories
 - Academic events
@@ -192,66 +186,34 @@ Requirements:
 
 ### Timetable
 
-Requirements:
-
 - Weekly timetable
-- Module grouping
-- Lecture information
-- Room information
-- Attendance tracking
-- Navigation to lecture pages
+- Modules
+- Lectures
+- Basic room information
 
 ### Modules
 
-Each module should become its own workspace.
-
-Requirements:
-
-- Lectures
+- General module details
+- Lectures as a linked list; full lecture content lives in Lecture Hub
 - Assignments
-- Notes
 - Resources
-- Revision
-- Discussions
 
 ### Lecture Hub
 
-Requirements:
-
-- Notes
-- Attachments
-- Images
-- Recordings
+- Notes linked from Notes and tagged to the lecture
+- Attachments linked from Files and tagged to the lecture
 - Related assignments
-- Revision links
-- Discussion
+- Discussions
 
 ### Assignments
 
-Each assignment should support:
-
-- Title
-- Module
-- Deadline
-- Progress
-- Priority
-- Status
-- Notes
-- Checklist
-- Attachments
+- General details
+- Checklist or general planner
 - Group members
-- Estimated workload
-
-Views:
-
-- Upcoming
-- Active
-- Completed
-- Overdue
+- Sorting, such as upcoming, active, and completed
+- Priority, status, and progress inherited from the Tasks engine
 
 ### Notes
-
-Requirements:
 
 - Rich text
 - Markdown
@@ -265,8 +227,6 @@ Requirements:
 
 ### Revision
 
-Requirements:
-
 - Topics
 - Confidence
 - Flashcards
@@ -278,40 +238,32 @@ Requirements:
 
 ### Whiteboard
 
-Requirements:
-
-- Infinite canvas
+- Canvas
 - Drawing
 - Sticky notes
 - Shapes
 - Images
 - Collaboration
-- Export
+- Exporting
 
 ### Study Sessions
 
-Students should be able to:
-
 - Create sessions
-- Invite friends
-- Track study time
-- Share notes
+- Invite others
+- Track time
+- Share notes through links into Notes
 - Collaborate
+- Location
+- History and attachment links into Files
 
 ### Friends
 
-Requirements:
-
 - Profiles
-- Friend requests
-- Shared workspaces
-- Shared calendars
-- Shared revision
+- Requests
+- Shared work
 - Study groups
 
 ### Messaging
-
-Requirements:
 
 - Direct messages
 - Group conversations
@@ -322,90 +274,38 @@ Requirements:
 
 ### Group Projects
 
-Requirements:
-
-- Dedicated workspace
-- Shared files
-- Shared notes
+- Workspace
+- Shared files through links into Files
+- Shared notes through links into Notes
 - Task boards
 - Meeting notes
 - Timeline
-- Progress tracking
+- Progress
+- Job allocation
 
 ### Tasks
 
-Requirements:
+Tasks are the core planning engine. Assignments are a specialised view built on top of this.
 
 - Quick creation
 - Priorities
 - Categories
 - Deadlines
 - Recurring tasks
-- Progress tracking
+- Progress
+- Job allocation
 
 ### Files
 
-Requirements:
-
-- Organised storage
+- Storage
+- Organisation
 - Tags
 - Search
 - Preview
 - Sharing
 - Recent files
 
-### Goals
-
-Requirements:
-
-- Daily goals
-- Weekly goals
-- Semester goals
-- Progress tracking
-- Completion history
-
-### Habits
-
-Examples:
-
-- Study
-- Sleep
-- Exercise
-- Reading
-- Hydration
-
-Requirements:
-
-- Daily tracking
-- Streaks
-- Statistics
-- History
-
-### Placement Tracker
-
-Requirements:
-
-- Applications
-- Companies
-- Interviews
-- Notes
-- Deadlines
-- Status
-- CV tracking
-
-### User Profiles
-
-Requirements:
-
-- Profile
-- Statistics
-- Achievements
-- Modules
-- Privacy settings
-
 ### Notifications
-
-Requirements:
 
 - Assignment reminders
 - Lecture reminders
@@ -415,8 +315,6 @@ Requirements:
 - Configurable preferences
 
 ### Search
-
-Global search should locate:
 
 - Modules
 - Lectures
@@ -428,57 +326,40 @@ Global search should locate:
 - Tasks
 - Events
 
-## Functional Requirements
+## Potential Future Modules
 
-### User Management
+These are not in scope for the current build but are planned for later.
 
-The system shall allow users to:
+- Goals
+- Habits
+- Placement Tracker
+- User Profiles
 
-- Create an account
-- Sign in
-- Edit profile information
-- Manage privacy settings
-- Delete their account
+## User Stories
 
-### Academic Management
+### Dashboard
 
-The system shall allow users to:
+As a student, I want to immediately understand what requires my attention today, so I can begin work without searching through multiple applications.
 
-- Manage modules
-- Organise lectures
-- Create notes
-- Track assignments
-- Manage revision
-- Store resources
+### Assignments
 
-### Productivity
+As a student, I want to monitor coursework progress, so deadlines never become overwhelming.
 
-The system shall allow users to:
+### Notes
 
-- Manage tasks
-- Manage calendars
-- Create reminders
-- Set goals
-- Track habits
+As a student, I want all lecture notes organised by module, so revision becomes effortless.
+
+### Revision
+
+As a student, I want to identify my weakest topics, so I can spend my revision time effectively.
 
 ### Collaboration
 
-The system shall allow users to:
+As a student, I want to work with classmates in shared spaces, so group projects remain organised.
 
-- Communicate
-- Collaborate on notes
-- Share workspaces
-- Create study groups
-- Manage group projects
+### Habits
 
-### Personalisation
-
-Users shall be able to:
-
-- Customise dashboards
-- Change themes
-- Reorder widgets
-- Configure notifications
+As a student, I want to build consistent study habits, so I improve over the duration of my degree.
 
 ## Non-Functional Requirements
 
@@ -509,32 +390,6 @@ Features should evolve independently without negatively impacting existing funct
 ### Extensibility
 
 Future modules should integrate naturally into the existing workspace.
-
-## User Stories
-
-### Dashboard
-
-As a student, I want to immediately understand what requires my attention today, so I can begin work without searching through multiple applications.
-
-### Assignments
-
-As a student, I want to monitor coursework progress, so deadlines never become overwhelming.
-
-### Notes
-
-As a student, I want all lecture notes organised by module, so revision becomes effortless.
-
-### Revision
-
-As a student, I want to identify my weakest topics, so I can spend my revision time effectively.
-
-### Collaboration
-
-As a student, I want to work with classmates in shared spaces, so group projects remain organised.
-
-### Habits
-
-As a student, I want to build consistent study habits, so I improve over the duration of my degree.
 
 ## Information Architecture
 

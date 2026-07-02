@@ -4,11 +4,13 @@ Owns the overall Ceres experience and pages that combine information from severa
 
 This app is the home for the dashboard, landing page, main layout, shared navigation, shared page structure, general error pages, quick actions, and product-wide contextual actions.
 
-The dashboard should present data from other apps rather than owning it. Schedules and deadlines come from `planning`, notes come from `content`, assignments come from `academics`, notifications come from `notifications`, and friends or projects come from `collaboration`.
+## Does not own
+
+Actual schedules, deadlines, notes, assignments, notifications, friends, or project data should not be stored here. The dashboard presents data from other apps rather than owning it — schedules and deadlines come from `planning`, notes from `content`, assignments from `academics`, notifications from `notifications`, and friends or projects from `collaboration`. Store only presentation choices and pull the underlying data from the owning apps.
 
 ## Example database schema
 
-`core` should contain very little product data. Its tables should support the shared experience rather than duplicate records from other apps.
+`core` contains very little product data. Its tables support the shared experience rather than duplicate records from other apps.
 
 | Example table | What it represents | Example fields and data types | Example constraints and rules |
 | --- | --- | --- | --- |
@@ -17,4 +19,6 @@ The dashboard should present data from other apps rather than owning it. Schedul
 | Quick action preference | The quick actions a user wants visible | User reference; action key as short text; position as positive integer; pinned flag as boolean | One action key per user; position must be zero or greater |
 | User interface preference | Shared interface preferences not specific to accounts | User reference; theme mode as choice text; density as choice text; sidebar collapsed flag as boolean | One preference record per user; choices should be restricted to supported interface options |
 
-Avoid storing actual schedules, deadlines, notes, assignments, notifications, friends, or project data in `core`. Store only presentation choices and pull the underlying data from the owning apps.
+## Cross-app linking
+
+This app queries all other apps for display purposes only. It should never become a data owner for content that has a more appropriate home elsewhere.
