@@ -5,14 +5,24 @@ from django.conf import settings
 
 # Create your models here.
 class CalendarEvent(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='events')
+    RECURRENCE_TYPE_CHOICES = {
+        "N": "None",
+        "D": "Dayly",
+        "W": "Weekly",
+        "BW": "Biweekly",
+        "M": "Monthly"
+    }
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='events')
     title = models.CharField(max_length=100)
     description = models.TextField()
     start = models.DateTimeField()
     end = models.DateTimeField()
     allday = models.BooleanField()
+    colour = models.CharField(max_length=6,  null=True)
     location = models.CharField(max_length=100)
-    recurrence = models.CharField(max_length=100)
+    recurrence_type = models.CharField(max_length=11, choices=RECURRENCE_TYPE_CHOICES, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         constraints = [
