@@ -31,7 +31,7 @@ Each issue also carries one `area:*` label (which Django app it belongs to) and 
 
 Full label taxonomy, epic body template, and PR-closing conventions are in [issue-management-approach.md](issue-management-approach.md) — this section is just the practical summary.
 
-**The rule that matters most day to day:** feature work is blocked by the DB schema work it depends on. A feature issue like "Requests for Friends" is marked **Blocked by** the DB schema issue that defines the `FriendRequest` model. You cannot productively start a feature issue until its blockers are closed — the model it needs to write code against doesn't exist yet.
+**The rule that matters most day to day:** feature work is blocked by the DB schema work it depends on. A feature issue like "Requests for Friends" may be marked **Blocked by** the DB schema issue that defines the `FriendRequest` model. You cannot productively start a feature issue until its blockers are closed because the model shape it needs to write code against may still change.
 
 ---
 

@@ -34,19 +34,12 @@ class Friendship(models.Model):
     user_two = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='friendships_as_user_two'
     )
-    requested_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='friendship_requests_sent'
-    )
     status = models.CharField(max_length=255, choices=[
-        ('requested', 'Requested'),
         ('accepted', 'Accepted'),
         ('blocked', 'Blocked'),
         ('removed', 'Removed'),
-        ('rejected', 'Rejected'),
-    ], default='requested')
-    requested_at = models.DateTimeField(auto_now_add=True)
+    ], default='accepted')
     accepted_at = models.DateTimeField(null=True, blank=True)
-    rejected_at = models.DateTimeField(null=True, blank=True)
     removed_at = models.DateTimeField(null=True, blank=True)
     blocked_at = models.DateTimeField(null=True, blank=True)
 
@@ -54,9 +47,6 @@ class Friendship(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['user_one', 'user_two'], name='unique_friendship'
-            ),
-            models.CheckConstraint(
-                condition= Q(requested_by=F('user_one')) | Q(requested_by=F('user_two')), name='requested_by_either_user'
             ),
             models.CheckConstraint(
                 condition=Q(user_one__lt=F('user_two')),
@@ -67,13 +57,6 @@ class Friendship(models.Model):
 class FriendRequestEvent(models.Model):
     friendship = models.ForeignKey(Friendship, on_delete=models.CASCADE, related_name='events')
     actor_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='friend_request_events')
-    action = models.CharField(max_length=255, choices=[
-        ('requested', 'Requested'),
-        ('accepted', 'Accepted'),
-        ('rejected', 'Rejected'),
-        ('removed', 'Removed'),
-        ('blocked', 'Blocked'),
-    ])
     note = models.CharField(max_length=255, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -126,3 +109,28 @@ class PrivacyPreference(models.Model):
     allow_friend_requests = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class FriendRequest(models.Model):
+    from_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sent_friend_requests')
+    to_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='received_friend_requests')
+    status = models.CharField(max_length=255, choices=[
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+    ], default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['from_user', 'to_user'],
+                condition=Q(status='pending'),
+                name='unique_pending_friend_request'
+            ),
+            models.CheckConstraint(
+                condition=~Q(from_user=F('to_user')),
+                name='from_user_not_to_user'
+            ),
+        ]
