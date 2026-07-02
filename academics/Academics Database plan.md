@@ -2,11 +2,11 @@
 
 Owns the university-specific academic structure of Ceres.
 
-This app is the home for modules, lectures, timetable entries, assignments, and future revision features. It should contain module details and membership, lecture metadata, basic room and lecturer information, Lecture Hub views, assignment details, assignment deadlines, assignment lists, and academic filtering such as upcoming or completed assignments.
+This app is the home for modules, lectures, timetable entries, assignments, and future revision features. It contains module details and membership, lecture metadata, basic room and lecturer information, Lecture Hub views, assignment details, assignment deadlines, and assignment filtering such as upcoming or completed.
 
-Assignments belong here, but their generic planning behaviour should come from `planning`. Priority, status, progress, reusable tasks, and shared deadline behaviour should not be recreated independently inside this app.
+## Does not own
 
-It should not own general notes, file storage, generic tasks, personal calendar events, or group discussions. Those belong to `content`, `files`, `planning`, and `collaboration`.
+General notes, file storage, generic tasks, personal calendar events, and group discussions belong to `content`, `files`, `planning`, and `collaboration`. Assignments belong here, but their generic planning behaviour should come from `planning` — priority, status, progress, reusable tasks, and shared deadline behaviour should not be recreated independently inside this app.
 
 ## Example database schema
 
@@ -18,5 +18,7 @@ It should not own general notes, file storage, generic tasks, personal calendar 
 | Timetable entry | Recurring or scheduled academic timetable item | Module reference; lecture reference if applicable; weekday as choice text; start time; end time; room as short text; recurrence start and end dates | End time must be after start time; timetable entries should belong to a module |
 | Assignment | An academic assignment, coursework item, or assessment | Module reference; title as short text; brief as long text; due datetime; weighting as decimal number; type as choice text; group assignment flag as boolean; created and updated timestamps | Title and due date required; weighting must be zero or greater; planning status and task progress should come from `planning` |
 | Revision topic | A revisable topic within a module | Module reference; title as short text; confidence score as small integer; priority as choice text; last reviewed date | Confidence score should stay within the chosen scale, such as 1 to 5 |
+
+## Cross-app linking
 
 Academic records may link to notes in `content`, files in `files`, tasks and deadlines in `planning`, and discussions or group work in `collaboration`. Those links should not cause this app to duplicate the external data.

@@ -4,9 +4,9 @@ Owns time, scheduling, tasks, deadlines, and study activity.
 
 This app is the home for calendar views, personal and recurring events, shared calendars, the central task engine, priorities, categories, deadlines, progress, assignees, task allocation, study sessions, and potential goals or habits features.
 
-Tasks should be reusable across assignments, modules, lectures, study sessions, group projects, and notes. Assignments remain academic objects in `academics`, but assignment planning data should use this app's task and deadline behaviour.
+## Does not own
 
-The university timetable remains part of `academics`, even when timetable items are displayed in calendar-style views.
+The university timetable remains part of `academics`, even when timetable items are displayed in calendar-style views. Assignments remain academic objects in `academics`, but assignment planning data should use this app's task and deadline behaviour.
 
 ## Example database schema
 
@@ -21,4 +21,6 @@ The university timetable remains part of `academics`, even when timetable items 
 | Deadline | A central deadline record that can point to another object | Owner user reference; title as short text; due datetime; source app label as short text; source object type as short text; source object identifier as positive integer; reminder enabled flag as boolean | Due date required; source object should be unique when the deadline mirrors another app's object |
 | Goal | A personal academic goal | Owner user reference; title as short text; goal type as choice text; target value as decimal number; current value as decimal number; start and end dates | Current value should not be negative; end date should be after start date |
 
-Assignments belong to `academics`, but assignment progress, planning tasks, assignees, reminders, and general deadline behaviour should be represented here.
+## Cross-app linking
+
+Tasks should be reusable across assignments, modules, lectures, study sessions, group projects, and notes. Deadlines may point to assignment, task, calendar event, group project, or revision plan objects in their respective apps.

@@ -4,9 +4,9 @@ Owns shared spaces and communication between users.
 
 This app is the home for study groups, group projects, group membership, invitations, project workspaces, project roles, shared academic activity, discussions, messaging, collaboration permissions, and group-project coordination.
 
-Group projects can reference members from `accounts`, tasks from `planning`, notes from `content`, files from `files`, and notifications from `notifications`. This app coordinates shared work rather than duplicating those systems.
+## Does not own
 
-It should not own user identity, general files, general notes, or generic tasks.
+User identity, general files, general notes, and generic tasks belong to `accounts`, `files`, `content`, and `planning`. This app coordinates those shared systems rather than recreating them.
 
 ## Example database schema
 
@@ -23,4 +23,6 @@ It should not own user identity, general files, general notes, or generic tasks.
 | Conversation participant | A user's membership in a conversation | Conversation reference; user reference; role as choice text; muted flag as boolean; last read timestamp | One participant per conversation and user |
 | Chat message | A message in a conversation | Conversation reference; author user reference; body as long text; reply-to message reference; created and edited timestamps | Author must be a participant; message belongs to exactly one conversation |
 
-Shared files, shared notes, and task boards should reference `files`, `content`, and `planning` rather than duplicating those systems inside `collaboration`.
+## Cross-app linking
+
+Shared files, shared notes, and task boards should reference `files`, `content`, and `planning` rather than duplicating those systems inside this app.

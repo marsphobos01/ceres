@@ -4,9 +4,9 @@ Owns uploaded files and reusable file-management behaviour.
 
 This app is the home for file storage, file metadata, organisation, tags, file search, previews, sharing, recent files, and attachment relationships.
 
-Files may be linked to modules, lectures, assignments, notes, study sessions, group projects, and messages. Attachments should be relationships to file records rather than separate upload systems in each feature app.
+## Does not own
 
-An uploaded file should exist once and be reusable in multiple places where appropriate.
+Separate upload systems for lectures, assignments, notes, study sessions, group projects, or messages should not be created. Attachments should be relationships to file records here rather than independent upload tables in each feature app. In-module file filtering and sorting queries `StoredFile`, `FileTag`, and `FileShare` directly and does not depend on the `search` app or `SearchIndexEntry`.
 
 ## Example database schema
 
@@ -19,4 +19,6 @@ An uploaded file should exist once and be reusable in multiple places where appr
 | File tag | A reusable tag for files | Owner user reference; name as short text; colour as short text | Tag name unique per owner |
 | File preview | Generated preview metadata for a file | Stored file reference; preview type as choice text; preview path as text; status as choice text; generated timestamp | One active preview per file and preview type; status limited to pending, ready, failed, or expired |
 
-Lecture attachments, assignment attachments, note attachments, study-session resources, project files, and message files should all point back to stored file records here.
+## Cross-app linking
+
+Lecture attachments, assignment attachments, note attachments, study-session resources, project files, and message files should all point back to stored file records here. Files appearing in global Ceres search are handled separately — a `files` indexer writes `StoredFile` summaries into `SearchIndexEntry` in the `search` app.
