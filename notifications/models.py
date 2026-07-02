@@ -1,29 +1,31 @@
 from django.db import models
 from django.conf import settings
+
+
+
 # Create your models here.
-CATEGORY_CHOICES = {"A": "Academic",
-                        "C": "Colaboration"
-                        }  # TODO: Refine the category choices.
+CATEGORY_CHOICES = {"AR": "Assignment Reminder",
+                    "LR": "Lecture Reminder",
+                    "CR": "Calendar Reminder",
+                    "GU": "Group Update",
+                    "FR": "Friend Request",
+                    "NM": "New Message",
+                    "SSI": "Study Session Invite"
+                        }
 
 class Notification(models.Model):
-    notification_id = models.BigAutoField(primary_key=True)
-    notification_name = models.CharField(max_length=100)
-    notification_content = models.TextField()
-    category = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
-    created_at = models.DateTimeField(auto_now_add=True)
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="recipient_fk")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="actor_fk")
+    category = models.CharField(choices=CATEGORY_CHOICES, max_length=3)
+    title = models.CharField(max_length=120)
+    body = models.TextField()
+    source_app = models.CharField(max_length=120)
+    source_object_type = models.CharField(max_length=120)
+    source_object_id = models.PositiveIntegerField()
     read_at = models.DateTimeField(null=True)
-    #object_id = models.ForeignKey("Object", on_delete=models.CASCADE) # TODO: OneToOneField for the object model.
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    """class Meta:
-        constraints = [
-            #TODO: Refine the category choices.
-            models.CheckConstraint(
-            check = models.Q(category__in=["A", "C"]),
-            name="notification_category_valid"
-            )
-        ]"""
 
 
 class Reminder(models.Model):
