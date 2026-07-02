@@ -55,18 +55,32 @@ Ceres uses a `requirements.txt` at the repo root to track Python packages. Each 
 - After pulling changes that touch `requirements.txt`, install the update before running the app: `pip install -r requirements.txt` (or, in PyCharm, right-click `requirements.txt` and choose "Install requirements").
 - Don't rely on PyCharm's automatic install prompt alone — make re-installing after a pull a habit.
 
-## Pre-PR checklist
+## Pre-PR checklist — DB / schema work
 
-Before opening a pull request for schema or setup work, check all of these — they're easy to forget individually, but any one of them can break the app for the other person after they pull:
+Before opening a pull request that adds or changes models, check all of these — they're easy to forget individually, but any one of them can break the app for the other person after they pull:
 
 - [ ] If you added a new app, is it registered in `INSTALLED_APPS` in `config/settings.py`?
 - [ ] If you installed a new package, did you regenerate `requirements.txt` (delete the old file first, then `pip freeze > requirements.txt` from a shell that writes UTF-8 — PowerShell's default redirection writes UTF-16, which breaks `pip install -r requirements.txt` for everyone else)?
 - [ ] Does `pip install -r requirements.txt` run cleanly from a fresh check of that file?
-- [ ] If you changed models, did you run `makemigrations` and actually read the generated migration file before applying it?
+- [ ] Are the new or changed models registered in that app's `admin.py` (and does the class name in `admin.py` actually match the model name)?
+- [ ] Did you run `makemigrations` and actually read the generated migration file before applying it?
 - [ ] Did you run `migrate` locally and confirm it applies without errors?
 - [ ] Are the new migration files committed along with the model changes? Migrations are part of the code, not a generated artifact to ignore.
 - [ ] Are any secrets (DB passwords, API keys) coming from `.env` via `python-dotenv`, rather than hardcoded in `settings.py`? Check `.env` isn't accidentally un-ignored.
 - [ ] Does the app actually start and run without errors before you push?
+- [ ] Did you ask Claude to generate/update a `<App> Database Implementation` file for your models? This is separate from writing the models themselves, and it helps the other person understand your schema.
+
+## Pre-PR checklist — feature work
+
+Before opening a pull request that builds a feature on top of existing models, check these:
+
+- [ ] If you installed a new package, did you regenerate `requirements.txt` the same way as above (delete first, UTF-8 shell) and confirm `pip install -r requirements.txt` runs cleanly?
+- [ ] Did this feature need a new field or model change? If so, did you go through the DB/schema checklist above for that part, rather than assuming the schema is already finished?
+- [ ] Are there tests for the new behavior, and do they pass?
+- [ ] Did you manually run the feature end-to-end at least once, not just read the code?
+- [ ] Are any secrets coming from `.env`, not hardcoded?
+- [ ] Does the app actually start and run without errors before you push?
+- [ ] Did you ask Claude to generate/update a '<App> Features' file for your feature? This is separate from writing the feature itself, and it helps the other person understand your work.
 
 ## Suggested branch names
 
