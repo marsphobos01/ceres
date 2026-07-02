@@ -46,4 +46,4 @@ Ceres is an academic workspace designed to help university students organise, ma
 - [App Structure](Documentation/Django%20App%20Structure.md)
 - [Database Schema Overview](Documentation/database-schema-overview.md)
 - [Feature List](Documentation/feature_list.md)
-- [Git Flow](Documentation/ceres-git-flow.md)
+- [Contributor Workflow](Documentation/contributor-workflow.md)
