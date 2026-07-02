@@ -113,20 +113,19 @@ Optional note/audit record attached to a `Friendship`.
 
 ## UserContentPermission
 
-A default sharing-permission rule one user sets for another.
+A default sharing-permission rule one user sets for another. This model handles account-level default sharing only; per-object or `specific_content` overrides belong to the owning content/files apps and the feature work tracked by `#3`.
 
 | Field | Type | Notes |
 | --- | --- | --- |
 | `owner` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='content_permissions'` |
-| `target_user` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='targeted_permissions'` |
+| `grantee` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='granted_content_permissions'`; the user receiving default access |
 | `permission_level` | `CharField(255)` | Choices: `view`, `comment`, `edit` |
-| `applies_to` | `CharField(255)` | Currently only `all_content` |
 
 **Constraints:**
-- `unique_permission` is unique on `(owner, target_user, applies_to)`.
-- `owner_not_target_user` prevents a user from granting permissions to themselves.
+- `unique_content_permission` is unique on `(owner, grantee)`.
+- `owner_not_grantee` prevents a user from granting permissions to themselves.
 
-**Usage:** represents the default access `target_user` has to everything `owner` shares. Per-item overrides are intended to live in the owning app once `applies_to='specific_content'` exists.
+**Usage:** represents the default access `grantee` has to content shared by `owner`. This does not model object-specific permissions.
 
 ## How the models relate
 
@@ -139,7 +138,7 @@ User (Django auth)
   - blocked_users / blocked_by -> BlockedUser
   - friendships_as_user_one / friendships_as_user_two -> Friendship
   - friend_request_events -> FriendRequestEvent
-  - content_permissions / targeted_permissions -> UserContentPermission
+  - content_permissions / granted_content_permissions -> UserContentPermission
 
 Friendship
   - events -> FriendRequestEvent

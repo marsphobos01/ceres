@@ -65,26 +65,22 @@ class FriendRequestEvent(models.Model):
 
 class UserContentPermission(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='content_permissions')
-    target_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='targeted_permissions')
+    grantee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='granted_content_permissions')
     permission_level = models.CharField(max_length=255, choices=[
         ('view', 'View'),
         ('comment', 'Comment'),
         ('edit', 'Edit'),
     ])
-    applies_to = models.CharField(max_length=255, choices=[
-        ('all_content', 'All Content'),
-        #('specific_content', 'Specific Content'),
-    ])
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['owner', 'target_user', 'applies_to'],
-                name='unique_permission'
+                fields=['owner', 'grantee'],
+                name='unique_content_permission'
             ),
             models.CheckConstraint(
-                condition=~Q(owner=F('target_user')),
-                name='owner_not_target_user'
+                condition=~Q(owner=F('grantee')),
+                name='owner_not_grantee'
             ),
         ]
 
