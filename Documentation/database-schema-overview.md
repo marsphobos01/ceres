@@ -8,7 +8,7 @@ The most important boundary rule is that each app owns its own records. Other ap
 
 | App | Main tables | What they own |
 | --- | --- | --- |
-| `accounts` | User profile, account preference, privacy preference, friendship, friend request, blocked user, friend request event, user content permission | Identity, profile details, privacy settings, and direct user relationships |
+| `accounts` | User profile, account preference, privacy preference, friendship, friend request, blocked user, friend request event, user content permission | Identity, profile details, privacy settings, direct user relationships, and friend request audit events |
 | `academics` | Module, module membership, lecture, timetable entry, assignment, revision topic | University structure, teaching sessions, assignments, and revision topics |
 | `planning` | Calendar event, task, task assignment, task link, study session, study session participant, deadline, goal | Time, tasks, deadlines, study sessions, and planning behaviour |
 | `content` | Note, note link, content collection, tag, tagged content, whiteboard, note version | Reusable academic content, notes, whiteboards, tags, and content organisation |
@@ -64,10 +64,10 @@ The most important boundary rule is that each app owns its own records. Other ap
 | File share | connects | Stored file to User | Direct file sharing permission |
 | File preview | belongs to | Stored file | Generated preview metadata |
 | Notification | sent to | User | May point back to any source app object |
-| Reminder | scheduled for | User and source object | Can remind about assignments, lectures, events, tasks, or projects |
-| Notification preference | belongs to | User | One preference per category and channel |
-| Notification delivery | belongs to | Notification | Tracks channel delivery attempts |
-| Muted context | connects | User to source object | Used to suppress noisy groups, projects, or conversations |
+| Reminder | scheduled for | User and source object | Can remind about assignments, lectures, events, tasks, or projects; unique per (recipient, source_app_label, source_object_type, source_object_id, remind_at) |
+| Notification preference | belongs to | User | One preference per category and channel; unique per (user, category, channel) |
+| Notification delivery | belongs to | Notification | Tracks channel delivery attempts; unique per (notification, channel) |
+| Muted context | connects | User to source object | Used to suppress noisy groups, projects, or conversations; unique per (user, source_app_label, source_object_type, source_object_id) |
 | Search index entry | summarizes | Any supported source object | Search is not the source of truth |
 | Search access hint | connects | Search index entry to User or group | Optional cache that must respect source permissions |
 | Search history item | belongs to | User | Can be deleted independently |
@@ -86,6 +86,8 @@ The most important boundary rule is that each app owns its own records. Other ap
 | Notes and whiteboards | `content` | Create note links instead of separate lecture, assignment, project, or meeting note tables |
 | Study groups, group projects, discussions, and messages | `collaboration` | Reference notes, files, tasks, and users from their owning apps |
 | Uploaded files and attachments | `files` | Create file links instead of separate upload records |
+| In-module file filtering and sorting | `files` | Query `StoredFile`, `FileTag`, and `FileShare` directly; no dependency on `search` app or `SearchIndexEntry` |
+| Files appearing in global Ceres search | `search` | A `files` indexer writes `StoredFile` summaries into `SearchIndexEntry`; this is separate from in-module filtering |
 | Alerts and reminders | `notifications` | Send source context and let notifications decide storage and delivery |
 | Global search | `search` | Index summaries and always respect source app permissions |
 | Dashboard and shared interface preferences | `core` | Store presentation choices only |
@@ -108,7 +110,7 @@ The most important boundary rule is that each app owns its own records. Other ap
 | Theme | Suggested rule |
 | --- | --- |
 | Ownership | Most tables should include an owner, creator, or recipient user where appropriate |
-| Uniqueness | Use uniqueness rules for one-to-one settings, membership records, links, shares, and duplicate relationship prevention |
+| Uniqueness | Use uniqueness rules for one-to-one settings, membership records, links, shares, and duplicate relationship prevention. Key notification constraints: `NotificationPreference (user, category, channel)`, `NotificationDelivery (notification, channel)`, `Reminder (recipient, source_app_label, source_object_type, source_object_id, remind_at)`, `MutedContext (user, source_app_label, source_object_type, source_object_id)` |
 | Choices | Use controlled choices for statuses, roles, permissions, visibility, notification categories, and content formats |
 | Time | Store created and updated timestamps on records that users edit or review |
 | Access | Any cross-app link must be permission checked through the source app before display |
