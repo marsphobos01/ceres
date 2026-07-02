@@ -36,12 +36,10 @@ class Friendship(models.Model):
     )
     status = models.CharField(max_length=255, choices=[
         ('accepted', 'Accepted'),
-        ('blocked', 'Blocked'),
         ('removed', 'Removed'),
     ], default='accepted')
     accepted_at = models.DateTimeField(null=True, blank=True)
     removed_at = models.DateTimeField(null=True, blank=True)
-    blocked_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [
@@ -132,5 +130,22 @@ class FriendRequest(models.Model):
             models.CheckConstraint(
                 condition=~Q(from_user=F('to_user')),
                 name='from_user_not_to_user'
+            ),
+        ]
+
+class BlockedUser(models.Model):
+    blocker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='blocked_users')
+    blocked = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='blocked_by')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['blocker', 'blocked'],
+                name='unique_blocked_user'
+            ),
+            models.CheckConstraint(
+                condition=~Q(blocker=F('blocked')),
+                name='no_self_blocking'
             ),
         ]

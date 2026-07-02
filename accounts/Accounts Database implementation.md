@@ -2,7 +2,7 @@
 
 This document describes the models as actually implemented in `accounts/models.py`, and how to use them. Unlike `Accounts Database plan.md`, which describes the intended design, this reflects the current code. Update this file whenever the models change.
 
-The accounts schema is partially aligned with the decomposed plan. `FriendRequest` is now the dedicated model for pending and resolved friend requests, so request-specific state no longer lives on `Friendship`. `Friendship` still includes blocked and removed relationship states; the dedicated `BlockedUser` split remains future work tracked separately.
+The accounts schema is partially aligned with the decomposed plan. `FriendRequest` is the dedicated model for pending and resolved friend requests, so request-specific state no longer lives on `Friendship`. `BlockedUser` is the dedicated model for user blocks, so block-specific state no longer lives on `Friendship`.
 
 ## UserProfile
 
@@ -68,20 +68,36 @@ Dedicated lifecycle record for a friend request between two users. This resolves
 
 ## Friendship
 
-Relationship record for users who have moved beyond the request stage.
+Relationship record for users who have moved beyond the request stage. Blocking is tracked separately in `BlockedUser`.
 
 | Field | Type | Notes |
 | --- | --- | --- |
 | `user_one` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='friendships_as_user_one'` |
 | `user_two` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='friendships_as_user_two'` |
-| `status` | `CharField(255)` | Choices: `accepted`, `blocked`, `removed`; default `accepted` |
-| `accepted_at`, `removed_at`, `blocked_at` | `DateTimeField`, nullable | Set by application code when the corresponding transition happens |
+| `status` | `CharField(255)` | Choices: `accepted`, `removed`; default `accepted` |
+| `accepted_at`, `removed_at` | `DateTimeField`, nullable | Set by application code when the corresponding transition happens |
 
 **Constraints:**
 - `unique_friendship` is unique on `(user_one, user_two)`.
 - `user_one_before_user_two` requires `user_one_id < user_two_id`. Code creating a `Friendship` must sort the two users before saving.
 
-**Usage:** query for the sorted pair with `status='accepted'` to determine whether two users are friends. Pending and rejected requests live in `FriendRequest`, not here. `blocked` remains here for now until the blocked-user schema alignment is handled.
+**Usage:** query for the sorted pair with `status='accepted'` to determine whether two users are friends. Pending and rejected requests live in `FriendRequest`, not here. Blocks live in `BlockedUser`, not here.
+
+## BlockedUser
+
+Dedicated block record between two users. This resolves the `#158` decision in favor of a separate `BlockedUser` model because blocking can exist without a prior friendship.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `blocker` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='blocked_users'`; the user who initiated the block |
+| `blocked` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='blocked_by'`; the user being blocked |
+| `created_at` | `DateTimeField` | Auto-set on create |
+
+**Constraints:**
+- `unique_blocked_user` prevents duplicate blocks for the same `(blocker, blocked)` pair.
+- `no_self_blocking` prevents a user from blocking themselves.
+
+**Usage:** create a `BlockedUser` row when one user blocks another. A block does not require an existing `Friendship`, and block state should not be written to `Friendship`.
 
 ## FriendRequestEvent
 
@@ -121,6 +137,7 @@ User (Django auth)
   - preference -> AccountPreference (1:1)
   - privacy -> PrivacyPreference (1:1)
   - sent_friend_requests / received_friend_requests -> FriendRequest
+  - blocked_users / blocked_by -> BlockedUser
   - friendships_as_user_one / friendships_as_user_two -> Friendship
   - friend_request_events -> FriendRequestEvent
   - content_permissions / targeted_permissions -> UserContentPermission
