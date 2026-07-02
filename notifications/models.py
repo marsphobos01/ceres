@@ -62,6 +62,17 @@ class NotificationPreferences(models.Model):
     enabled_flag = models.BooleanField(default=True)
     quiet_hours_start=models.TimeField()
     quiet_hours_end=models.TimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "category", "channel"],
+                #One preference per user per category per channel
+                name="unique_notification_perferences"
+            )
+        ]
 
 
 class NotificationDelivery(models.Model):
