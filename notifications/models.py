@@ -14,8 +14,8 @@ CATEGORY_CHOICES = {"AR": "Assignment Reminder",
                         }
 
 class Notification(models.Model):
-    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="recipient_fk")
-    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="actor_fk")
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="noticication_recipient_fk")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notification_actor_fk")
     category = models.CharField(choices=CATEGORY_CHOICES, max_length=3)
     title = models.CharField(max_length=120)
     body = models.TextField()
@@ -29,30 +29,21 @@ class Notification(models.Model):
 
 
 class Reminder(models.Model):
-    STATUS_CHOICES = {"S": "Scheduled",
-                      "ST": "Sent",
-                      "C": "Canceled"
-                      }
-    FREQUENCY_CHOICES = {"O": "Once",
-                        "RD": "Repeat Daily",
-                         "RW": "Repeat Weekly",
-                         "RB": "Repeat Biweekly",
-                         "RM": "Repeat Monthly"
-                        }
-    reminder_id = models.BigAutoField(primary_key=True)
-    reminder_content = models.TextField()
-    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE ,related_name='reminders')
-
-    created_at = models.DateTimeField(auto_now_add=True)
+    STATUS_CHOICES = {"P": "Pending",
+                      "S": "Sent",
+                      "C": "Canceled",}
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reminder_recipient_fk")
+    source_app = models.CharField(max_length=120)
+    source_object_type = models.CharField(max_length=120)
+    source_object_id = models.PositiveIntegerField()
     remind_at = models.DateTimeField()
-    next_fire_at = models.DateTimeField(null=True)
-    frequency = models.CharField(max_length=10, choices=FREQUENCY_CHOICES, default="O")
-    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default="S")
-    #object_id = models.ForeignKey("Object", on_delete=models.CASCADE) # TODO: OneToOneField for the object model.
+    status = models.CharField(max_length=120, choices=STATUS_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         constraints = [
-            #TODO: add the reminder contratins, needs data that isn't written yet.
+            models.UniqueConstraint(fields=["recipient", "source_app", "source_object_type", "source_object_id", "remind_at"], name="unique_reminder")
         ]
 
 
