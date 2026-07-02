@@ -39,3 +39,14 @@ class ModuleMembership(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['user', 'module'], name='unique_user_module')
         ]
+
+class Lecture(models.Model):
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='lectures')
+    title = models.CharField(max_length=255)
+    date = models.DateTimeField(null=True, blank=True)
+    room = models.CharField(max_length=100, null=True, blank=True)
+    lecturer_name = models.CharField(max_length=255, null=True, blank=True)
+    lecturer_email = models.EmailField(null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
