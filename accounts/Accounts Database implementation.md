@@ -2,7 +2,7 @@
 
 This document describes the models as actually implemented in `accounts/models.py`, and how to use them. Unlike `Accounts Database plan.md`, which describes the intended (decomposed) design, this reflects the current code. Update this file (not the plan) whenever the models change.
 
-**The decomposition described in the plan has not happened yet.** `Friendship` still combines relationship state, request state, and block state into one model with a `status` field, rather than being split into separate `Friendship`/`FriendRequest`/`BlockedUser` models. `PrivacyPreference` does not exist as a separate model at all. This matches the "current drift to resolve" described in the GitHub schema-alignment issues (`#153`–`#159`) — those issues are the tracked work to bring the code in line with the plan; this file documents what exists *before* that work lands.
+**The decomposition described in the plan is partially complete.** `Friendship` still combines relationship state, request state, and block state into one model with a `status` field, rather than being split into separate `Friendship`/`FriendRequest`/`BlockedUser` models. This matches the "current drift to resolve" described in the GitHub schema-alignment issues (`#153`–`#159`) — those issues are the tracked work to bring the code in line with the plan. `#153` (naming) and `#155` (`PrivacyPreference`) are now implemented.
 
 ## UserProfile
 
@@ -16,12 +16,11 @@ One profile per user, holding public/private display details.
 | `university` | `CharField(255)`, nullable | Optional |
 | `course` | `CharField(255)`, nullable | Optional |
 | `bio` | `TextField`, nullable | Optional |
-| `profile_visibility` | `CharField(255)`, choices `public` / `friends_only` / `private` | Default `private` |
 | `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
 
-**Usage:** every `User` should have exactly one `UserProfile` (enforced by the one-to-one relationship). Access it with `user.profile`. The `visibility` field only stores the user's preference — nothing in this model enforces who can actually see the profile; that access control needs to be applied wherever profile data gets displayed.
+**Usage:** every `User` should have exactly one `UserProfile` (enforced by the one-to-one relationship). Access it with `user.profile`. Profile visibility no longer lives here — see `PrivacyPreference` below.
 
-**Known drift from the plan (`#153`):** the plan's target uses `profile_image` and `profile_visibility` with choices `public`/`friends_only`/`private`. The real field names are `profile_picture` and `visibility`, with choices `public`/`friends`/`private`. Not yet aligned.
+**`#153` resolved:** field renamed from `profile_picture` to `profile_image`, matching the plan.
 
 ## AccountPreference
 
@@ -39,9 +38,21 @@ One row per user for account-level settings.
 
 **Usage:** access with `user.preference`.
 
-## PrivacyPreference — does not exist yet
+**Intentionally not merged into `PrivacyPreference` (`#155`):** `searchable` controls discoverability in search/friend-lookup, which is a distinct concern from profile visibility level. It stays here rather than moving to the new model.
 
-The plan describes a separate `PrivacyPreference` model (`profile_visibility`, `show_online_status`, `allow_friend_requests`). **No such model exists in `accounts/models.py`.** Privacy-related state currently lives on `UserProfile.visibility` only. See `#155` (Decide and implement PrivacyPreference schema alignment) for the tracked work.
+## PrivacyPreference
+
+One row per user for privacy-related settings, kept separate from `AccountPreference` to avoid mixing concerns, per the plan.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `user` | `OneToOneField(AUTH_USER_MODEL)` | `related_name='privacy'` — access via `user.privacy` |
+| `profile_visibility` | `CharField(255)`, choices `public` / `friends_only` / `private` | Default `private` |
+| `show_online_status` | `BooleanField` | Default `True` |
+| `allow_friend_requests` | `BooleanField` | Default `True` |
+| `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
+
+**Usage:** access with `user.privacy`. This is the single source of truth for profile visibility — `UserProfile` no longer has a visibility field of its own.
 
 ## Friendship
 
@@ -104,6 +115,7 @@ A default sharing-permission rule one user sets for another.
 User (Django auth)
  ├─ profile                                    → UserProfile (1:1)
  ├─ preference                                  → AccountPreference (1:1)
+ ├─ privacy                                     → PrivacyPreference (1:1)
  ├─ friendships_as_user_one / friendships_as_user_two → Friendship (M:N, sorted pair)
  ├─ friendship_requests_sent                    → Friendship (1:M, via requested_by)
  ├─ friend_request_events                       → FriendRequestEvent (1:M, via actor_user)
@@ -113,4 +125,4 @@ Friendship
  └─ events → FriendRequestEvent (1:M)
 ```
 
-No `PrivacyPreference`, `FriendRequest`, or `BlockedUser` models exist — do not reference them in code until the alignment issues above are resolved.
+No `FriendRequest` or `BlockedUser` models exist — do not reference them in code until the `#156`–`#158` alignment issues are resolved.

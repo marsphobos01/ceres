@@ -13,11 +13,6 @@ class UserProfile(models.Model):
     university = models.CharField(max_length=255, null=True, blank=True)
     course = models.CharField(max_length=255, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
-    profile_visibility = models.CharField(max_length=255, choices=[
-        ('public', 'Public'),
-        ('friends_only','Friends_Only'),
-        ('private', 'Private'),
-    ], default='private')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -116,3 +111,18 @@ class UserContentPermission(models.Model):
                 name='owner_not_target_user'
             ),
         ]
+
+
+class PrivacyPreference(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='privacy'
+    )
+    profile_visibility = models.CharField(max_length=255, choices=[
+        ('public', 'Public'),
+        ('friends_only', 'Friends Only'),
+        ('private', 'Private'),
+    ], default='private')
+    show_online_status = models.BooleanField(default=True)
+    allow_friend_requests = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
