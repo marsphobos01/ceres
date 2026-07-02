@@ -47,44 +47,24 @@ class Friendship(models.Model):
             ),
         ]
 
-class FriendRequestEvent(models.Model):
-    friendship = models.ForeignKey(Friendship, on_delete=models.CASCADE, related_name='events')
-    actor_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='friend_request_events')
-    note = models.CharField(max_length=255, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def clean(self):
-        super().clean()
-        if self.actor_user not in [self.friendship.user_one, self.friendship.user_two]:
-            raise ValidationError("Actor user must be one of the users involved in the friendship.")
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
-
-
 class UserContentPermission(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='content_permissions')
-    target_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='targeted_permissions')
+    grantee = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='granted_content_permissions')
     permission_level = models.CharField(max_length=255, choices=[
         ('view', 'View'),
         ('comment', 'Comment'),
         ('edit', 'Edit'),
     ])
-    applies_to = models.CharField(max_length=255, choices=[
-        ('all_content', 'All Content'),
-        #('specific_content', 'Specific Content'),
-    ])
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['owner', 'target_user', 'applies_to'],
-                name='unique_permission'
+                fields=['owner', 'grantee'],
+                name='unique_content_permission'
             ),
             models.CheckConstraint(
-                condition=~Q(owner=F('target_user')),
-                name='owner_not_target_user'
+                condition=~Q(owner=F('grantee')),
+                name='owner_not_grantee'
             ),
         ]
 
@@ -144,3 +124,33 @@ class BlockedUser(models.Model):
                 name='no_self_blocking'
             ),
         ]
+
+class FriendRequestEvent(models.Model):
+    class Action(models.TextChoices):
+        SENT = 'sent', 'Sent'
+        ACCEPTED = 'accepted', 'Accepted'
+        DECLINED = 'declined', 'Declined'
+        CANCELLED = 'cancelled', 'Cancelled'
+
+    friend_request = models.ForeignKey(
+        FriendRequest,
+        on_delete=models.CASCADE,
+        related_name='events'
+    )
+    actor_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='friend_request_events'
+    )
+    action = models.CharField(max_length=255, choices=Action.choices)
+    note = models.CharField(max_length=255, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def clean(self):
+        super().clean()
+        if self.actor_user not in [self.friend_request.from_user, self.friend_request.to_user]:
+            raise ValidationError("Actor user must be one of the users involved in the friend request.")
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
