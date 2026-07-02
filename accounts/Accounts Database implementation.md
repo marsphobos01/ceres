@@ -12,11 +12,11 @@ One profile per user, holding public/private display details.
 | --- | --- | --- |
 | `user` | `OneToOneField(AUTH_USER_MODEL)` | `related_name='profile'` — access via `user.profile` |
 | `display_name` | `CharField(255)` | Required |
-| `profile_picture` | `ImageField`, nullable | Optional; requires Pillow installed |
+| `profile_image` | `ImageField`, nullable | Optional; requires Pillow installed |
 | `university` | `CharField(255)`, nullable | Optional |
 | `course` | `CharField(255)`, nullable | Optional |
 | `bio` | `TextField`, nullable | Optional |
-| `visibility` | `CharField(255)`, choices `public` / `friends` / `private` | Default `private` |
+| `profile_visibility` | `CharField(255)`, choices `public` / `friends_only` / `private` | Default `private` |
 | `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
 
 **Usage:** every `User` should have exactly one `UserProfile` (enforced by the one-to-one relationship). Access it with `user.profile`. The `visibility` field only stores the user's preference — nothing in this model enforces who can actually see the profile; that access control needs to be applied wherever profile data gets displayed.

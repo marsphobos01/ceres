@@ -9,13 +9,13 @@ class UserProfile(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profile')
     display_name = models.CharField(max_length=255)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
+    profile_image = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
     university = models.CharField(max_length=255, null=True, blank=True)
     course = models.CharField(max_length=255, null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
-    visibility = models.CharField(max_length=255, choices=[
+    profile_visibility = models.CharField(max_length=255, choices=[
         ('public', 'Public'),
-        ('friends','Friends'),
+        ('friends_only','Friends_Only'),
         ('private', 'Private'),
     ], default='private')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -28,7 +28,9 @@ class AccountPreference(models.Model):
     timezone = TimeZoneField(default='UTC')
     email_notifications = models.BooleanField(default=True)
     searchable = models.BooleanField(default=True)
-
+    language = models.CharField(max_length=10, default='en')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class Friendship(models.Model):
     user_one = models.ForeignKey(
