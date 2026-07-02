@@ -18,7 +18,7 @@ class CalendarEvent(models.Model):
         constraints = [
             models.CheckConstraint(
                 condition=models.Q(end__gt=F("start")),
-                name='end_gt_start'
+                name='calendarevent_end_gt_start'
             )
         ]
 
@@ -45,7 +45,7 @@ class Task(models.Model):
 
     class Meta:
         constraints = [
-            models.CheckConstraint(models.Q(progress__lte=1) & models.Q(progress__gte=0),
+            models.CheckConstraint(condition=models.Q(progress__lte=1) & models.Q(progress__gte=0),
                                    name='progress_bounds_check'),
         ]
 
@@ -92,7 +92,7 @@ class StudySession(models.Model):
         constraints = [
             models.CheckConstraint(
                 condition=models.Q(end_time__gt=F("start_time")),
-                name='end_gt_start'
+                name='studysession_end_gt_start'
             )]
 
 class StudySessionsParticipant(models.Model):
@@ -136,8 +136,8 @@ class Goal(models.Model):
         constraints = [
             models.CheckConstraint(
                 condition=models.Q(end_date__gt=F("start_date")),
-                name='end_gt_start'
+                name='goal_end_gt_start'
             ),
-        models.CheckConstraint(models.Q(target_value__lte=1) & models.Q(target_value__gte=0), name="target_value_bounds_check"),
-            models.CheckConstraint(models.Q(current_value__lte=1) & models.Q(current_value__gte=0), name="current_value_bounds_check"),
+        models.CheckConstraint(condition=models.Q(target_value__lte=1) & models.Q(target_value__gte=0), name="target_value_bounds_check"),
+            models.CheckConstraint(condition=models.Q(current_value__lte=1) & models.Q(current_value__gte=0), name="current_value_bounds_check"),
         ]
