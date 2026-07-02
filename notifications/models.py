@@ -16,13 +16,14 @@ class Notification(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
 
-    class Meta:
+    """class Meta:
         constraints = [
+            #TODO: Refine the category choices.
             models.CheckConstraint(
             check = models.Q(category__in=["A", "C"]),
             name="notification_category_valid"
             )
-        ]
+        ]"""
 
 
 class Reminder(models.Model):
@@ -87,12 +88,12 @@ class MutedContent(models.Model):
     #source = models.ForeignKye("", on_delete=models.CASCADE, related_name="source") #TODO: Not written yet.
     muted_until = models.DateTimeField()
 
-    class Meta:
+    """class Meta:
 
         constraints = [
             #TODO: Field not written yet.
-            """models.UniqueConstraint(
+            models.UniqueConstraint(
                 fields=["user", "source"],
                 name="unique_mute_per_user_and_source"
-            )"""
-        ]
+            )
+        ]"""
