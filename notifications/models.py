@@ -76,28 +76,37 @@ class NotificationPreferences(models.Model):
 
 
 class NotificationDelivery(models.Model):
-    DELIVERY_STATUS_CHOICES = {"P": "Pending",
+    DSTATUS_CHOICES = {"P": "Pending",
                                "S": "Sent",
                                "F":"Failed",
                                "SK": "Skipped"
                                }
     notification = models.ForeignKey(Notification, on_delete=models.CASCADE, related_name='delivery')
     channel = models.CharField(max_length=100, choices=CHANNEL_CHOICES)
-    delivery_status = models.CharField(max_length=100, choices=DELIVERY_STATUS_CHOICES)
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES)
     attempted_at = models.DateTimeField(auto_now_add=True)
     provider_response = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["notification", "channel"], name="unique_notification_delivery")
+        ]
 
 class MutedContent(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='muted_content')
-    #source = models.ForeignKye("", on_delete=models.CASCADE, related_name="source") #TODO: Not written yet.
+    source_app = models.CharField(max_length=120)
+    source_object_type = models.CharField(max_length=120)
+    source_object_id = models.PositiveIntegerField()
     muted_until = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
-    """class Meta:
+    class Meta:
 
         constraints = [
-            #TODO: Field not written yet.
             models.UniqueConstraint(
-                fields=["user", "source"],
+                fields=["user", "source_app", "source_object_type", "source_object_id"],
                 name="unique_mute_per_user_and_source"
             )
-        ]"""
+        ]
