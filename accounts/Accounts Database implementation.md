@@ -33,6 +33,9 @@ One row per user for account-level settings.
 | `timezone` | `TimeZoneField` | Default `UTC`; requires `django-timezone-field` installed |
 | `email_notifications` | `BooleanField` | Default `True` |
 | `searchable` | `BooleanField` | Default `True` |
+| `language` | `CharField(max_length=10)` | Default `'en'`; ISO language code |
+| `created_at` | `DateTimeField` | `auto_now_add=True` — set on creation |
+| `updated_at` | `DateTimeField` | `auto_now=True` — updated on every save |
 
 **Usage:** access with `user.preference`.
 

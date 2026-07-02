@@ -29,6 +29,7 @@ class AccountPreference(models.Model):
     email_notifications = models.BooleanField(default=True)
     searchable = models.BooleanField(default=True)
 
+
 class Friendship(models.Model):
     user_one = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='friendships_as_user_one'
@@ -99,7 +100,7 @@ class UserContentPermission(models.Model):
     ])
     applies_to = models.CharField(max_length=255, choices=[
         ('all_content', 'All Content'),
-        #('specific_content', 'Specific Content'), # TODO: When items are implemented / files / content, this will be a foreign key to the content item
+        #('specific_content', 'Specific Content'),
     ])
 
     class Meta:
