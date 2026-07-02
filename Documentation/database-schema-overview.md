@@ -8,7 +8,7 @@ The most important boundary rule is that each app owns its own records. Other ap
 
 | App | Main tables | What they own |
 | --- | --- | --- |
-| `accounts` | User profile, account preference, friendship, friend request event, user content permission | Identity, profile details, privacy settings, and direct user relationships |
+| `accounts` | User profile, account preference, privacy preference, friendship, friend request, blocked user, friend request event, user content permission | Identity, profile details, privacy settings, and direct user relationships |
 | `academics` | Module, module membership, lecture, timetable entry, assignment, revision topic | University structure, teaching sessions, assignments, and revision topics |
 | `planning` | Calendar event, task, task assignment, task link, study session, study session participant, deadline, goal | Time, tasks, deadlines, study sessions, and planning behaviour |
 | `content` | Note, note link, content collection, tag, tagged content, whiteboard, note version | Reusable academic content, notes, whiteboards, tags, and content organisation |
@@ -25,7 +25,11 @@ The most important boundary rule is that each app owns its own records. Other ap
 | --- | --- | --- | --- |
 | User profile | belongs to | User | One profile per user |
 | Account preference | belongs to | User | One preference record per user |
-| Friendship | connects | User to User | Prevent duplicate relationships for the same pair |
+| Privacy preference | belongs to | User | One preference record per user; separated from account preference to keep concerns distinct |
+| Friendship | connects | User to User | Confirmed friendships only; lower user ID always stored first to prevent duplicate pairs |
+| Friend request | sent from | User to User | Tracks pending and resolved requests separately from confirmed friendships |
+| Blocked user | issued by | User against User | Kept separate from friendship so block checks never touch friendship records |
+| Friend request event | records action on | Friend request | Optional audit trail; actor must be one of the two users on the request |
 | User content permission | grants access from | User to User | Used as a default sharing rule, not a replacement for app-specific permissions |
 | Module | owned by | User | The user owns or manages the module record |
 | Module membership | connects | Module to User | Supports shared modules or future tutor/collaborator access |
