@@ -106,7 +106,6 @@ Every context switch creates friction. Ceres aims to reduce these interruptions 
 - Tasks
 - Files
 - Calendar
-- Goals
 
 ### Learning
 
@@ -171,7 +170,6 @@ This section is the canonical feature reference. Each feature lists what it incl
 - Notes
 - Quick actions
 - Calendar overview
-- Goals
 - Summary
 
 ### Calendar
