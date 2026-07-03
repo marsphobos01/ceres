@@ -10,7 +10,7 @@ The most important boundary rule is that each app owns its own records. Other ap
 | --- | --- | --- |
 | `accounts` | User profile, account preference, privacy preference, friendship, friend request, blocked user, friend request event, user content permission | Identity, profile details, privacy settings, direct user relationships, and friend request audit events |
 | `academics` | Module, module membership, lecture, timetable entry, assignment, revision topic | University structure, teaching sessions, assignments, and revision topics |
-| `planning` | Calendar event, task, task assignment, task link, study session, study session participant, deadline | Time, tasks, deadlines, study sessions, and planning behaviour. A `Goal` table has been discussed but has no schema issue yet — not a scoped table |
+| `planning` | Calendar event, task, task assignment, task link, study session, study session participant, deadline, timetable import | Time, tasks, deadlines, study sessions, timetable import jobs, and planning behaviour. A `Goal` table has been discussed but has no schema issue yet — not a scoped table |
 | `content` | Note, note link, content collection, tag, tagged content, whiteboard, note version | Reusable academic content, notes, whiteboards, tags, and content organisation |
 | `collaboration` | Study group, group membership, group invitation, group project, project membership, discussion thread, discussion message, conversation, conversation participant, chat message | Shared workspaces, projects, discussions, and messaging |
 | `files` | Stored file, file version, file link, file share, file tag, file preview | Uploaded files, metadata, previews, versions, sharing, and attachments |

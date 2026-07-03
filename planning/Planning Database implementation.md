@@ -2,6 +2,17 @@
 
 This document describes the models as actually implemented in `planning/models.py`, and how to use them. Unlike `Planning Database plan.md`, which describes the intended design, this reflects the current code. Update this file whenever the models change.
 
+## Differences from the earlier design plan
+
+Issue references for this app haven't been supplied yet, so the notes below describe each gap against `Planning Database plan.md` only, without attributing it to a specific epic or issue decision. (See `content`, `academics`, and `collaboration`'s implementation docs for the pattern once references are available — those cite the epic and per-model schema issue that scoped each divergence.)
+
+- `TaskLink` and `Deadline` both implement their generic links with a real `content_type`/`object_id` `GenericForeignKey`, rather than the plan's separate app-label/object-type text fields — a closer match to normal Django practice than the plan described.
+- `Deadline` has no uniqueness constraint ensuring the source object is unique when the deadline mirrors another app's object, and has no `reminder enabled` boolean flag, both of which the plan calls for.
+- `StudySessionsParticipant.response` choices are `Invited`, `Accepted`, `Declined` — the plan's `attended` status is not present. The plan also describes separate `invited` and `responded` timestamps; the implementation only has a single `created_at`. (The plan's "one participant per session and user" rule is now enforced by the `unique_study_session_participant` constraint.)
+- `Goal` is intentionally absent, matching the plan's explicit note that it isn't a scoped table yet — this isn't a gap, just confirmation that the models correctly haven't gotten ahead of an unwritten schema issue.
+
+These may be considered as future schema enhancements if required by feature implementation. The "Known open items" section further down covers implementation-quality issues (naming, inconsistent `max_length`) that are separate from plan divergence.
+
 ## CalendarEvent
 
 A single calendar entry owned by a user.
@@ -142,14 +153,36 @@ A due date, optionally linked to any object via `contenttypes`.
 
 **Usage:** `content_type`/`object_id` are both optional, so a `Deadline` can exist without pointing at anything. Confirm that's intentional — a deadline that isn't a deadline *for* anything is a bit ambiguous — before building logic on top of it.
 
+## TimetableImport
+
+A record of a bulk timetable import job (e.g. an uploaded timetable file), tracking its processing status and row-level outcomes. This model isn't mentioned in `Planning Database plan.md` at all — it doesn't correspond to any of the plan's example tables.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | `BigAutoField` | Default primary key |
+| `owner` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='timetable_imports'` |
+| `filename` | `CharField(100)` | Required |
+| `status` | `CharField(21)`, choices | Nested `Status`: `pending`, `processing`, `completed`, `completed_with_errors`, `failed`; default `pending` |
+| `total_rows` | `PositiveIntegerField` | Default `0` |
+| `imported_rows` | `PositiveIntegerField` | Default `0` |
+| `skipped_rows` | `PositiveIntegerField` | Default `0` |
+| `error_rows` | `PositiveIntegerField` | Default `0` |
+| `error_detail` | `JSONField` | Blank allowed; default `list` — expected to hold structured per-row error info |
+| `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
+
+**Constraints:** none implemented — nothing enforces `imported_rows + skipped_rows + error_rows` against `total_rows`.
+
+**Usage:** created when a user uploads a timetable file for bulk import (presumably feeding `academics.TimetableEntry`/`Lecture` rows, though nothing in this app's code links the two directly). `status` tracks the job's lifecycle; `error_detail` should hold enough structure to show the user what went wrong per row. Since this model doesn't appear in the plan, treat its scope and any related schema issue as unconfirmed rather than assuming this documents an agreed design.
+
 ## Known open items across this app
 
 - `updated_at` is absent on `TaskAssignment` and `StudySessionsParticipant`, unlike the other models in this file.
 - Several `choices` fields (`Task.priority`, `Task.status`, `StudySessionsParticipant.response`) use `max_length=100` for one-to-two-character codes.
 - Two generic-relation patterns (`TaskLink.linked_object`, `Deadline.links_to`) use different accessor names for the same `contenttypes` pattern.
 - Required `description` (on `Task` and `CalendarEvent`) and required `notes` (on `StudySession`) force text on every row; other apps make long-text fields optional.
+- `TimetableImport` has no constraint tying `imported_rows`/`skipped_rows`/`error_rows` to `total_rows`, and nothing in `planning` links an import job to the `academics` rows it presumably creates.
 
-Resolved in the 0004 migration pass: the `"Dayly"` label typo, the `ResponceChoices` class-name typo, the backwards `CA`/`CD` status codes, the duplicated `created_at` on `Deadline`, the missing `blank=True` on nullable fields (including `parent_task`, so admin forms no longer demand a parent for every task), the field-like `related_name`s, the non-updating `Task.updated_at`, and the missing uniqueness constraint on `StudySessionsParticipant`.
+Resolved in the 0005 migration pass: the `"Dayly"` label typo, the `ResponceChoices` class-name typo, the backwards `CA`/`CD` status codes, the duplicated `created_at` on `Deadline`, the missing `blank=True` on nullable fields (including `parent_task`, so admin forms no longer demand a parent for every task), the field-like `related_name`s, the non-updating `Task.updated_at`, and the missing uniqueness constraint on `StudySessionsParticipant`.
 
 ## How the models relate
 
@@ -172,4 +205,7 @@ StudySession
 
 TaskLink / Deadline
   - linked_object / links_to -> any model, via contenttypes (ContentType + object_id)
+
+TimetableImport
+  - owner -> User (M:1); not otherwise linked to any other model in this app
 ```
