@@ -86,6 +86,17 @@ One preview record per file.
 | `created_at` | `DateTimeField(auto_now_add=True)` | |
 | `updated_at` | `DateTimeField(auto_now=True)` | |
 
+## Organisation
+
+Decided under epic #22 (see `Organisation/Organisation-Decision.md` at the repo root for the full writeup): for this release, "organisation" is `FileTag` + `FileLink` together — no folder or collection model. A file is organised by the tags applied to it and by the contexts (module, lecture, assignment, etc.) it's linked to; both are flat, many-to-many, and already implemented above. No schema change was needed to make this decision — it's a scoping call, not a new model.
+
+- **Ownership:** unchanged — a file's tags and links don't have independent ownership; access follows `StoredFile.owner` and `FileShare`.
+- **Nesting:** none. Tags don't nest; a file can carry any number of them. Links are similarly flat — a file can link to multiple contexts at once, but contexts don't nest within each other at the file layer.
+- **Movement:** not applicable — there's no container to move a file out of. Retagging or relinking a file doesn't "move" it anywhere.
+- **Deletion:** `FileTag` and `FileLink` both cascade-delete when their `StoredFile` is deleted (`on_delete=CASCADE`). Deleting a `content.Tag` cascades to its `FileTag` rows only — the underlying file is untouched.
+
+A folder/collection model remains a real option for a later release; see the decision doc for what would need to be settled (ownership, nesting depth, move semantics, deletion cascade) before that work starts, and `content.ContentCollection`'s self-referential `parent` pattern as prior art if it does.
+
 ## Open items (non-blocking)
 
 - `StoredFile.file` and `FileVersion.file` both use `upload_to='files'` — same storage folder for originals and versioned copies. Not broken, but separating them (e.g. `upload_to='file_versions'`) would aid storage organisation.
