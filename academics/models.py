@@ -103,3 +103,17 @@ class Assignment(models.Model):
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.NOT_STARTED)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class RevisionTopic(models.Model):
+    class Confidence(models.TextChoices):
+        RED = 'red', 'Red'
+        AMBER = 'amber', 'Amber'
+        GREEN = 'green', 'Green'
+
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='revision_topics')
+    title = models.CharField(max_length=255)
+    confidence = models.CharField(max_length=10, choices=Confidence.choices,null=True,blank=True)
+    notes = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
