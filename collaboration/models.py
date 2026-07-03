@@ -107,3 +107,12 @@ class ConversationParticipant(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['user', 'conversation'], name='unique_conversation_participant')
         ]
+
+class ChatMessage(models.Model):
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    body = models.TextField()
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
+    attachment = models.ForeignKey('files.StoredFile', null=True, blank=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
