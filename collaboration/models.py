@@ -96,3 +96,14 @@ class Conversation(models.Model):
         GROUP = 'group', 'Group'
     type = models.CharField(max_length=10, choices=Type.choices)
     created_at = models.DateTimeField(auto_now_add=True)
+
+class ConversationParticipant(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
+    muted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'conversation'], name='unique_conversation_participant')
+        ]

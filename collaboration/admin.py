@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import StudyGroup, GroupMembership, GroupProject, GroupInvitation, ProjectMembership, DiscussionThread, DiscussionMessage, Conversation
+from .models import StudyGroup, GroupMembership, GroupProject, GroupInvitation, ProjectMembership, DiscussionThread, DiscussionMessage, Conversation, ConversationParticipant
 # Register your models here.
 
 admin.site.register(StudyGroup)
@@ -10,3 +10,4 @@ admin.site.register(ProjectMembership)
 admin.site.register(DiscussionThread)
 admin.site.register(DiscussionMessage)
 admin.site.register(Conversation)
+admin.site.register(ConversationParticipant)
