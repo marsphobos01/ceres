@@ -40,9 +40,13 @@ A teaching session attached to a Module. It stores a title, optional date, room,
 
 A recurring or one-off timetable item. It belongs to a Module and may optionally link to a Lecture. It stores weekday, start and end times, room, recurrence type, optional one-off date, and timestamps.
 
+CSV imports (see `academics/CSV-TEST-DOC/Timetable-CSV-Import-Decisions.md`) always create `recurrence_type=one_off` entries with `date` set — every row in a MyTimetable export is already a concrete dated occurrence, not a pattern. That doc also specifies a pending schema prerequisite for #220: an `is_manually_edited` field, not yet added, needed so re-imports don't overwrite hand-edited entries.
+
 ## TimetableImport
 
 Tracks a timetable import job, including its owner, filename, processing status, row totals, error details, and timestamps.
+
+`imported_rows`/`skipped_rows`/`error_rows` definitions for CSV imports are specified in `academics/CSV-TEST-DOC/Timetable-CSV-Import-Decisions.md`.
 
 ## Assignment
 
