@@ -10,12 +10,12 @@ The most important boundary rule is that each app owns its own records. Other ap
 | --- | --- | --- |
 | `accounts` | User profile, account preference, privacy preference, friendship, friend request, blocked user, friend request event, user content permission | Identity, profile details, privacy settings, direct user relationships, and friend request audit events |
 | `academics` | Module, module membership, lecture, timetable entry, assignment, revision topic | University structure, teaching sessions, assignments, and revision topics |
-| `planning` | Calendar event, task, task assignment, task link, study session, study session participant, deadline | Time, tasks, deadlines, study sessions, and planning behaviour. A `Goal` table has been discussed but has no schema issue yet — not a scoped table |
+| `planning` | Calendar event, task, task assignment, task link, study session, study session participant, deadline, timetable import | Time, tasks, deadlines, study sessions, timetable import jobs, and planning behaviour. A `Goal` table has been discussed but has no schema issue yet — not a scoped table |
 | `content` | Note, note link, content collection, tag, tagged content, whiteboard, note version | Reusable academic content, notes, whiteboards, tags, and content organisation |
 | `collaboration` | Study group, group membership, group invitation, group project, project membership, discussion thread, discussion message, conversation, conversation participant, chat message | Shared workspaces, projects, discussions, and messaging |
 | `files` | Stored file, file version, file link, file share, file tag, file preview | Uploaded files, metadata, previews, versions, sharing, and attachments |
-| `notifications` | Notification, reminder, notification preference, notification delivery, muted context | Alerts, reminders, delivery attempts, read state, and notification preferences |
-| `search` | Search index entry, search access hint, search history item, saved search, search synonym | Search summaries, history, saved searches, suggestions, and optional access hints |
+| `notifications` | Notification, reminder, notification preference, notification delivery, muted content | Alerts, reminders, delivery attempts, read state, and notification preferences |
+| `search` | Search index entry, search history item, saved search, search synonym (search access hint is deferred and not yet implemented) | Search summaries, history, saved searches, suggestions, and optional access hints |
 | `core` | Dashboard layout, dashboard widget setting, quick action preference, user interface preference | Presentation preferences for the overall Ceres experience |
 | `config` | No product tables | Project configuration only |
 
@@ -53,7 +53,7 @@ The most important boundary rule is that each app owns its own records. Other ap
 | Theme | Suggested rule |
 | --- | --- |
 | Ownership | Most tables should include an owner, creator, or recipient user where appropriate |
-| Uniqueness | Use uniqueness rules for one-to-one settings, membership records, links, shares, and duplicate relationship prevention. Key notification constraints: `NotificationPreference (user, category, channel)`, `NotificationDelivery (notification, channel)`, `Reminder (recipient, source_app_label, source_object_type, source_object_id, remind_at)`, `MutedContext (user, source_app_label, source_object_type, source_object_id)` |
+| Uniqueness | Use uniqueness rules for one-to-one settings, membership records, links, shares, and duplicate relationship prevention. Key notification constraints: `NotificationPreferences (user, category, channel)`, `NotificationDelivery (notification, channel)`, `Reminder (recipient, source_app, source_object_type, source_object_id, remind_at)`, `MutedContent (user, source_app, source_object_type, source_object_id)` |
 | Choices | Use controlled choices for statuses, roles, permissions, visibility, notification categories, and content formats |
 | Time | Store created and updated timestamps on records that users edit or review |
 | Access | Any cross-app link must be permission checked through the source app before display |

@@ -21,7 +21,7 @@ Ceres is an academic workspace designed to help university students organise, ma
    ```bash
    pip install -r requirements.txt
    ```
-4. Copy `.env.example` to `.env` and fill in your database credentials
+4. Copy `.env.example` to `.env` and fill in your settings — database credentials are required; `SECRET_KEY`, `DEBUG`, and `ALLOWED_HOSTS` are optional and fall back to development defaults
    ```bash
    cp .env.example .env
    ```
@@ -47,3 +47,4 @@ Ceres is an academic workspace designed to help university students organise, ma
 - [Database Schema Overview](Documentation/database-schema-overview.md)
 - [Feature List](Documentation/feature_list.md)
 - [Contributor Workflow](Documentation/contributor-workflow.md)
+- [Issue Management Approach](Documentation/issue-management-approach.md)

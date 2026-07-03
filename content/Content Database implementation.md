@@ -24,6 +24,7 @@ A reusable note that can be linked across Ceres.
 | --- | --- | --- |
 | `owner` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='notes'` |
 | `module` | `ForeignKey('academics.Module')`, nullable | `related_name='notes'`; optional link to a module |
+| `collection` | `ForeignKey(ContentCollection)`, nullable | `related_name='notes'`; `on_delete=SET_NULL` — deleting a collection leaves its notes in place, uncollected |
 | `title` | `CharField(255)` | Required |
 | `body` | `TextField`, nullable | Optional |
 | `format` | `CharField(9)` | Choices: `markdown`, `rich_text`; default `markdown` |
@@ -139,7 +140,7 @@ A folder, notebook, or collection for notes and whiteboards.
 
 #187 scoped this model to the owner reference, title, nullable parent, and timestamps; same-owner ancestry, cycle prevention, colour, and sort order were not part of that requirement.
 
-**Usage:** application code creating or reparenting a `ContentCollection` must independently check that the parent belongs to the same owner and that no cycle is introduced.
+**Usage:** application code creating or reparenting a `ContentCollection` must independently check that the parent belongs to the same owner and that no cycle is introduced. Contents are attached from the item side: `Note.collection` and `Whiteboard.collection` are nullable FKs into this model (added in migration `0010`), so a collection's contents are `collection.notes.all()` and `collection.whiteboards.all()`.
 
 ## Whiteboard
 
@@ -148,6 +149,7 @@ A reusable visual workspace.
 | Field | Type | Notes |
 | --- | --- | --- |
 | `owner` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='whiteboards'` |
+| `collection` | `ForeignKey(ContentCollection)`, nullable | `related_name='whiteboards'`; `on_delete=SET_NULL` — deleting a collection leaves its whiteboards in place |
 | `title` | `CharField(255)` | Required |
 | `canvas_data` | `JSONField` | Serialised canvas state; do not store binary data directly in it |
 | `content_type` | `ForeignKey('contenttypes.ContentType')`, nullable | Optional generic link to another app's object |
@@ -184,6 +186,8 @@ academics.RevisionTopic
 
 ContentCollection
   - sub_collections -> ContentCollection (self-referential parent/child)
+  - notes -> Note (nullable FK, SET_NULL)
+  - whiteboards -> Whiteboard (nullable FK, SET_NULL)
 
 Whiteboard
   - content_object -> generic FK to any app's object (optional)

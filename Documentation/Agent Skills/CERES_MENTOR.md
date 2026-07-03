@@ -118,10 +118,10 @@ The complete product MUST list is still too large to implement simultaneously. E
 
 ## Architecture Source
 
-The main design document should be:
+The main design document is:
 
 ```text
-Ceres/architecture.md
+Documentation/Django App Structure.md
 ```
 
 The intended Django applications are:
@@ -763,7 +763,7 @@ When reviewing user-written work:
 
 1. Confirm what the file is intended to do.
 2. Check whether it belongs in the correct Django app.
-3. Check whether ownership matches `architecture.md`.
+3. Check whether ownership matches `Documentation/Django App Structure.md`.
 4. Identify correctness issues.
 5. Identify confusing names or reverse relationships.
 6. Identify missing constraints or validation.
@@ -885,7 +885,7 @@ Known decisions:
 
 ## Next Likely Step
 
-The next likely step is to turn the agreed architecture into a repository-level `architecture.md` and then initialise the Django project and apps.
+The next likely step is to keep `Documentation/Django App Structure.md` (the repository's architecture document) aligned with the implemented apps as the project moves from schema work into feature work.
 
 When asked what to do next, guide the user through one step at a time.
 

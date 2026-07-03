@@ -13,7 +13,7 @@ class SearchIndexEntry(models.Model):
     title = models.TextField()
     summary = models.TextField()
     keywords = models.TextField()
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, related_name='search_index_entries')
     visibility = models.CharField(max_length=100, choices=VisibilityChoices.choices)
     last_indexed = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -36,7 +36,7 @@ class SearchIndexEntry(models.Model):
 #    created_at = models.DateTimeField(auto_now_add=True)
 
 class SearchHistoryItem(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='search_history')
     query = models.TextField()
     filters = models.JSONField(blank=True, null=True)
 
@@ -44,7 +44,7 @@ class SearchHistoryItem(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 class SavedSearch(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='saved_searches')
     name = models.CharField(max_length=100)
     query = models.TextField()
     filters = models.JSONField(blank=True, null=True)
