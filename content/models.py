@@ -33,3 +33,14 @@ class NoteLink(models.Model):
             models.UniqueConstraint(fields=["note", "content_type", "object_id"],
                                     name="note_link_unique"),
         ]
+
+class Tag(models.Model):
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tags')
+    name = models.CharField(max_length=50)
+    colour = models.CharField(max_length=6, null=True, blank=True)  # Hex colour code
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["owner", "name"], name="unique_tag_per_user"),
+        ]
