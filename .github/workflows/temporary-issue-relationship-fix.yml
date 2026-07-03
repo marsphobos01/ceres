@@ -1,0 +1,133 @@
+name: Temporary issue relationship fix
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Apply and verify native relationships
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+
+          repo = os.environ['REPO']
+          owner, name = repo.split('/', 1)
+
+          def run(args, check=False):
+              result = subprocess.run(args, capture_output=True, text=True)
+              if check and result.returncode != 0:
+                  raise SystemExit(result.stderr or result.stdout)
+              return result
+
+          def rest_id(number):
+              return run(['gh', 'api', f'repos/{repo}/issues/{number}', '--jq', '.id'], check=True).stdout.strip()
+
+          def blocker_ids(issue):
+              result = run([
+                  'gh', 'api', '--paginate',
+                  f'repos/{repo}/issues/{issue}/dependencies/blocked_by?per_page=100',
+                  '--jq', '.[].id',
+              ], check=True)
+              return set(result.stdout.split())
+
+          log = []
+
+          for issue, blocker in [(220, 267), (138, 253)]:
+              blocker_id = rest_id(blocker)
+              if blocker_id not in blocker_ids(issue):
+                  result = run([
+                      'gh', 'api', '--method', 'POST',
+                      f'repos/{repo}/issues/{issue}/dependencies/blocked_by',
+                      '-F', f'issue_id={blocker_id}',
+                  ], check=True)
+                  log.append(f'added blocker #{blocker} -> #{issue}')
+              else:
+                  log.append(f'blocker already present #{blocker} -> #{issue}')
+
+          numbers = [8, 57, 146, 267]
+          fields = '\n'.join(
+              f'i{number}: issue(number: {number}) {{ id number parent {{ id number }} }}'
+              for number in numbers
+          )
+          query = f'''query($owner: String!, $name: String!) {{
+            repository(owner: $owner, name: $name) {{
+              {fields}
+            }}
+          }}'''
+          lookup = run([
+              'gh', 'api', 'graphql',
+              '-f', f'query={query}',
+              '-F', f'owner={owner}',
+              '-F', f'name={name}',
+          ], check=True)
+          data = json.loads(lookup.stdout)['data']['repository']
+
+          parent_267 = data['i267']['parent']
+          if not parent_267 or parent_267['number'] != 146:
+              mutation = '''mutation($parent: ID!, $child: ID!) {
+                addSubIssue(input: {issueId: $parent, subIssueId: $child, replaceParent: true}) {
+                  issue { number }
+                  subIssue { number }
+                }
+              }'''
+              run([
+                  'gh', 'api', 'graphql',
+                  '-f', f'query={mutation}',
+                  '-F', f'parent={data["i146"]["id"]}',
+                  '-F', f'child={data["i267"]["id"]}',
+              ], check=True)
+              log.append('attached #267 under #146')
+          else:
+              log.append('#267 already under #146')
+
+          parent_57 = data['i57']['parent']
+          if parent_57 and parent_57['number'] == 8:
+              mutation = '''mutation($parent: ID!, $child: ID!) {
+                removeSubIssue(input: {issueId: $parent, subIssueId: $child}) {
+                  issue { number }
+                  subIssue { number }
+                }
+              }'''
+              run([
+                  'gh', 'api', 'graphql',
+                  '-f', f'query={mutation}',
+                  '-F', f'parent={data["i8"]["id"]}',
+                  '-F', f'child={data["i57"]["id"]}',
+              ], check=True)
+              log.append('removed deferred #57 from Dashboard #8')
+          else:
+              log.append('#57 is not an active child of #8')
+
+          # Final REST verification.
+          for issue, blocker in [(220, 267), (138, 253), (80, 261)]:
+              if rest_id(blocker) not in blocker_ids(issue):
+                  raise SystemExit(f'missing blocker #{blocker} -> #{issue}')
+
+          # Final parent verification.
+          verify = run([
+              'gh', 'api', 'graphql',
+              '-f', f'query={query}',
+              '-F', f'owner={owner}',
+              '-F', f'name={name}',
+          ], check=True)
+          verified = json.loads(verify.stdout)['data']['repository']
+          if verified['i267']['parent']['number'] != 146:
+              raise SystemExit('#267 parent verification failed')
+          if verified['i57']['parent'] is not None:
+              raise SystemExit('#57 should have no native parent after deferral')
+
+          print('\n'.join(log))
+          PY
