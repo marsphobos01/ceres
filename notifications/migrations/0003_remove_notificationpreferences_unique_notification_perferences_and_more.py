@@ -13,9 +13,29 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveConstraint(
-            model_name='notificationpreferences',
-            name='unique_notification_perferences',
+        # Databases created before 0002_repair_stale_notification_tables may be
+        # missing this constraint entirely (the repair migration restored columns
+        # but not constraints), so the drop must tolerate its absence.
+        migrations.SeparateDatabaseAndState(
+            database_operations=[
+                migrations.RunSQL(
+                    sql=(
+                        "ALTER TABLE notifications_notificationpreferences "
+                        "DROP CONSTRAINT IF EXISTS unique_notification_perferences;"
+                    ),
+                    reverse_sql=(
+                        "ALTER TABLE notifications_notificationpreferences "
+                        "ADD CONSTRAINT unique_notification_perferences "
+                        "UNIQUE (user_id, category, channel);"
+                    ),
+                ),
+            ],
+            state_operations=[
+                migrations.RemoveConstraint(
+                    model_name='notificationpreferences',
+                    name='unique_notification_perferences',
+                ),
+            ],
         ),
         migrations.AlterField(
             model_name='notification',

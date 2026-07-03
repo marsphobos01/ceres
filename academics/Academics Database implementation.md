@@ -2,7 +2,7 @@
 
 This document describes the models as actually implemented in `academics/models.py`, and how to use them. Unlike `Academics Database plan.md`, which describes the intended design, this reflects the current code. Update this file whenever the models change.
 
-The academics schema covers modules, module membership, lectures, timetable entries, assignments, and revision topics.
+The academics schema covers modules, module membership, lectures, timetable entries, timetable import jobs, assignments, and revision topics.
 
 ## Differences from the earlier design plan
 
@@ -110,12 +110,33 @@ A revisable topic within a module.
 | `notes` | `TextField`, nullable | Optional |
 | `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
 
+## TimetableImport
+
+A record of a bulk timetable import job (e.g. an uploaded timetable file), tracking its processing status and row-level outcomes. Added by issue #219; originally implemented in `planning` and moved here (`academics.0008_timetableimport` / `planning.0006_delete_timetableimport`) because the timetable it feeds is owned by this app — keeping the job record next to `TimetableEntry` avoids a circular `academics`/`planning` dependency if entries later gain an import-provenance FK.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `owner` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='timetable_imports'` |
+| `filename` | `CharField(100)` | Required |
+| `status` | `CharField(21)`, choices | Nested `Status`: `pending`, `processing`, `completed`, `completed_with_errors`, `failed`; default `pending` |
+| `total_rows` | `PositiveIntegerField` | Default `0` |
+| `imported_rows` | `PositiveIntegerField` | Default `0` |
+| `skipped_rows` | `PositiveIntegerField` | Default `0` |
+| `error_rows` | `PositiveIntegerField` | Default `0` |
+| `error_detail` | `JSONField` | Blank allowed; default `list` — expected to hold structured per-row error info |
+| `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
+
+**Constraints:** none implemented — nothing enforces `imported_rows + skipped_rows + error_rows` against `total_rows`.
+
+**Usage:** created when a user uploads a timetable file for bulk import (feeding `TimetableEntry`/`Lecture` rows). `status` tracks the job's lifecycle; `error_detail` should hold enough structure to show the user what went wrong per row. Nothing currently links a `TimetableEntry` back to the import that created it — add a nullable provenance FK on `TimetableEntry` if "view/undo this import" features are built.
+
 ## How the models relate
 
 ```
 User (Django auth)
   - owned_modules -> Module
   - module_memberships -> ModuleMembership
+  - timetable_imports -> TimetableImport
 
 Module
   - memberships -> ModuleMembership
@@ -126,4 +147,7 @@ Module
 
 Lecture
   - timetable_entries -> TimetableEntry (optional link)
+
+TimetableImport
+  - owner -> User (M:1); not yet linked to TimetableEntry rows it creates
 ```
