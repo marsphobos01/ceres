@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
+from django.db import transaction
 from django.test import TestCase
 
 from .models import Assignment, AssignmentParticipant, Module, ModuleMembership
@@ -108,8 +109,12 @@ class AssignmentParticipantTests(TestCase):
             )
 
     def test_many_to_many_add_uses_participant_validation(self):
+        # ManyRelatedManager.add() uses an atomic block without a savepoint.
+        # Isolate the expected validation error in our own savepoint so the
+        # surrounding TestCase transaction remains usable for the valid add.
         with self.assertRaises(ValidationError):
-            self.group_assignment.participants.add(self.outsider)
+            with transaction.atomic():
+                self.group_assignment.participants.add(self.outsider)
 
         self.group_assignment.participants.add(self.member)
         self.assertTrue(
