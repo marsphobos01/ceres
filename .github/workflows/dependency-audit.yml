@@ -1,0 +1,28 @@
+name: Temporary dependency audit
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Export native issue dependency graph
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          echo 'DEPENDENCY_AUDIT_BEGIN'
+          for issue in $(seq 1 246); do
+            blocked_by=$(gh api --paginate "repos/${REPO}/issues/${issue}/dependencies/blocked_by?per_page=100" --jq '.[].number' 2>/dev/null | paste -sd, - || true)
+            blocks=$(gh api --paginate "repos/${REPO}/issues/${issue}/dependencies/blocking?per_page=100" --jq '.[].number' 2>/dev/null | paste -sd, - || true)
+            if [ -n "$blocked_by" ] || [ -n "$blocks" ]; then
+              echo "ISSUE=$issue BLOCKED_BY=$blocked_by BLOCKS=$blocks"
+            fi
+          done
+          echo 'DEPENDENCY_AUDIT_END'
