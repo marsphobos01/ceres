@@ -2,6 +2,7 @@ name: Temporary sub-issue cleanup
 
 on:
   push:
+  pull_request:
 
 permissions:
   contents: read
