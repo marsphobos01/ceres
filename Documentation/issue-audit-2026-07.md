@@ -34,6 +34,14 @@ Native parent relationships were explicitly verified for:
 
 Closed invalid issues #49 and #139–#142 have no native parent.
 
+## Alignment statement
+
+The issue system now aligns with the documentation at the **architecture, ownership, scope, priority, parent, and dependency** levels.
+
+Not every long-term feature issue is already implementation-ready. The issue-management documentation deliberately allows broad backlog placeholders, provided they are refined using `Documentation/feature-workflow.md` before work begins. A placeholder may therefore align with the process without yet containing a complete URL/view/service/test design.
+
+The final verification also found one current code/documentation exception in Notifications. Issues #5 and #6 were reopened to track that remediation, so the inconsistency is represented honestly in the graph rather than being hidden behind completed issues.
+
 ## Corrections applied
 
 ### Issue quality and scope
