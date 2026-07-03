@@ -39,11 +39,25 @@ Closed invalid issues #49 and #139–#142 have no native parent.
 ### Issue quality and scope
 
 - Closed #3 as not planned because per-object access belongs to source apps.
-- Updated #5 and #6 so they describe genuine remaining notification work.
+- Reopened #5 and #6 after verifying that the merged implementation did not yet satisfy their acceptance criteria.
 - Standardised #7 as a duplicate.
 - Closed invalid Potential Modules issues #139–#142.
 - Closed out-of-scope Groups search #49.
 - Deferred optional `SearchAccessHint` work #210 and #228 as not planned for the current build.
+
+### Notification alignment discovered during final verification
+
+#5 and #6 were automatically closed by a merged PR, but final code/documentation verification found unresolved work:
+
+- `CategoryChoices` exists, but enum member names contain spelling errors and the implementation documentation still describes old module-level dictionaries.
+- Notification category current-build versus future scope is not fully documented.
+- No notification model tests were added.
+- `Reminder` now defines `source_app_label`, but its uniqueness constraint still references `source_app`.
+- `Notification` and `MutedContent` still use `source_app`, so the generic reference vocabulary is inconsistent.
+- No migration was added for the `Reminder.source_app` to `source_app_label` rename.
+- `notifications/Notifications Database implementation.md` still documents the old field and choice definitions.
+
+Those issues remain genuine blockers for notification feature work and must pass `python manage.py check`, migrations, tests, and documentation review before closing again.
 
 ### Application Foundation
 
@@ -103,12 +117,12 @@ The corrected rules include:
 - Messaging is optional for core Group Projects;
 - source apps retain ownership of Notes, Files, Tasks, and permissions.
 
-## Remaining explicit decisions
+## Remaining explicit decisions and remediation
 
 The audit is complete, but these issues intentionally remain open:
 
-- **#5:** final notification category vocabulary;
-- **#6:** notification source-reference naming and tests;
+- **#5:** finish notification category naming, scope documentation, migrations where needed, and tests;
+- **#6:** make notification source-reference names consistent, repair the invalid Reminder constraint, add the required migration, tests, and documentation updates;
 - **#244:** exact timetable CSV mapping and duplicate rules;
 - **#245:** Assignment lifecycle versus Task status/progress;
 - **#253:** recurring Task persistence and history;
@@ -116,7 +130,7 @@ The audit is complete, but these issues intentionally remain open:
 - **#255:** tag-only versus folder/collection Files organisation;
 - **#256:** Goals as Dashboard capability, promoted module, or deferred work.
 
-These are not audit omissions. They are real product or schema decisions represented as blockers.
+These are not audit omissions. They are real product, schema, or remediation tasks represented as blockers.
 
 ## Description policy
 
@@ -173,4 +187,4 @@ Before each milestone:
 
 **Complete.**
 
-The issue inventory, epic structure, labels, native dependency graph, native parent graph, and major architecture consistency have been audited. Unambiguous defects were corrected; genuine unresolved decisions are represented by explicit blocking issues.
+The issue inventory, epic structure, labels, native dependency graph, native parent graph, and major architecture consistency have been audited. Unambiguous defects were corrected; genuine unresolved decisions and detected remediation work are represented by explicit blocking issues.
