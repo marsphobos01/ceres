@@ -88,3 +88,16 @@ class FlashcardDeck(models.Model):
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class NoteVersion(models.Model):
+    note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='versions')
+    version_number = models.PositiveIntegerField()
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["note", "version_number"], name="unique_note_version"),
+        ]

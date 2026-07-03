@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Note, NoteLink, Tag, TaggedContent, Flashcard, FlashcardDeck
+from .models import Note, NoteLink, Tag, TaggedContent, Flashcard, FlashcardDeck, NoteVersion
 # Register your models here.
 admin.site.register(Note)
 admin.site.register(NoteLink)
@@ -7,3 +7,4 @@ admin.site.register(Tag)
 admin.site.register(TaggedContent)
 admin.site.register(Flashcard)
 admin.site.register(FlashcardDeck)
+admin.site.register(NoteVersion)
