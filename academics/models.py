@@ -53,27 +53,26 @@ class Lecture(models.Model):
 
 class TimetableEntry(models.Model):
     class DayOfWeek(models.TextChoices):
-        MONDAY = 'monday', 'Monday'
-        TUESDAY = 'tuesday', 'Tuesday'
-        WEDNESDAY = 'wednesday', 'Wednesday'
-        THURSDAY = 'thursday', 'Thursday'
-        FRIDAY = 'friday', 'Friday'
-        SATURDAY = 'saturday', 'Saturday'
-        SUNDAY = 'sunday', 'Sunday'
+        MONDAY = 'mon', 'Monday'
+        TUESDAY = 'tue', 'Tuesday'
+        WEDNESDAY = 'wed', 'Wednesday'
+        THURSDAY = 'thu', 'Thursday'
+        FRIDAY = 'fri', 'Friday'
+        SATURDAY = 'sat', 'Saturday'
+        SUNDAY = 'sun', 'Sunday'
 
-    class Recurrence(models.TextChoices):
-        ONCE = 'once', 'once'
-        DAILY = 'daily', 'Daily'
+    class RecurrenceType(models.TextChoices):
         WEEKLY = 'weekly', 'Weekly'
-        FORTNIGHLY = 'fortnightly', 'Fortnightly'
+        FORTNIGHTLY = 'fortnightly', 'Fortnightly'
+        ONE_OFF = 'one_off', 'One-off'
 
     module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='timetable_entries')
-    lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name='timetable_entries',null=True)
+    lecture = models.ForeignKey(Lecture, on_delete=models.CASCADE, related_name='timetable_entries',null=True,blank=True)
     day_of_week = models.CharField(max_length=10, choices=DayOfWeek.choices)
     start_time = models.TimeField()
     end_time = models.TimeField()
     room = models.CharField(max_length=100, null=True, blank=True)
-    recurrence_type = models.CharField(max_length=20, choices=Recurrence.choices, default=Recurrence.ONCE)
+    recurrence_type = models.CharField(max_length=20, choices=RecurrenceType.choices, default=RecurrenceType.WEEKLY)
     date = models.DateField(null=True, blank=True)  # For one-time events
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
