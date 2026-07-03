@@ -1,277 +1,176 @@
 # Ceres Repository Issue Audit — July 2026
 
-## Purpose
+## Scope
 
-This audit reviews the Ceres issue system against:
+This audit checked every Ceres issue and epic against the canonical Vision, Django app ownership, implemented models and migrations, issue-management rules, and the live native GitHub relationship graph.
 
-- the canonical Ceres Vision;
-- Django app ownership rules;
-- the implemented database schema;
-- the issue-management approach;
-- the contributor and feature-development workflows.
+The native graph was exported with `gh api` using GitHub's blocked-by, blocking, parent, and sub-issue endpoints. Temporary GitHub Actions workflows were used only to provide an authenticated `gh` environment and were removed from the final review branch after verification.
 
-It covers epic scope, child issues, labels, description quality, dependencies, stale decisions, and whether issues are actionable.
+## Verified result
 
-## Important limitation
+After correction, the native dependency graph contains:
 
-The GitHub connector used for this audit could read issue bodies, labels, states, code, documentation, and pull requests, but did not reliably expose GitHub's native blocked/blocked-by graph. Native relationships must therefore be spot-checked in the GitHub UI. This audit treats native relationships as the execution source of truth and does not replace them with prose dependency lists.
+- **339 unique blocked-by relationships**;
+- **201 participating issues**;
+- **no duplicate relationships**;
+- **no dependency cycles**.
 
-## Overall assessment
+The audit added **119 missing dependencies** and removed **7 incorrect or obsolete dependencies**.
 
-The repository has a strong structural base:
+Native parent relationships were explicitly verified for:
 
-- feature work is grouped under epics;
-- database work is separated into DB epics and schema issues;
-- app ownership is generally well defined;
-- completed schema work has migrations and implementation documentation;
-- the Ready to Start workflow is based on native dependency relationships.
+- #219 under Academics DB Schema #146;
+- #220 and #244 under Timetable #10;
+- #236–#242 under Application Foundation #235;
+- #245 and #254 under Assignments #13;
+- #246 under Generalised Search #25;
+- #249 under Dashboard #8;
+- #250 under Lecture Hub #12;
+- #251 under Notes #14;
+- #252 under Notifications #24;
+- #253 under Tasks #21;
+- #255 under Files #22;
+- #256 under Potential Modules #23.
 
-The main weakness is the transition from schema planning to feature delivery. Most original feature children were generated from feature-list headings and use boilerplate descriptions. They identify a capability but do not yet define observable behaviour, exact prerequisites, implementation responsibilities, permissions, tests, or manual verification.
+Closed invalid issues #49 and #139–#142 have no native parent.
 
-Those issues are valid backlog placeholders, but they must be refined using `Documentation/feature-workflow.md` before a branch is started.
+## Corrections applied
 
-## Corrections applied during the audit
+### Issue quality and scope
 
-### Legacy schema issues
-
-- #3 was closed as not planned. `UserContentPermission` remains an account-level default sharing rule; per-object access belongs to source apps.
-- #5 was updated to reflect the current notification category implementation and its remaining TextChoices/scope work.
-- #6 was updated to acknowledge that source-reference fields and constraints exist; remaining work is naming consistency, tests, and documentation.
-- #7 received standard type, priority, and app labels and remains a duplicate.
-
-### Invalid backlog items
-
-- #139–#142 were closed as not planned. They incorrectly treated `[Epic] Potential Modules` as a university-module marketplace. Epic #23 is a holding area for future Ceres product areas.
-- #49 Groups for Generalised Search was closed as not planned for the current build because Groups are not in the canonical Search feature list.
+- Closed #3 as not planned because per-object access belongs to source apps.
+- Updated #5 and #6 so they describe genuine remaining notification work.
+- Standardised #7 as a duplicate.
+- Closed invalid Potential Modules issues #139–#142.
+- Closed out-of-scope Groups search #49.
+- Deferred optional `SearchAccessHint` work #210 and #228 as not planned for the current build.
 
 ### Application Foundation
 
-- #235 was rewritten using the standard epic structure.
-- #236 now uses the real project package (`config`) and real Django apps rather than treating Calendar, Tasks, Modules, and other product areas as separate app packages.
-- #236, #238, #239, #241, and #242 are technical tasks rather than user-facing features.
-- #237 and #240 remain user-facing features.
-- Foundation child issues now carry relevant app ownership labels.
-- #242 now describes a dependency rule and integration gate rather than maintaining a stale exhaustive downstream checklist.
+- Standardised epic #235 and children #236–#242.
+- Corrected #236 to use the real `config` package and existing Django apps.
+- Added app/type labels and native parent relationships.
+- Added missing Foundation ordering: #238 blocks #239 and #240.
+- Kept #242 as the final page-level integration gate.
 
 ### Timetable import
 
-- #219 now reflects its merged ownership in `academics` and its relationship to `TimetableEntry`.
-- #220 was moved conceptually from Calendar to Timetable and now imports `TimetableEntry` records rather than creating duplicate `CalendarEvent` records.
-- #244 was created to resolve CSV mapping, Module matching, recurrence, and idempotency before implementation.
+- Moved #219 to Academics DB Schema #146.
+- Moved #220 from Calendar to Timetable #10.
+- Corrected #220 to create/update `TimetableEntry`, not duplicate `CalendarEvent` rows.
+- Created #244 for CSV mapping, Module matching, recurrence, and idempotency.
+- Made #220 depend on #244 and basic Timetable issue #66.
 
-### Missing feature foundations
+### Missing foundations and decisions
 
-- #245 was created to resolve Assignment status/progress ownership between `Assignment` and linked Tasks.
-- #246 was created for the unified search query service and results interface required before source-specific search integrations are independently useful.
+Created:
 
-## High-priority findings still requiring follow-up
+- #249 — core Dashboard page and widget layout;
+- #250 — core Lecture Hub detail page;
+- #251 — core Notes pages;
+- #252 — Notification Centre;
+- #253 — recurring Task schema;
+- #254 — Assignment participant schema;
+- #255 — Files organisation decision;
+- #256 — Goals scope decision.
 
-### 1. Generic feature descriptions need refinement
+These are native children of their owning epics and block only the work that genuinely requires them.
 
-Most feature children in the original #26–#142 block use a template similar to:
+### Cross-feature dependencies
 
-```text
-Deliver <capability> as part of <epic>.
-Confirm the required DB schema exists.
-Respect app ownership.
-```
+- #26–#34 now depend on shared Search foundation #246 and their source feature.
+- #50–#58 now depend on Dashboard foundation #249 and their source capability.
+- Files features #36–#41 depend on basic Files issue #35.
+- Lecture Hub children depend on #250.
+- Notes children depend on #251.
+- Notification features depend on notification infrastructure plus the source behaviour.
+- Assignment planner/progress work depends on #245 and the relevant Task features.
+- #80 depends on Assignment participant schema #254.
+- #138 depends on recurring Task schema #253.
 
-That is consistent but not actionable. Before implementation, each selected issue must gain:
+Incorrect dependencies on `SearchIndexEntry` were removed from internal Files, Notes, and Group Projects search features.
 
-- a user journey;
-- explicit in/out scope;
+### Epic architecture
+
+Open Modules, Assignments, Friends, Group Projects, Tasks, Notifications, and Search epics were updated where their descriptions contradicted implemented architecture.
+
+The corrected rules include:
+
+- Module sharing uses `ModuleMembership`;
+- Lecture navigation does not invent next/previous foreign keys;
+- Assignments compose with Tasks through `TaskLink`;
+- Study Groups belong to `collaboration`;
+- Messaging is optional for core Group Projects;
+- source apps retain ownership of Notes, Files, Tasks, and permissions.
+
+## Remaining explicit decisions
+
+The audit is complete, but these issues intentionally remain open:
+
+- **#5:** final notification category vocabulary;
+- **#6:** notification source-reference naming and tests;
+- **#244:** exact timetable CSV mapping and duplicate rules;
+- **#245:** Assignment lifecycle versus Task status/progress;
+- **#253:** recurring Task persistence and history;
+- **#254:** group Assignment participant relationship;
+- **#255:** tag-only versus folder/collection Files organisation;
+- **#256:** Goals as Dashboard capability, promoted module, or deferred work.
+
+These are not audit omissions. They are real product or schema decisions represented as blockers.
+
+## Description policy
+
+Issue descriptions are governed by `Documentation/issue-management-approach.md` and `Documentation/feature-workflow.md`.
+
+Before implementation, a feature must define:
+
+- observable user behaviour;
+- scope and exclusions;
 - exact blockers;
+- primary app ownership;
 - likely URL/view/service/model/permission/UI responsibilities;
-- automated test expectations;
-- manual verification steps.
+- automated tests;
+- manual verification.
 
-Do not attempt to mass-invent detailed implementation for every feature now. Refine an issue when it enters the current milestone or is about to be selected.
+The original generic feature descriptions may remain as backlog placeholders, but they are not implementation-ready until refined for a milestone.
 
-### 2. Native dependency graph requires UI verification
-
-Spot-check the native graph for:
-
-- every page-based feature being blocked by #242 until Foundation integration completes;
-- source-specific search features being blocked by #246 and their source feature;
-- #220 being blocked by #244 and the basic Timetable UI;
-- dashboard widgets being blocked by the source features they aggregate;
-- notifications being blocked by both notification infrastructure and the source event feature;
-- cross-app integrations being blocked by working source features, not only completed schemas.
-
-Avoid maintaining duplicate dependency lists in issue bodies. Bodies should explain why; native relationships should control readiness.
-
-### 3. Modules epic is stale against the implemented schema
-
-#11 currently mentions credit weighting, lecturer fields, explicit next/previous Lecture model references, and no sharing. The implemented schema instead has:
-
-- Module title, code, description, colour, academic year, and semester;
-- ModuleMembership for owner/member/viewer access;
-- Lecture records without next/previous foreign keys.
-
-Update #11 and #70–#73 during refinement. Ordered lecture navigation may be implemented by date/order queries without claiming a linked-list schema that does not exist.
-
-### 4. Assignment and Task state needs one source of truth
-
-#13 and #21 still describe composition versus inheritance as undecided, but `TaskLink` already establishes composition. #245 now tracks the remaining real question: whether `Assignment.status` represents a distinct academic submission lifecycle or duplicates Task state.
-
-Assignment feature issues should remain blocked until #245 defines status, priority, progress, and initial TaskLink behaviour.
-
-### 5. Friends and Study Groups ownership needs wording updates
-
-#18 still describes profile and group ownership as undecided. Current architecture is:
-
-- profiles and direct friendships: `accounts`;
-- StudyGroup and group membership: `collaboration`;
-- shared Modules: queried from `academics`;
-- shared Study Sessions: queried from `planning`.
-
-#117 should be refined as a cross-app collaboration feature rather than implying that StudyGroup is owned by `accounts`.
-
-### 6. Group Projects contains resolved or optional dependencies
-
-#20 should be updated so:
-
-- tasks are linked through the shared planning Task/TaskLink system;
-- linked group conversation is optional, because Messaging is not part of the canonical Group Projects feature list;
-- Messaging does not block the core Group Projects workspace;
-- notes and files remain source-app-owned links.
-
-### 7. Notification epic scope exceeds the canonical feature list
-
-#24 currently includes message notifications, study-session invitations, a notification centre, source muting, delivery tracking, and text/Discord channels. The canonical Vision explicitly lists assignment, lecture, calendar, group, friend-request notifications, and configurable preferences.
-
-Infrastructure may support later categories, but #24 should distinguish:
-
-- committed user-facing notification features;
-- required shared notification infrastructure;
-- future integrations and delivery channels.
-
-#5 now tracks the immediate category-scope decision.
-
-### 8. Files epic and schema differ
-
-#22 says version history is out of scope, but `FileVersion` exists. It also promises individual, group, and link sharing, while the current `FileShare` schema only grants access to a user.
-
-Refine #35–#41 so the first implementation matches current schema. Create separate schema/feature issues before promising group or public-link sharing.
-
-### 9. Closed DB epics contain historical wording drift
-
-Several completed DB epic bodies reference the retired `ceres-git-flow.md`, outdated names, or decisions that changed during implementation. Examples include:
-
-- #148 incorrectly referring to `#18 Flashcards` even though #18 is Friends;
-- #151 using `DashboardWidgetSetting` while the implemented model is `DashboardWidget`;
-- DB epic titles using inconsistent app capitalisation;
-- old source-reference terminology.
-
-Closed issue history does not need a full rewrite to run the project. The implementation documents and database overview should remain the current source of truth. Correct closed bodies only where the stale text is likely to mislead future work.
-
-### 10. Canonical Vision contains a Goals contradiction
-
-Goals appear in the Dashboard feature list but are also listed as a Potential Future Module. Until this is resolved:
-
-- Dashboard Goals should remain low priority;
-- it must not create an accidental Goal schema inside `core`;
-- a full Goals module must be promoted through #23 before implementation.
-
-## Label standardisation
+## Label policy
 
 Every active implementation issue should have:
 
-1. exactly one `type:*` label;
-2. exactly one `priority:p0`–`priority:p3` label;
-3. one `area:*` product-area label;
-4. one `app:*` code-ownership label when a clear owning Django app exists.
+1. one `type:*` label;
+2. one `priority:p0`–`priority:p3` label;
+3. one `area:*` label;
+4. one `app:*` label where a primary Django app exists.
 
-`area:*` and `app:*` are different:
+`area:*` describes the product capability. `app:*` describes code ownership. P3 is used for optional, COULD, deferred, or future work.
 
-- `area:assignments` describes the product capability;
-- `app:academics` describes where the primary code belongs.
+## Dependency policy
 
-Cross-cutting issues may have one primary owning app plus dependency notes. Holding-area epics may omit an app label.
+Native blocked/blocked-by relationships are the readiness source of truth.
 
-Do not create alternative priority labels such as `priority:optional`; use `priority:p3` and explain the reason in the issue.
+- Page features wait for #242.
+- Cross-app integrations wait for working source features, not only schemas.
+- Search integrations wait for #246 and their source feature.
+- Dashboard widgets wait for #249 and their source capability.
+- Notification integrations wait for infrastructure and source behaviour.
+- Decision issues block only the features governed by that decision.
 
-## Priority review
+Issue bodies explain why a relationship exists; they should not manually duplicate the complete graph.
 
-The following categories should generally be P3 until explicitly promoted:
-
-- Potential Modules candidates;
-- Messaging;
-- Revision;
-- mathematical notation;
-- whiteboard exporting;
-- calendar colour categories and academic-event distinctions;
-- lecture discussions;
-- Dashboard Goals, assignment progress, and study reminders where classified as COULD.
-
-Priority does not replace dependencies. A P1 issue can still be blocked, and a P3 issue can still be technically ready.
-
-## Standard description policy
-
-### Epics
-
-Use the standard sections:
-
-- Epic goal
-- Scope
-- Success criteria
-- Dependencies
-- Notes
-- native Sub-issues statement
-
-### Features
-
-Before implementation, use:
-
-- Parent epic
-- User behaviour
-- Scope
-- Out of scope
-- Dependencies
-- Implementation checklist
-- Done when
-- Manual verification
-
-### Tasks
-
-Use:
-
-- Context/Purpose
-- Scope
-- Out of scope
-- Dependencies
-- Done when
-
-### DB schema
-
-Use:
-
-- Model/App/Parent epic
-- Purpose
-- Fields
-- Constraints and boundaries
-- Dependencies
-- Done when
-
-## Ongoing audit workflow
+## Ongoing workflow
 
 Before each milestone:
 
-1. Select candidate issues from `-is:blocked`.
-2. Remove epics and out-of-scope/P3 work unless intentionally promoted.
-3. Refine selected features using `feature-workflow.md`.
-4. Verify native blockers in the GitHub UI.
-5. Confirm labels and app ownership.
-6. Compare scope with the canonical Vision.
-7. Add the issue to the milestone only after it is understandable and implementable.
+1. Start from `-is:blocked`.
+2. Exclude epics and intentionally deferred work.
+3. Narrow by milestone, priority, and area.
+4. Refine candidate issues using `feature-workflow.md`.
+5. Confirm native parent/blocker relationships and app ownership.
+6. Begin work only when the issue is understandable and implementable.
 
-After every architecture or schema decision:
+## Status
 
-1. update affected open epics/features;
-2. update implementation documentation;
-3. add or remove native blockers;
-4. avoid leaving “decide later” language after the decision has been made.
+**Complete.**
 
-## Audit status
-
-This audit corrected unambiguous defects and created follow-up issues for unresolved design decisions. It deliberately did not fabricate detailed implementations for the entire long-term backlog. The remaining generic feature issues are accepted as placeholders but are not implementation-ready until refined.
+The issue inventory, epic structure, labels, native dependency graph, native parent graph, and major architecture consistency have been audited. Unambiguous defects were corrected; genuine unresolved decisions are represented by explicit blocking issues.
