@@ -205,6 +205,8 @@ Commit messages should describe the completed model or schema unit, for example:
 
 Do not mix unrelated fixes into the same commit.
 
+If the current sub-issue satisfies its acceptance criteria, commit the completed work to the current epic branch.
+
 When Morgan says the commit is pushed, inspect it automatically rather than asking for the SHA.
 
 ## PR strategy
@@ -224,6 +226,8 @@ Before recommending the PR, verify with GitHub compare that the branch is:
 * limited to the expected app files
 
 Provide a suggested PR title and body, but do not create the PR unless Morgan explicitly asks.
+
+Morgan owns PR creation. Even after committing a completed sub-issue to the branch, stop before opening a PR unless Morgan explicitly asks for one.
 
 The PR body should include:
 
@@ -254,4 +258,3 @@ Do not prematurely add these relationships to `Note`.
 Mentor the implementation; do not take it over.
 
 Use GitHub to verify what Morgan actually pushed, keep the current issue tightly scoped, and move to the next issue only after the current one satisfies its acceptance criteria.
-
