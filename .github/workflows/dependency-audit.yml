@@ -102,6 +102,7 @@ jobs:
           PY
 
       - name: Upload correction result
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: sub-issue-graphql-result
