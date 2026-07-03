@@ -1,26 +1,12 @@
 # academics - Implemented Database Schema
 
-This document describes the models as actually implemented in `academics/models.py`, and how to use them. Unlike `Academics Database plan.md`, which describes the intended design, this reflects the current code. Update this file whenever the models change.
+This document describes the models implemented in `academics/models.py`. Update it whenever the schema changes.
 
-The academics schema covers modules, module membership, lectures, timetable entries, timetable import jobs, assignments, and revision topics.
-
-## Differences from the earlier design plan
-
-The implemented schema follows epic #146 and its child schema issues (`Module` #160, `ModuleMembership` #161, `Lecture` #162, `TimetableEntry` #163, `Assignment` #164, `RevisionTopic` #165). Some concepts from the earlier design plan were not included in the current models, and a couple of fields were implemented differently than described:
-
-- `Module` has no `archived` flag, and there is no uniqueness constraint on module code per owner and academic year.
-- `Module`'s `semester` field is the plan's `term` concept under a different name.
-- `ModuleMembership`'s `role` choices are `owner`, `member`, `viewer`, not the plan's `owner`, `student`, `tutor`, `collaborator`.
-- `Lecture` has a single `date` field rather than separate start and end times, so there is no constraint that an end time falls after a start time. `lecturer` is split into `lecturer_name` and `lecturer_email` rather than one field.
-- `TimetableEntry` has a single `date` field for one-off events rather than separate recurrence start and end dates, and there is no constraint that `end_time` falls after `start_time`.
-- `Assignment.weighting` has no constraint requiring it to be zero or greater.
-- `RevisionTopic.confidence` is a `red`/`amber`/`green` choice field, not the plan's numeric confidence score, and there is no `priority` or `last_reviewed` field.
-
-These may be considered as future schema enhancements if required by feature implementation.
+The academics schema covers modules, module memberships, lectures, timetable entries, timetable imports, assignments, assignment participants, and revision topics.
 
 ## Module
 
-A university module or class.
+A university module owned by a user.
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -28,59 +14,39 @@ A university module or class.
 | `title` | `CharField(255)` | Required |
 | `code` | `CharField(20)`, nullable | Optional |
 | `description` | `TextField`, nullable | Optional |
-| `colour` | `CharField(6)`, nullable | Optional hex colour code |
-| `academic_year` | `CharField(9)`, nullable | e.g. `"2023/2024"` |
-| `semester` | `CharField(10)`, nullable | Choices: `autumn`, `spring`, `summer`, `full_year` |
-| `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
+| `colour` | `CharField(6)`, nullable | Optional hex colour |
+| `academic_year` | `CharField(9)`, nullable | Example: `2025/2026` |
+| `semester` | `CharField(10)`, nullable | `autumn`, `spring`, `summer`, `full_year` |
+| `created_at`, `updated_at` | `DateTimeField` | Automatic timestamps |
 
 ## ModuleMembership
 
-A user's relationship to a module.
+Connects a user to a Module.
 
 | Field | Type | Notes |
 | --- | --- | --- |
 | `user` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='module_memberships'` |
 | `module` | `ForeignKey(Module)` | `related_name='memberships'` |
-| `role` | `CharField(10)` | Choices: `owner`, `member`, `viewer`; default `member` |
-| `created_at` | `DateTimeField` | Auto-set on create |
+| `role` | `CharField(10)` | `owner`, `member`, `viewer`; default `member` |
+| `created_at` | `DateTimeField` | Automatic timestamp |
 
-**Constraints:**
-- `unique_user_module` is unique on `(user, module)`.
+`unique_user_module` prevents duplicate membership rows for the same user and Module.
 
 ## Lecture
 
-A lecture or teaching session attached to a module.
-
-| Field | Type | Notes |
-| --- | --- | --- |
-| `module` | `ForeignKey(Module)` | `related_name='lectures'` |
-| `title` | `CharField(255)` | Required |
-| `date` | `DateTimeField`, nullable | Single date/time field; no separate end time |
-| `room` | `CharField(100)`, nullable | Optional |
-| `lecturer_name` | `CharField(255)`, nullable | Optional |
-| `lecturer_email` | `EmailField`, nullable | Optional |
-| `description` | `TextField`, nullable | Optional free-text details about the lecture (renamed from `notes` in migration `0007` — real lecture notes belong to the `content` app's Note system, so the old name invited confusion with the "one notes system" rule) |
-| `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
+A teaching session attached to a Module. It stores a title, optional date, room, lecturer details, description, and timestamps.
 
 ## TimetableEntry
 
-A recurring or scheduled academic timetable item.
+A recurring or one-off timetable item. It belongs to a Module and may optionally link to a Lecture. It stores weekday, start and end times, room, recurrence type, optional one-off date, and timestamps.
 
-| Field | Type | Notes |
-| --- | --- | --- |
-| `module` | `ForeignKey(Module)` | `related_name='timetable_entries'` |
-| `lecture` | `ForeignKey(Lecture)`, nullable | `related_name='timetable_entries'`; optional link to a specific lecture |
-| `day_of_week` | `CharField(10)` | Choices: `mon` through `sun` |
-| `start_time` | `TimeField` | Required |
-| `end_time` | `TimeField` | Required; no database constraint enforcing it falls after `start_time` |
-| `room` | `CharField(100)`, nullable | Optional |
-| `recurrence_type` | `CharField(20)` | Choices: `weekly`, `fortnightly`, `one_off`; default `weekly` |
-| `date` | `DateField`, nullable | Used for one-off events |
-| `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
+## TimetableImport
+
+Tracks a timetable import job, including its owner, filename, processing status, row totals, error details, and timestamps.
 
 ## Assignment
 
-An academic assignment, coursework item, or assessment.
+An academic assessment belonging to a Module.
 
 | Field | Type | Notes |
 | --- | --- | --- |
@@ -88,64 +54,60 @@ An academic assignment, coursework item, or assessment.
 | `title` | `CharField(255)` | Required |
 | `description` | `TextField`, nullable | Optional |
 | `deadline` | `DateTimeField`, nullable | Optional |
-| `weighting` | `DecimalField(5,2)`, nullable | Percentage; no constraint requiring zero or greater |
-| `submission_type` | `CharField(20)`, nullable | Choices: `essay`, `report`, `presentation`, `exam`, `practical`, `other` |
-| `is_group` | `BooleanField` | Default `False` |
-| `submission_status` | `CharField(20)` | Choices: `not_submitted`, `submitted`; default `not_submitted` |
-| `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
+| `weighting` | `DecimalField(5,2)`, nullable | Optional percentage |
+| `submission_type` | `CharField(20)`, nullable | Essay, report, presentation, exam, practical, or other |
+| `is_group` | `BooleanField` | Describes whether the assessment is group work |
+| `submission_status` | `CharField(20)` | `not_submitted` or `submitted` |
+| `participants` | `ManyToManyField(AUTH_USER_MODEL)` | Uses `AssignmentParticipant` as its through model |
+| `created_at`, `updated_at` | `DateTimeField` | Automatic timestamps |
 
-**Usage:** `submission_status` records only whether the academic work itself has been submitted. Progress, priority, and work state are not stored on `Assignment` — they come from linked planning `Task` records via `TaskLink`. This follows issue #245.
+`submission_status` records only the academic submission lifecycle. Task priority, work state, progress, and breakdown remain in `planning` through linked Tasks.
+
+A populated group Assignment cannot be changed to individual work. Participant rows must be removed first.
+
+Permission helpers:
+
+- `can_manage_participants(user)` is true for the Module owner or a Module member with the `owner` role.
+- `add_participant(actor=..., user=...)` checks permission and creates a validated participant row.
+- `remove_participant(actor=..., user=...)` checks permission and removes the participant row.
+- Being a participant does not itself grant permission to edit the Assignment or manage its participants.
+
+## AssignmentParticipant
+
+The single source of truth for who is involved in an academic group Assignment.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `assignment` | `ForeignKey(Assignment)` | `related_name='participant_memberships'`; cascades on deletion |
+| `user` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='assignment_participations'`; cascades on deletion |
+| `created_at` | `DateTimeField` | Automatic timestamp |
+
+Rules:
+
+- `unique_assignment_participant` prevents duplicate `(assignment, user)` rows.
+- Participants may only be added to Assignments where `is_group=True`.
+- A participant must own or have membership of the Assignment's Module.
+- Normal saves and Many-to-Many bulk additions run model validation.
+- The model has no participant role. Task allocation belongs to `planning`.
+- This relationship is separate from Study Group and Group Project membership in `collaboration`.
+
+Useful accessors:
+
+- `assignment.participants.all()` returns participant users.
+- `assignment.participant_memberships.all()` returns join records.
+- `user.participating_assignments.all()` returns the user's Assignments.
+- `user.assignment_participations.all()` returns the user's join records.
 
 ## RevisionTopic
 
-A revisable topic within a module.
+A revisable topic attached to a Module. Confidence uses the controlled values `red`, `amber`, and `green`.
 
-| Field | Type | Notes |
-| --- | --- | --- |
-| `module` | `ForeignKey(Module)` | `related_name='revision_topics'` |
-| `title` | `CharField(255)` | Required |
-| `confidence` | `CharField(10)`, nullable | Choices: `red`, `amber`, `green` |
-| `notes` | `TextField`, nullable | Optional |
-| `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
+## Relationship summary
 
-## TimetableImport
-
-A record of a bulk timetable import job (e.g. an uploaded timetable file), tracking its processing status and row-level outcomes. Added by issue #219; originally implemented in `planning` and moved here (`academics.0008_timetableimport` / `planning.0006_delete_timetableimport`) because the timetable it feeds is owned by this app — keeping the job record next to `TimetableEntry` avoids a circular `academics`/`planning` dependency if entries later gain an import-provenance FK.
-
-| Field | Type | Notes |
-| --- | --- | --- |
-| `owner` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='timetable_imports'` |
-| `filename` | `CharField(100)` | Required |
-| `status` | `CharField(21)`, choices | Nested `Status`: `pending`, `processing`, `completed`, `completed_with_errors`, `failed`; default `pending` |
-| `total_rows` | `PositiveIntegerField` | Default `0` |
-| `imported_rows` | `PositiveIntegerField` | Default `0` |
-| `skipped_rows` | `PositiveIntegerField` | Default `0` |
-| `error_rows` | `PositiveIntegerField` | Default `0` |
-| `error_detail` | `JSONField` | Blank allowed; default `list` — expected to hold structured per-row error info |
-| `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
-
-**Constraints:** none implemented — nothing enforces `imported_rows + skipped_rows + error_rows` against `total_rows`.
-
-**Usage:** created when a user uploads a timetable file for bulk import (feeding `TimetableEntry`/`Lecture` rows). `status` tracks the job's lifecycle; `error_detail` should hold enough structure to show the user what went wrong per row. Nothing currently links a `TimetableEntry` back to the import that created it — add a nullable provenance FK on `TimetableEntry` if "view/undo this import" features are built.
-
-## How the models relate
-
-```
-User (Django auth)
-  - owned_modules -> Module
-  - module_memberships -> ModuleMembership
-  - timetable_imports -> TimetableImport
-
-Module
-  - memberships -> ModuleMembership
-  - lectures -> Lecture
-  - timetable_entries -> TimetableEntry
-  - assignments -> Assignment
-  - revision_topics -> RevisionTopic
-
-Lecture
-  - timetable_entries -> TimetableEntry (optional link)
-
-TimetableImport
-  - owner -> User (M:1); not yet linked to TimetableEntry rows it creates
+```text
+Module -> ModuleMembership -> User
+Module -> Lecture -> TimetableEntry
+Module -> Assignment -> AssignmentParticipant -> User
+Module -> RevisionTopic
+User -> TimetableImport
 ```
