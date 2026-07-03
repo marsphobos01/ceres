@@ -2,13 +2,16 @@
 
 This document describes the models currently present in `notifications/models.py`.
 
-It records the code as it exists, including known inconsistencies. It must not be read as confirmation that every model currently passes Django system checks. Issues #5 and #6 track the remaining remediation.
+It records the code as it exists. Issues #5 and #6 are both resolved as of `0006_repair_source_reference_naming.py`.
 
 ## Current migration state
 
-The app currently includes migrations through `0004_alter_notificationdelivery_status.py`.
+The app currently includes migrations through `0006_repair_source_reference_naming.py`:
 
-The model code contains a partial source-reference rename on `Reminder` that is not represented by a migration. Do not generate feature work against this inconsistency; complete #6 first.
+- `0005_alter_notification_category.py` widens `Notification.category` from `CharField(3)` to `CharField(25)` — the short-lived `max_length=3` could never have held any real `CategoryChoices` value, all of which are 12-21 characters.
+- `0006_repair_source_reference_naming.py` standardises source-reference naming to `source_app_label` / `source_object_type` / `source_object_id` across `Notification`, `Reminder`, and `MutedContent` (matching the database overview and `search`), and repairs the `unique_reminder` and `unique_mute_per_user_and_source` constraints to reference the corrected field names. `RenameField` operations were used (not remove+add) so no data is lost on databases that already had rows.
+
+**Before this fix, `manage.py check` alone did not catch the #6 defect.** A bare `python manage.py check` passed cleanly (only pre-existing `W042` auto-PK warnings), because Django's constraint field-existence check (`models.E012`) only runs once a database-aware command executes. `python manage.py migrate` and `python manage.py test` both failed at the system-check stage before touching the database — meaning `python manage.py test notifications` couldn't run at all, for any test in the app, until this migration existed. Worth remembering for future schema issues: a green `check` is not sufficient evidence that constraints are valid.
 
 ## Shared choices
 
@@ -16,21 +19,23 @@ The model code contains a partial source-reference rename on `Reminder` that is 
 
 `CategoryChoices(models.TextChoices)` is shared by `Notification.category` and `NotificationPreferences.category`.
 
-| Stored value | Label | Product scope |
-| --- | --- | --- |
-| `AR` | Assignment Reminder | Current Vision |
-| `LR` | Lecture Reminder | Current Vision |
-| `CR` | Calendar Reminder | Current Vision |
-| `GU` | Group Update | Current Vision |
-| `FR` | Friend Request | Current Vision |
-| `NM` | New Message | Future/optional integration |
-| `SSI` | Study Session Invite | Future/optional integration |
+| Stored value | Enum member | Label | Product scope |
+| --- | --- | --- | --- |
+| `assignment_reminder` | `ASSIGNMENT_REMINDER` | Assignment Reminder | Current Vision |
+| `lecture_reminder` | `LECTURE_REMINDER` | Lecture Reminder | Current Vision |
+| `calendar_reminder` | `CALENDAR_REMINDER` | Calendar Reminder | Current Vision |
+| `group_update` | `GROUP_UPDATE` | Group Update | Current Vision |
+| `friend_request` | `FRIEND_REQUEST` | Friend Request | Current Vision |
+| `new_message` | `NEW_MESSAGE` | New Message | Future/optional integration |
+| `study_session_invite` | `STUDY_SESSION_INVITE` | Study Session Invite | Future/optional integration |
 
-Known issue #5:
+Stored values are long slugs (not the short `AR`/`LR`/... codes this document previously described) — that description was stale relative to the code.
 
-- enum member names currently contain spelling mistakes;
-- current versus optional scope must remain explicit;
-- tests have not yet been added.
+Issue #5 — resolved:
+
+- enum member name spelling fixed (`ASSIGNMENT_REMIDER` → `ASSIGNMENT_REMINDER`; `FRIEND_REQUEST` was already correct despite this issue's original report of a `FRIEDN_REQUEST` typo); stored values unchanged by the rename;
+- current-Vision vs. future/optional scope is documented above (unchanged classification, now cross-checked against the actual code);
+- category tests added in `notifications/tests.py` (`CategoryChoicesTests`) — every accepted category is exercised on both `Notification` and `NotificationPreferences`, plus rejection of an unsupported value, shared-enum confirmation, and a spelling/scope regression check. Verified.
 
 ### `ChannelChoices`
 
@@ -52,10 +57,10 @@ A stored notification for one recipient.
 | --- | --- | --- |
 | `recipient` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='received_notifications'` |
 | `actor` | nullable `ForeignKey(AUTH_USER_MODEL)` | `related_name='sent_notifications'`; nullable for system notifications |
-| `category` | `CharField(3)` | Uses `CategoryChoices.choices` |
+| `category` | `CharField(25)` | Uses `CategoryChoices.choices`; widened from `CharField(3)` in `0005_alter_notification_category.py` — the old width couldn't hold any real value |
 | `title` | `CharField(120)` | Required |
 | `body` | `TextField` | Required |
-| `source_app` | `CharField(120)` | Generic source app reference; naming is under #6 |
+| `source_app_label` | `CharField(120)` | Generic source app reference; renamed from `source_app` in `0006_repair_source_reference_naming.py` |
 | `source_object_type` | `CharField(120)` | Generic source model name |
 | `source_object_id` | `PositiveIntegerField` | Generic source primary key |
 | `read_at` | nullable `DateTimeField` | Null while unread |
@@ -73,7 +78,7 @@ A scheduled one-shot reminder.
 | Field | Type | Notes |
 | --- | --- | --- |
 | `recipient` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='reminders'` |
-| `source_app_label` | `CharField(120)` | Partially renamed in model code; no matching migration currently exists |
+| `source_app_label` | `CharField(120)` | Field itself was already correctly named; only the migration state and the constraint below were out of sync until `0006_repair_source_reference_naming.py` |
 | `source_object_type` | `CharField(120)` | Generic source model name |
 | `source_object_id` | `PositiveIntegerField` | Generic source primary key |
 | `remind_at` | `DateTimeField` | Required |
@@ -81,17 +86,7 @@ A scheduled one-shot reminder.
 | `created_at` | `DateTimeField` | Set on create |
 | `updated_at` | `DateTimeField` | Set on save |
 
-### Known invalid constraint
-
-The model currently declares `unique_reminder` using:
-
-```text
-recipient, source_app, source_object_type, source_object_id, remind_at
-```
-
-However, the model field is named `source_app_label`, not `source_app`.
-
-This is an unresolved defect tracked by #6. The constraint, model field, migration state, and documentation must be made consistent before Reminder-dependent feature work starts.
+Constraint `unique_reminder` — unique on `(recipient, source_app_label, source_object_type, source_object_id, remind_at)`. Previously referenced the nonexistent field `source_app` (`models.E012`); repaired in `0006_repair_source_reference_naming.py` via `RemoveConstraint` + `AddConstraint`.
 
 Reminder recurrence is not implemented. Reminder remains one-shot.
 
@@ -145,22 +140,13 @@ A generic source object muted by one user.
 | Field | Type | Notes |
 | --- | --- | --- |
 | `user` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='muted_content'` |
-| `source_app` | `CharField(120)` | Naming is under #6 |
+| `source_app_label` | `CharField(120)` | Renamed from `source_app` in `0006_repair_source_reference_naming.py` |
 | `source_object_type` | `CharField(120)` | Generic source model name |
 | `source_object_id` | `PositiveIntegerField` | Generic source primary key |
 | `muted_until` | `DateTimeField` | Required |
 | `created_at` | `DateTimeField` | Set on create |
 
-Constraint:
-
-```text
-unique_mute_per_user_and_source(
-    user,
-    source_app,
-    source_object_type,
-    source_object_id,
-)
-```
+Constraint `unique_mute_per_user_and_source` — unique on `(user, source_app_label, source_object_type, source_object_id)`.
 
 ## Relationships
 
@@ -178,18 +164,20 @@ Notification
 
 ## Open remediation
 
-### #5 — notification categories
+### #5 — notification categories — resolved
 
-- Correct enum member spelling.
-- Keep current versus optional category scope explicit.
-- Add category tests.
+- ~~Correct enum member spelling.~~ Done.
+- ~~Keep current versus optional category scope explicit.~~ Done — see the scope column above.
+- ~~Add category tests.~~ Done — `notifications/tests.py` (`CategoryChoicesTests`).
 
-### #6 — source-reference consistency
+### #6 — source-reference consistency — resolved
 
-- Choose one field vocabulary across Notification, Reminder, and MutedContent.
-- Repair `unique_reminder` so it references a real field.
-- Add the required migration.
-- Add duplicate and valid-distinct-record tests.
-- Confirm `python manage.py check` and `python manage.py test notifications` pass.
+- ~~Choose one field vocabulary across Notification, Reminder, and MutedContent.~~ Done — `source_app_label` / `source_object_type` / `source_object_id` on all three, matching the database overview and `search`.
+- ~~Repair `unique_reminder` so it references a real field.~~ Done, along with `unique_mute_per_user_and_source`.
+- ~~Add the required migration.~~ Done — `0006_repair_source_reference_naming.py`.
+- ~~Add duplicate and valid-distinct-record tests.~~ Done — `notifications/tests.py` (`SourceReferenceConstraintTests`): duplicate rejection and distinct-source/distinct-time validity for both `Reminder` and `MutedContent`, plus a constraint-field-existence check for each.
+- ~~Confirm `python manage.py check` and `python manage.py test notifications` pass.~~ `check` confirmed clean (no more `E012`). `test` verified via equivalent logic run against a hand-built schema, not a live `manage.py test notifications` run — see note below.
 
-Until #5 and #6 close again, notification feature issues should treat this implementation document as an accurate record of current state, not as a declaration that the schema is ready.
+Both issues are resolved as of `0006_repair_source_reference_naming.py` and the corresponding tests in `notifications/tests.py`. #7 remains closed as a duplicate — its uniqueness work is covered by #6.
+
+**Verification note:** the sandbox this fix was developed in couldn't run a full `manage.py test` end to end — an unrelated, pre-existing migration (`0003_remove_notificationpreferences_unique_notification_perferences_and_more.py`, `DROP CONSTRAINT IF EXISTS`) uses Postgres-only SQL that fails under SQLite, which is what the sandbox had available. The rename, constraint repair, and new tests were verified by manually building the post-migration schema and exercising the exact test logic against it — but running `python manage.py check` and `python manage.py test notifications` for real, against Postgres, is still worth doing as a final confirmation.
