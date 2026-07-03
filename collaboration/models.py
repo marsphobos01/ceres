@@ -56,3 +56,19 @@ class GroupInvitation(models.Model):
             raise ValidationError("Set either study_group or group_project, not both.")
         if not self.study_group and not self.group_project:
             raise ValidationError("Set either study_group or group_project.")
+
+
+class ProjectMembership(models.Model):
+    class Role(models.TextChoices):
+        OWNER = 'owner', 'Owner'
+        EDITOR = 'editor', 'Editor'
+        VIEWER = 'viewer', 'Viewer'
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    group_project = models.ForeignKey(GroupProject, on_delete=models.CASCADE)
+    role = models.CharField(max_length=10, choices=Role.choices, default=Role.VIEWER)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'group_project'], name='unique_project_membership')
+        ]
