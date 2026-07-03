@@ -44,3 +44,16 @@ class Tag(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["owner", "name"], name="unique_tag_per_user"),
         ]
+
+class TaggedContent(models.Model):
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name='tagged_contents')
+    content_type = models.ForeignKey('contenttypes.ContentType', on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["tag", "content_type", "object_id"],
+                                    name="tagged_content_unique"),
+        ]
