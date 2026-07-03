@@ -18,8 +18,6 @@ The implemented schema follows epic #146 and its child schema issues (`Module` #
 
 These may be considered as future schema enhancements if required by feature implementation.
 
-`Assignment.status` is addressed separately below — it is a deliberate divergence from the plan, not an unimplemented item or an accidental overlap.
-
 ## Module
 
 A university module or class.
@@ -93,10 +91,10 @@ An academic assignment, coursework item, or assessment.
 | `weighting` | `DecimalField(5,2)`, nullable | Percentage; no constraint requiring zero or greater |
 | `submission_type` | `CharField(20)`, nullable | Choices: `essay`, `report`, `presentation`, `exam`, `practical`, `other` |
 | `is_group` | `BooleanField` | Default `False` |
-| `status` | `CharField(20)` | Choices: `not_started`, `in_progress`, `submitted`, `completed`; default `not_started` |
+| `submission_status` | `CharField(20)` | Choices: `not_submitted`, `submitted`; default `not_submitted` |
 | `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
 
-**Usage:** the earlier academics plan proposed that generic status and progress behaviour should live in `planning`. The implemented schema deliberately retains an academic lifecycle `status` on `Assignment`, as explicitly required by academics epic #146 and Assignment issue #164. This status records assignment-level states such as `submitted`, while planning tasks retain their own execution status, priority, breakdown, and reminders — issue #164 only prohibits those from being duplicated here. The similarly named statuses should be treated as separate concepts (assessment lifecycle vs. linked task execution state), although clearer naming such as `submission_status` could be considered in a future schema change. No model change is needed based on this alone.
+**Usage:** `submission_status` records only whether the academic work itself has been submitted. Progress, priority, and work state are not stored on `Assignment` — they come from linked planning `Task` records via `TaskLink`. This follows issue #245.
 
 ## RevisionTopic
 

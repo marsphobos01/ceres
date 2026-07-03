@@ -106,10 +106,8 @@ class Assignment(models.Model):
         OTHER = 'other', 'Other'
 
     class Status(models.TextChoices):
-        NOT_STARTED = 'not_started', 'Not Started'
-        IN_PROGRESS = 'in_progress', 'In Progress'
+        NOT_SUBMITTED = 'not_submitted', 'Not Submitted'
         SUBMITTED = 'submitted', 'Submitted'
-        COMPLETED = 'completed', 'Completed'
     module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='assignments')
     title = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
@@ -117,7 +115,7 @@ class Assignment(models.Model):
     weighting = models.DecimalField(max_digits=5,decimal_places=2,null=True, blank=True)  # Weighting as a percentage
     submission_type = models.CharField(max_length=20, choices=SubmissionType.choices,null=True, blank=True)
     is_group = models.BooleanField(default=False)
-    status = models.CharField(max_length=20, choices=Status.choices, default=Status.NOT_STARTED)
+    submission_status = models.CharField(max_length=20, choices=Status.choices, default=Status.NOT_SUBMITTED)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
