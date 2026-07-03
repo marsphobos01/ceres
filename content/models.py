@@ -67,11 +67,24 @@ class Flashcard(models.Model):
     module = models.ForeignKey(
         'academics.Module', on_delete=models.CASCADE, related_name='flashcards', null=True, blank=True
     )
+    deck = models.ForeignKey(
+        'content.FlashcardDeck', on_delete=models.CASCADE, related_name='flashcards', null=True, blank=True
+    )
     revision_topic = models.ForeignKey(
         'academics.RevisionTopic', on_delete=models.CASCADE, related_name='flashcards', null=True, blank=True
     )
     front = models.TextField()
     back = models.TextField()
     confidence = models.CharField(max_length=10, choices=Confidence.choices, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+class FlashcardDeck(models.Model):
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='flashcard_decks')
+    module = models.ForeignKey(
+        'academics.Module', on_delete=models.CASCADE, related_name='flashcard_decks', null=True, blank=True
+    )
+    title = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
