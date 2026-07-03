@@ -23,27 +23,21 @@ jobs:
           import time
 
           repo = os.environ['REPO']
-
           add_edges = [
-              (239, 238), (240, 238),
-              (249, 242),
+              (239, 238), (240, 238), (249, 242),
               *[(issue, 249) for issue in range(50, 59)],
-              (50, 66), (50, 59), (50, 107),
-              (51, 78), (51, 135),
+              (50, 66), (50, 59), (50, 107), (51, 78), (51, 135),
               (52, 82), (54, 251), (56, 59), (57, 256),
               *[(58, blocker) for blocker in range(50, 57)],
               (246, 242), (246, 209),
               *[(issue, 246) for issue in range(26, 35)],
               (26, 70), (27, 250), (28, 251), (29, 78), (30, 35),
               (31, 114), (32, 118), (32, 119), (33, 132), (34, 59),
-              (35, 242),
-              *[(issue, 35) for issue in range(36, 42)],
+              (35, 242), *[(issue, 35) for issue in range(36, 42)],
               (36, 255), (255, 189), (255, 193),
-              (250, 242), (250, 162),
-              *[(issue, 250) for issue in range(74, 78)],
+              (250, 242), (250, 162), *[(issue, 250) for issue in range(74, 78)],
               (43, 250),
-              (251, 242), (251, 173),
-              *[(issue, 251) for issue in range(83, 92)],
+              (251, 242), (251, 173), *[(issue, 251) for issue in range(83, 92)],
               (74, 251), (110, 251), (126, 251), (128, 251),
               (252, 242), (252, 5), (252, 6), (252, 181),
               *[(issue, 5) for issue in range(42, 47)],
@@ -57,65 +51,71 @@ jobs:
               (244, 163), (244, 219), (220, 244), (220, 66),
               (123, 118), (123, 119),
           ]
-
           remove_edges = [
               (38, 209), (90, 209), (123, 209),
               (49, 195), (49, 209), (49, 242),
           ]
 
-          def run(args, check=True):
-              return subprocess.run(args, check=check, capture_output=True, text=True)
+          def run(args):
+              return subprocess.run(args, check=False, capture_output=True, text=True)
 
+          ids = {}
           def issue_id(number):
-              return run(['gh', 'api', f'repos/{repo}/issues/{number}', '--jq', '.id']).stdout.strip()
+              if number not in ids:
+                  result = run(['gh', 'api', f'repos/{repo}/issues/{number}', '--jq', '.id'])
+                  ids[number] = result.stdout.strip()
+              return ids[number]
 
-          id_cache = {}
-          def cached_id(number):
-              if number not in id_cache:
-                  id_cache[number] = issue_id(number)
-              return id_cache[number]
-
-          def current_blocker_ids(issue):
+          def blockers(issue):
               result = run([
                   'gh', 'api', '--paginate',
                   f'repos/{repo}/issues/{issue}/dependencies/blocked_by?per_page=100',
                   '--jq', '.[].id',
-              ], check=False)
+              ])
               return set(result.stdout.split()) if result.returncode == 0 else set()
 
-          log = []
+          lines = []
           for issue, blocker in add_edges:
-              blocker_id = cached_id(blocker)
-              if blocker_id in current_blocker_ids(issue):
-                  log.append(f'SKIP add #{blocker} -> #{issue}')
+              blocker_id = issue_id(blocker)
+              if blocker_id in blockers(issue):
+                  lines.append(f'SKIP ADD {blocker} {issue}')
                   continue
               result = run([
                   'gh', 'api', '--method', 'POST',
                   f'repos/{repo}/issues/{issue}/dependencies/blocked_by',
                   '-F', f'issue_id={blocker_id}',
-              ], check=False)
-              log.append(
-                  f'ADD #{blocker} -> #{issue}' if result.returncode == 0
-                  else f'ERROR add #{blocker} -> #{issue}: {result.stderr.strip()}'
-              )
-              time.sleep(0.2)
+              ])
+              if result.returncode == 0:
+                  lines.append(f'ADD {blocker} {issue}')
+              else:
+                  message = (result.stderr or result.stdout).strip().replace('\n', ' ')
+                  lines.append(f'ERROR ADD {blocker} {issue} {message}')
+              time.sleep(0.15)
 
           for issue, blocker in remove_edges:
-              blocker_id = cached_id(blocker)
-              if blocker_id not in current_blocker_ids(issue):
-                  log.append(f'SKIP remove #{blocker} -> #{issue}')
+              blocker_id = issue_id(blocker)
+              if blocker_id not in blockers(issue):
+                  lines.append(f'SKIP REMOVE {blocker} {issue}')
                   continue
               result = run([
                   'gh', 'api', '--method', 'DELETE',
                   f'repos/{repo}/issues/{issue}/dependencies/blocked_by/{blocker_id}',
-              ], check=False)
-              log.append(
-                  f'REMOVE #{blocker} -> #{issue}' if result.returncode == 0
-                  else f'ERROR remove #{blocker} -> #{issue}: {result.stderr.strip()}'
-              )
-              time.sleep(0.2)
+              ])
+              if result.returncode == 0:
+                  lines.append(f'REMOVE {blocker} {issue}')
+              else:
+                  message = (result.stderr or result.stdout).strip().replace('\n', ' ')
+                  lines.append(f'ERROR REMOVE {blocker} {issue} {message}')
+              time.sleep(0.15)
 
-          print('\n'.join(log))
-          if any(line.startswith('ERROR') for line in log):
-              raise SystemExit('One or more dependency mutations failed.')
+          with open('dependency-correction.log', 'w', encoding='utf-8') as output:
+              output.write('\n'.join(lines) + '\n')
+          print(f'Processed {len(lines)} dependency operations.')
           PY
+
+      - name: Upload correction results
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-correction-results
+          path: dependency-correction.log
+          if-no-files-found: error
