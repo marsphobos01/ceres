@@ -12,26 +12,18 @@ jobs:
   correct:
     runs-on: ubuntu-latest
     steps:
-      - name: Apply native sub-issue corrections
+      - name: Apply native sub-issue parents with GraphQL
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
           python - <<'PY'
+          import json
           import os
           import subprocess
-          import time
 
-          repo = os.environ['REPO']
-
-          remove_links = [
-              (147, 219),
-              (9, 220),
-              (25, 49),
-              (23, 139), (23, 140), (23, 141), (23, 142),
-          ]
-
-          add_links = [
+          owner, name = os.environ['REPO'].split('/', 1)
+          links = [
               *[(235, child) for child in range(236, 243)],
               (8, 249),
               (10, 244), (10, 220),
@@ -46,67 +38,72 @@ jobs:
               (146, 219),
           ]
 
-          def run(args):
-              return subprocess.run(args, check=False, capture_output=True, text=True)
+          numbers = sorted({number for link in links for number in link})
+          fields = '\n'.join(
+              f'i{number}: issue(number: {number}) {{ id number }}'
+              for number in numbers
+          )
+          query = f'''query($owner: String!, $name: String!) {{
+            repository(owner: $owner, name: $name) {{
+              {fields}
+            }}
+          }}'''
 
-          ids = {}
-          def issue_id(number):
-              if number not in ids:
-                  result = run(['gh', 'api', f'repos/{repo}/issues/{number}', '--jq', '.id'])
-                  ids[number] = result.stdout.strip()
-              return ids[number]
+          lookup = subprocess.run(
+              [
+                  'gh', 'api', 'graphql',
+                  '-f', f'query={query}',
+                  '-F', f'owner={owner}',
+                  '-F', f'name={name}',
+              ],
+              check=True,
+              capture_output=True,
+              text=True,
+          )
+          payload = json.loads(lookup.stdout)
+          repository = payload['data']['repository']
+          node_ids = {
+              number: repository[f'i{number}']['id']
+              for number in numbers
+          }
 
-          def child_ids(parent):
-              result = run([
-                  'gh', 'api', '--paginate',
-                  f'repos/{repo}/issues/{parent}/sub_issues?per_page=100',
-                  '--jq', '.[].id',
-              ])
-              return set(result.stdout.split()) if result.returncode == 0 else set()
+          mutation_fields = []
+          for index, (parent, child) in enumerate(links):
+              mutation_fields.append(
+                  f'''m{index}: addSubIssue(input: {{
+                    issueId: "{node_ids[parent]}"
+                    subIssueId: "{node_ids[child]}"
+                    replaceParent: true
+                  }}) {{
+                    issue {{ number }}
+                    subIssue {{ number }}
+                  }}'''
+              )
 
-          lines = []
-          for parent, child in remove_links:
-              child_id = issue_id(child)
-              if child_id not in child_ids(parent):
-                  lines.append(f'SKIP REMOVE {parent} {child}')
-                  continue
-              result = run([
-                  'gh', 'api', '--method', 'DELETE',
-                  f'repos/{repo}/issues/{parent}/sub_issue',
-                  '-F', f'sub_issue_id={child_id}',
-              ])
-              if result.returncode == 0:
-                  lines.append(f'REMOVE {parent} {child}')
-              else:
-                  message = (result.stderr or result.stdout).strip().replace('\n', ' ')
-                  lines.append(f'ERROR REMOVE {parent} {child} {message}')
-              time.sleep(0.2)
+          mutation = 'mutation {\n' + '\n'.join(mutation_fields) + '\n}'
+          result = subprocess.run(
+              ['gh', 'api', 'graphql', '-f', f'query={mutation}'],
+              check=False,
+              capture_output=True,
+              text=True,
+          )
 
-          for parent, child in add_links:
-              child_id = issue_id(child)
-              if child_id in child_ids(parent):
-                  lines.append(f'SKIP ADD {parent} {child}')
-                  continue
-              result = run([
-                  'gh', 'api', '--method', 'POST',
-                  f'repos/{repo}/issues/{parent}/sub_issues',
-                  '-F', f'sub_issue_id={child_id}',
-              ])
-              if result.returncode == 0:
-                  lines.append(f'ADD {parent} {child}')
-              else:
-                  message = (result.stderr or result.stdout).strip().replace('\n', ' ')
-                  lines.append(f'ERROR ADD {parent} {child} {message}')
-              time.sleep(0.2)
+          with open('sub-issue-graphql-result.json', 'w', encoding='utf-8') as output:
+              output.write(result.stdout or result.stderr)
 
-          with open('sub-issue-correction.log', 'w', encoding='utf-8') as output:
-              output.write('\n'.join(lines) + '\n')
-          print(f'Processed {len(lines)} sub-issue operations.')
+          if result.returncode != 0:
+              raise SystemExit(result.stderr or result.stdout)
+
+          response = json.loads(result.stdout)
+          if response.get('errors'):
+              raise SystemExit(json.dumps(response['errors'], indent=2))
+
+          print(f'Applied {len(links)} native sub-issue relationships.')
           PY
 
-      - name: Upload correction results
+      - name: Upload correction result
         uses: actions/upload-artifact@v4
         with:
-          name: sub-issue-correction-results
-          path: sub-issue-correction.log
+          name: sub-issue-graphql-result
+          path: sub-issue-graphql-result.json
           if-no-files-found: error
