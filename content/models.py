@@ -12,6 +12,9 @@ class Note(models.Model):
     module = models.ForeignKey(
         'academics.Module', on_delete=models.CASCADE, related_name='notes', null=True, blank=True
     )
+    collection = models.ForeignKey(
+        'content.ContentCollection', on_delete=models.SET_NULL, related_name='notes', null=True, blank=True
+    )
     title = models.CharField(max_length=255)
     body = models.TextField(null=True, blank=True)
     format = models.CharField(max_length=9, choices=Format.choices, default=Format.MARKDOWN)
@@ -111,6 +114,9 @@ class ContentCollection(models.Model):
 
 class Whiteboard(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='whiteboards')
+    collection = models.ForeignKey(
+        'content.ContentCollection', on_delete=models.SET_NULL, related_name='whiteboards', null=True, blank=True
+    )
     title = models.CharField(max_length=255)
     canvas_data = models.JSONField()  # Store the whiteboard data as JSON
     content_type = models.ForeignKey('contenttypes.ContentType', on_delete=models.CASCADE, null=True, blank=True)

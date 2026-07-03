@@ -14,7 +14,7 @@ A searchable summary of an object owned by another app. Never the source of trut
 | `title` | `TextField` | Searchable title |
 | `summary` | `TextField` | Searchable summary/excerpt |
 | `keywords` | `TextField` | Searchable keywords |
-| `owner` | `ForeignKey(AUTH_USER_MODEL, on_delete=CASCADE, null=True)` | The user who owns the source object |
+| `owner` | `ForeignKey(AUTH_USER_MODEL, on_delete=CASCADE, null=True, blank=True)` | The user who owns the source object; `related_name='search_index_entries'` |
 | `visibility` | `CharField(choices=VisibilityChoices)` | `PUBLIC`, `SHARED`, `GROUP` — no default; must be set explicitly |
 | `last_indexed` | `DateTimeField(auto_now=True)` | Updates on every save; used to detect stale entries |
 | `created_at` | `DateTimeField(auto_now_add=True)` | |
@@ -35,7 +35,7 @@ A record of a user's previous search. Immutable once created.
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `user` | `ForeignKey(AUTH_USER_MODEL, on_delete=CASCADE)` | Who performed the search |
+| `user` | `ForeignKey(AUTH_USER_MODEL, on_delete=CASCADE)` | Who performed the search; `related_name='search_history'` |
 | `query` | `TextField` | Required |
 | `filters` | `JSONField(blank=True, null=True)` | Applied filters at time of search |
 | `result_count` | `PositiveIntegerField` | Number of results returned |
@@ -50,7 +50,7 @@ A user-saved search shortcut.
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `user` | `ForeignKey(AUTH_USER_MODEL, on_delete=CASCADE)` | Owner of the saved search |
+| `user` | `ForeignKey(AUTH_USER_MODEL, on_delete=CASCADE)` | Owner of the saved search; `related_name='saved_searches'` |
 | `name` | `CharField(max_length=100)` | Required; unique per user |
 | `query` | `TextField` | Required |
 | `filters` | `JSONField(blank=True, null=True)` | Saved filter configuration |

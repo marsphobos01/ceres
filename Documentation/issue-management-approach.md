@@ -11,6 +11,7 @@ Each issue should have:
 
 1. **One type label**
    - `type:epic`
+   - `type:db-epic` (the DB-schema counterpart to a feature epic, e.g. `[Epic] notifications DB Schema`)
    - `type:feature`
    - `type:bug`
    - `type:db-schema`

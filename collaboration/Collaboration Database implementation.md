@@ -25,7 +25,7 @@ A shared study space.
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `created_by` | `ForeignKey(AUTH_USER_MODEL)` | |
+| `created_by` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='created_study_groups'` |
 | `title` | `CharField(255)` | Required |
 | `description` | `TextField` | Blank allowed |
 | `created_at` | `DateTimeField` | Auto-set on create |
@@ -36,8 +36,8 @@ A user's membership in a study group.
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `user` | `ForeignKey(AUTH_USER_MODEL)` | |
-| `study_group` | `ForeignKey(StudyGroup)` | |
+| `user` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='study_group_memberships'` |
+| `study_group` | `ForeignKey(StudyGroup)` | `related_name='memberships'` |
 | `role` | `CharField(10)` | Choices: `member`, `owner`; default `member` |
 | `status` | `CharField(10)` | Choices: `active`, `invited`, `left`; default `active` |
 | `created_at` | `DateTimeField` | Auto-set on create |
@@ -51,9 +51,9 @@ A collaborative project workspace.
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `created_by` | `ForeignKey(AUTH_USER_MODEL)` | |
-| `study_group` | `ForeignKey(StudyGroup)`, nullable | Optional |
-| `module` | `ForeignKey('academics.Module')`, nullable | Optional |
+| `created_by` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='created_group_projects'` |
+| `study_group` | `ForeignKey(StudyGroup)`, nullable | Optional; `related_name='projects'` |
+| `module` | `ForeignKey('academics.Module')`, nullable | Optional; `related_name='group_projects'` |
 | `title` | `CharField(255)` | Required |
 | `description` | `TextField` | Blank allowed |
 | `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
@@ -68,12 +68,12 @@ An invitation to join a study group or project.
 | --- | --- | --- |
 | `invited_by` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='sent_invitations'` |
 | `invited_user` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='received_invitations'` |
-| `study_group` | `ForeignKey(StudyGroup)`, nullable | Set for a study group invite |
-| `group_project` | `ForeignKey(GroupProject)`, nullable | Set for a project invite |
+| `study_group` | `ForeignKey(StudyGroup)`, nullable | Set for a study group invite; `related_name='invitations'` |
+| `group_project` | `ForeignKey(GroupProject)`, nullable | Set for a project invite; `related_name='invitations'` |
 | `status` | `CharField(10)` | Choices: `pending`, `accepted`, `declined`, `cancelled`; default `pending` |
 | `created_at` | `DateTimeField` | Auto-set on create |
 
-**Validation:** `clean()` requires exactly one of `study_group` or `group_project` to be set — not both, and not neither. This is intentionally not a database-level constraint: epic #150 and issue #197 both specify that the exactly-one-target rule is enforced through `clean()` rather than the database, so the absence of a `CheckConstraint` here is correct as implemented.
+**Validation:** `clean()` requires exactly one of `study_group` or `group_project` to be set — not both, and not neither. This is intentionally not a database-level constraint: epic #150 and issue #197 both specify that the exactly-one-target rule is enforced through `clean()` rather than the database, so the absence of a `CheckConstraint` here is correct as implemented. `save()` calls `full_clean()` (matching the `FriendRequestEvent` pattern in `accounts`), so the rule is enforced on every save, including direct `objects.create(...)` calls.
 
 ## ProjectMembership
 
@@ -81,8 +81,8 @@ A user's role in a group project.
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `user` | `ForeignKey(AUTH_USER_MODEL)` | |
-| `group_project` | `ForeignKey(GroupProject)` | |
+| `user` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='project_memberships'` |
+| `group_project` | `ForeignKey(GroupProject)` | `related_name='memberships'` |
 | `role` | `CharField(10)` | Choices: `owner`, `editor`, `viewer`; default `viewer` |
 | `created_at` | `DateTimeField` | Auto-set on create |
 
@@ -95,7 +95,7 @@ A discussion attached to an academic or collaborative context.
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `created_by` | `ForeignKey(AUTH_USER_MODEL)` | |
+| `created_by` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='created_discussion_threads'` |
 | `title` | `CharField(255)` | Required |
 | `content_type` | `ForeignKey('contenttypes.ContentType')` | Identifies the linked object's model |
 | `object_id` | `PositiveIntegerField` | Identifies the linked object's row |
@@ -110,10 +110,10 @@ A message inside a discussion thread.
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `thread` | `ForeignKey(DiscussionThread)` | |
-| `author` | `ForeignKey(AUTH_USER_MODEL)` | |
+| `thread` | `ForeignKey(DiscussionThread)` | `related_name='messages'` |
+| `author` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='discussion_messages'` |
 | `body` | `TextField` | Required |
-| `parent` | `ForeignKey('self')`, nullable | Optional reply-to reference |
+| `parent` | `ForeignKey('self')`, nullable | Optional reply-to reference; `related_name='replies'` |
 | `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
 
 ## Conversation
@@ -133,8 +133,8 @@ A user's membership in a conversation.
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `user` | `ForeignKey(AUTH_USER_MODEL)` | |
-| `conversation` | `ForeignKey(Conversation)` | |
+| `user` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='conversation_participations'` |
+| `conversation` | `ForeignKey(Conversation)` | `related_name='participants'` |
 | `muted` | `BooleanField` | Default `False` |
 | `created_at` | `DateTimeField` | Auto-set on create |
 
@@ -147,11 +147,11 @@ A message in a conversation.
 
 | Field | Type | Notes |
 | --- | --- | --- |
-| `conversation` | `ForeignKey(Conversation)` | |
-| `author` | `ForeignKey(AUTH_USER_MODEL)` | |
+| `conversation` | `ForeignKey(Conversation)` | `related_name='messages'` |
+| `author` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='chat_messages'` |
 | `body` | `TextField` | Required |
-| `parent` | `ForeignKey('self')`, nullable | Optional reply-to reference |
-| `attachment` | `ForeignKey('files.StoredFile')`, nullable, `on_delete=SET_NULL` | A message either has one file or it doesn't |
+| `parent` | `ForeignKey('self')`, nullable | Optional reply-to reference; `related_name='replies'` |
+| `attachment` | `ForeignKey('files.StoredFile')`, nullable, `on_delete=SET_NULL` | A message either has one file or it doesn't; `related_name='chat_messages'` |
 | `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
 
 **Usage:** author must be a participant in `conversation`; this is not enforced at the model level.

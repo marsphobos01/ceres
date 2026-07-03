@@ -9,7 +9,7 @@ from academics.models import Module
 class CalendarEvent(models.Model):
     class RecurrenceTypeChoices(models.TextChoices):
         NONE = "N", "None"
-        DAILY = "D", "Dayly"
+        DAILY = "D", "Daily"
         WEEKLY = "W", "Weekly"
         BIWEEKLY = "BW", "Biweekly"
         MONTHLY = "M", "Monthly"
@@ -20,9 +20,9 @@ class CalendarEvent(models.Model):
     start = models.DateTimeField()
     end = models.DateTimeField()
     allday = models.BooleanField()
-    colour = models.CharField(max_length=6,  null=True)
+    colour = models.CharField(max_length=6, null=True, blank=True)
     location = models.CharField(max_length=100)
-    recurrence_type = models.CharField(max_length=11, choices=RecurrenceTypeChoices.choices, null=True)
+    recurrence_type = models.CharField(max_length=11, choices=RecurrenceTypeChoices.choices, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -45,8 +45,8 @@ class Task(models.Model):
     class StatusChoices(models.TextChoices):
         NOT_STARTED = "NS", "Not Started"
         IN_PROGRESS = "IP", "In Progress"
-        COMPLETED = "CA", "Completed"
-        CANCELED = "CD", "Canceled"
+        COMPLETED = "CP", "Completed"
+        CANCELED = "CN", "Canceled"
 
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='tasks')
     title = models.CharField(max_length=100)
@@ -54,15 +54,15 @@ class Task(models.Model):
     priority = models.CharField(max_length=100, choices=PriorityChoices.choices)
     status = models.CharField(max_length=100, choices=StatusChoices.choices)
     due_date = models.DateTimeField()
-    parent_task = models.ForeignKey("self", on_delete=models.CASCADE, related_name='children', null=True)
+    parent_task = models.ForeignKey("self", on_delete=models.CASCADE, related_name='children', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
 
 class TaskAssignment(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='task_assignment')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='task_assigned_to_user')
-    assigned_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='task_assigned_by_user', null=True)
-    assigned_date = models.DateTimeField(null=True)
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='assignments')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='task_assignments')
+    assigned_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='given_task_assignments', null=True, blank=True)
+    assigned_date = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [
@@ -73,7 +73,7 @@ class TaskAssignment(models.Model):
         ]
 
 class TaskLink(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='task_link')
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='links')
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     linked_object = GenericForeignKey('content_type', 'object_id')
@@ -91,11 +91,11 @@ class TaskLink(models.Model):
 
 class StudySession(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sessions')
-    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='sessions', null=True)
-    title = models.CharField(max_length=100, null=True)
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='sessions', null=True, blank=True)
+    title = models.CharField(max_length=100, null=True, blank=True)
     start = models.DateTimeField()
-    end = models.DateTimeField(null=True)
-    location = models.CharField(max_length=100, null=True)
+    end = models.DateTimeField(null=True, blank=True)
+    location = models.CharField(max_length=100, null=True, blank=True)
     notes = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -108,25 +108,32 @@ class StudySession(models.Model):
             )]
 
 class StudySessionsParticipant(models.Model):
-    class ResponceChoices(models.TextChoices):
+    class ResponseChoices(models.TextChoices):
         INVITED = "I", "Invited"
         ACCEPTED = "A", "Accepted"
         DECLINED = "D", "Declined"
 
 
-    session = models.ForeignKey(StudySession, on_delete=models.CASCADE, related_name='session_key')
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='participant_user_key')
-    response = models.CharField(max_length=100, choices=ResponceChoices.choices)
+    session = models.ForeignKey(StudySession, on_delete=models.CASCADE, related_name='participants')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='study_session_participations')
+    response = models.CharField(max_length=100, choices=ResponseChoices.choices)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["session", "user"],
+                name="unique_study_session_participant"
+            )
+        ]
 
 class Deadline(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='deadlines')
     title = models.CharField(max_length=100)
     due = models.DateTimeField()
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True)
-    object_id = models.PositiveIntegerField(null=True)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE, null=True, blank=True)
+    object_id = models.PositiveIntegerField(null=True, blank=True)
     links_to = GenericForeignKey('content_type', 'object_id')
-    created_at = models.DateTimeField(auto_now_add=True)
     is_dismissed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -1,6 +1,8 @@
 # Epic Issues — ready to paste into GitHub
 
-Source: Documentation/feature_list.md
+> **Historical draft.** These epics have been created on GitHub; this file is kept for reference only. The feature list it was drawn from now lives in the [Ceres Vision Document](Ceres%20Vision%20Document.md) (`feature_list.md` was merged into it).
+
+Source: the Features section of `Documentation/Ceres Vision Document.md`
 One issue per module. Paste title into the GitHub "New issue" title field, body into the description. Label each `epic` once created, then add the `feature` label to sub-issues as they're split off.
 
 ---

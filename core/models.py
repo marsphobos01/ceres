@@ -1,10 +1,9 @@
-from django.contrib.auth.models import User
 from django.db import models
 from django.conf import settings
 
 # Create your models here.
 class DashboardLayout(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True, related_name='dashboard_layout')
     layout_name = models.CharField(max_length=120)
     widget_order = models.JSONField(default=dict)
     is_default = models.BooleanField(default=False)
@@ -18,7 +17,7 @@ class DashboardWidget(models.Model):
         MEDIUM = "M", 'medium'
         LARGE = "L", 'large'
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='dashboard_widgets')
     widget_key = models.CharField(max_length=120,)
     enabled = models.BooleanField(default=True)
     display_size = models.CharField(max_length=120, choices=DisplaySizeChoices.choices)
@@ -36,7 +35,7 @@ class DashboardWidget(models.Model):
 
 
 class QuickActionPreference(models.Model):
-   user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+   user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='quick_action_preferences')
    action_key = models.CharField(max_length=120)
    position = models.PositiveIntegerField()
    enabled = models.BooleanField(default=True)
@@ -62,7 +61,7 @@ class UserInterfacePreference(models.Model):
         COMFORTABLE = 'CFE', 'comfortable'
         SPACE = 'SPC', 'spacious'
 
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='interface_preference')
     theme = models.CharField(max_length=6, choices=ThemeChoices.choices)
     density = models.CharField(max_length=11, choices=DensityChoices.choices)
     sidebar_collapsed = models.BooleanField(default=True)

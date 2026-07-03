@@ -61,7 +61,7 @@ A lecture or teaching session attached to a module.
 | `room` | `CharField(100)`, nullable | Optional |
 | `lecturer_name` | `CharField(255)`, nullable | Optional |
 | `lecturer_email` | `EmailField`, nullable | Optional |
-| `notes` | `TextField`, nullable | Optional |
+| `description` | `TextField`, nullable | Optional free-text details about the lecture (renamed from `notes` in migration `0007` — real lecture notes belong to the `content` app's Note system, so the old name invited confusion with the "one notes system" rule) |
 | `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
 
 ## TimetableEntry

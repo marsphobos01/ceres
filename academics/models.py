@@ -47,7 +47,7 @@ class Lecture(models.Model):
     room = models.CharField(max_length=100, null=True, blank=True)
     lecturer_name = models.CharField(max_length=255, null=True, blank=True)
     lecturer_email = models.EmailField(null=True, blank=True)
-    notes = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

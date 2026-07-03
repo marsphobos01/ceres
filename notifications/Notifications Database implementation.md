@@ -11,8 +11,8 @@ A feed item sent from one user (the actor) to another (the recipient).
 | Field | Type | Notes |
 | --- | --- | --- |
 | `id` | `BigAutoField` | Default primary key (no explicit override) |
-| `recipient` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='noticication_recipient_fk'` — access via `user.noticication_recipient_fk`. Name has a typo (`noticication` for "notification") and reads like a field, not a reverse manager; consider renaming to something like `received_notifications` |
-| `actor` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='notification_actor_fk'` — access via `user.notification_actor_fk`. Same naming-convention note as `recipient` (minus the typo) |
+| `recipient` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='received_notifications'` — access via `user.received_notifications` |
+| `actor` | `ForeignKey(AUTH_USER_MODEL)`, nullable | `related_name='sent_notifications'` — access via `user.sent_notifications`. Nullable so system-generated notifications (assignment/lecture/calendar reminders) don't need a human actor |
 | `category` | `CharField(3)`, choices `AR`/`LR`/`CR`/`GU`/`FR`/`NM`/`SSI` | Choices defined in module-level `CATEGORY_CHOICES` (Assignment Reminder, Lecture Reminder, Calendar Reminder, Group Update, Friend Request, New Message, Study Session Invite) |
 | `title` | `CharField(120)` | Required |
 | `body` | `TextField` | Required |
@@ -34,7 +34,7 @@ A scheduled, one-shot reminder for a deadline, lecture, event, or task.
 | Field | Type | Notes |
 | --- | --- | --- |
 | `id` | `BigAutoField` | Default primary key |
-| `recipient` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='reminder_recipient_fk'` — access via `user.reminder_recipient_fk` |
+| `recipient` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='reminders'` — access via `user.reminders` |
 | `source_app` | `CharField(120)` | Which app the source object belongs to |
 | `source_object_type` | `CharField(120)` | Model name of the source object |
 | `source_object_id` | `PositiveIntegerField` | Primary key of the source object |
@@ -65,7 +65,7 @@ A user's notification settings per category and channel.
 | `updated_at` | `DateTimeField` | Auto-set on every save |
 
 **Constraints:**
-- `unique_notification_perferences` — unique on `(user, category, channel)`; one preference row per category/channel combination per user. Constraint name has a typo ("perferences" for "preferences") — cosmetic, but worth fixing before it's referenced elsewhere (e.g. in a migration dependency or error-handling code).
+- `unique_notification_preferences` — unique on `(user, category, channel)`; one preference row per category/channel combination per user. (The original constraint name had a "perferences" typo; it was renamed in migration `0003`.)
 
 **Usage:** a user's full preference set is `user.notification_preferences.all()` — one row per category/channel combination they've configured, rather than a single row with multiple channels selected. A user wanting Assignment Reminders by both email and Discord has two rows: `(category="AR", channel="E")` and `(category="AR", channel="D")`. `quiet_hours_start`/`quiet_hours_end` apply per row as currently modeled, so they're duplicated across a user's rows rather than set once globally.
 
@@ -76,7 +76,7 @@ A delivery attempt for a notification, on a specific channel.
 | Field | Type | Notes |
 | --- | --- | --- |
 | `id` | `BigAutoField` | Default primary key |
-| `notification` | `ForeignKey(Notification)` | `related_name='delivery'` — access via `notification.delivery.all()` |
+| `notification` | `ForeignKey(Notification)` | `related_name='deliveries'` — access via `notification.deliveries.all()` |
 | `channel` | `CharField(100)`, choices from `CHANNEL_CHOICES` | Shared with `NotificationPreferences.channel` |
 | `status` | `CharField(100)`, choices `P` (Pending) / `S` (Sent) / `F` (Failed) / `SK` (Skipped) | Required. Field is named `status`, not `delivery_status` |
 | `attempted_at` | `DateTimeField` | Auto-set on create |
@@ -87,7 +87,7 @@ A delivery attempt for a notification, on a specific channel.
 **Constraints:**
 - `unique_notification_delivery` — unique on `(notification, channel)`; the same notification can't get duplicate delivery rows on the same channel, while still allowing separate rows per channel.
 
-**Usage:** one `Notification` can have multiple `NotificationDelivery` rows — one per channel it was sent on. `related_name='delivery'` reads as singular but returns a manager for potentially many rows (`notification.delivery.all()`); `deliveries` would read more naturally.
+**Usage:** one `Notification` can have multiple `NotificationDelivery` rows — one per channel it was sent on; access them via `notification.deliveries.all()`.
 
 ## MutedContent
 
@@ -114,8 +114,8 @@ These affect more than one model and are worth resolving together rather than pe
 
 - **Generic references are hand-rolled.** `Notification`, `Reminder`, and `MutedContent` all use three loosely-connected columns (`source_app`/`source_object_type`/`source_object_id`) rather than Django's `contenttypes` framework (`ContentType` + `GenericForeignKey`), which exists for exactly this pattern. Now that the pattern is used consistently across three models, it's worth evaluating a move to `contenttypes` before a fourth model repeats it.
 - **Recurrence on `Reminder` was removed rather than implemented.** The earlier `next_fire_at`/`frequency` fields are gone; `Reminder` is one-shot only for now.
-- **Related names on `Notification` (`noticication_recipient_fk`, `notification_actor_fk`) read like field names, not reverse accessors**, and `noticication_recipient_fk` has a typo — worth revisiting for clarity (e.g. `received_notifications` / `sent_notifications`).
-- **`NotificationPreferences`'s constraint name (`unique_notification_perferences`) has a typo** — cosmetic, but worth a clean rename while nothing else depends on the literal string.
+
+Resolved in migration `0003`: the field-like/typo'd related names (`noticication_recipient_fk` → `received_notifications`, `notification_actor_fk` → `sent_notifications`, `reminder_recipient_fk` → `reminders`, `delivery` → `deliveries`), the `unique_notification_perferences` constraint-name typo, and `Notification.actor` is now nullable for system-generated notifications.
 
 All four models that need database-level uniqueness (`Reminder`, `NotificationPreferences`, `NotificationDelivery`, `MutedContent`) now have their constraints implemented.
 
@@ -123,12 +123,12 @@ All four models that need database-level uniqueness (`Reminder`, `NotificationPr
 
 ```
 User (Django auth)
- ├─ noticication_recipient_fk  → Notification (1:M, as recipient)
- ├─ notification_actor_fk      → Notification (1:M, as actor)
- ├─ reminder_recipient_fk      → Reminder (1:M, via recipient)
+ ├─ received_notifications     → Notification (1:M, as recipient)
+ ├─ sent_notifications         → Notification (1:M, as actor; nullable for system notifications)
+ ├─ reminders                  → Reminder (1:M, via recipient)
  ├─ notification_preferences   → NotificationPreferences (1:M, one row per category+channel)
  └─ muted_content               → MutedContent (1:M, carries its own source reference)
 
 Notification
- └─ delivery → NotificationDelivery (1:M, one row per channel attempted)
+ └─ deliveries → NotificationDelivery (1:M, one row per channel attempted)
 ```

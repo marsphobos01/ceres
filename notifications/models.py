@@ -14,8 +14,8 @@ CATEGORY_CHOICES = {"AR": "Assignment Reminder",
                         }
 
 class Notification(models.Model):
-    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="noticication_recipient_fk")
-    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notification_actor_fk")
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="received_notifications")
+    actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sent_notifications", null=True, blank=True)
     category = models.CharField(choices=CATEGORY_CHOICES, max_length=3)
     title = models.CharField(max_length=120)
     body = models.TextField()
@@ -32,7 +32,7 @@ class Reminder(models.Model):
     STATUS_CHOICES = {"P": "Pending",
                       "S": "Sent",
                       "C": "Canceled",}
-    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reminder_recipient_fk")
+    recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reminders")
     source_app = models.CharField(max_length=120)
     source_object_type = models.CharField(max_length=120)
     source_object_id = models.PositiveIntegerField()
@@ -70,7 +70,7 @@ class NotificationPreferences(models.Model):
             models.UniqueConstraint(
                 fields=["user", "category", "channel"],
                 #One preference per user per category per channel
-                name="unique_notification_perferences"
+                name="unique_notification_preferences"
             )
         ]
 
@@ -81,7 +81,7 @@ class NotificationDelivery(models.Model):
                                "F":"Failed",
                                "SK": "Skipped"
                                }
-    notification = models.ForeignKey(Notification, on_delete=models.CASCADE, related_name='delivery')
+    notification = models.ForeignKey(Notification, on_delete=models.CASCADE, related_name='deliveries')
     channel = models.CharField(max_length=100, choices=CHANNEL_CHOICES)
     status = models.CharField(max_length=100, choices=STATUS_CHOICES)
     attempted_at = models.DateTimeField(auto_now_add=True)
