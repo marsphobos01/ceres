@@ -4,19 +4,20 @@ from django.conf import settings
 
 
 # Create your models here.
-CATEGORY_CHOICES = {"AR": "Assignment Reminder",
-                    "LR": "Lecture Reminder",
-                    "CR": "Calendar Reminder",
-                    "GU": "Group Update",
-                    "FR": "Friend Request",
-                    "NM": "New Message",
-                    "SSI": "Study Session Invite"
-                        }
+class CategoryChoices(models.TextChoices):
+    ASSIGNMENT_REMIDER = "AR", "Assignment Reminder",
+    LECTURE_REMINDER= "LR", "Lecture Reminder",
+    CALENDAR_REMINDER= "CR", "Calendar Reminder",
+    GROUP_UPDATE = "GU", "Group Update",
+    FRIEDN_REQUEST = "FR", "Friend Request",
+    NEW_MESSAGE = "NM", "New Message",
+    STUDY_SESSION_INVITE = "SSI", "Study Session Invite"
+
 
 class Notification(models.Model):
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="received_notifications")
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sent_notifications", null=True, blank=True)
-    category = models.CharField(choices=CATEGORY_CHOICES, max_length=3)
+    category = models.CharField(choices=CategoryChoices.choices, max_length=3)
     title = models.CharField(max_length=120)
     body = models.TextField()
     source_app = models.CharField(max_length=120)
@@ -29,15 +30,16 @@ class Notification(models.Model):
 
 
 class Reminder(models.Model):
-    STATUS_CHOICES = {"P": "Pending",
-                      "S": "Sent",
-                      "C": "Canceled",}
+    class StatusChoices(models.TextChoices):
+        PENDING = "P", "Pending"
+        SENT = "S", "Sent"
+        CANCELED = "C", "Canceled"
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reminders")
-    source_app = models.CharField(max_length=120)
+    source_app_label = models.CharField(max_length=120)
     source_object_type = models.CharField(max_length=120)
     source_object_id = models.PositiveIntegerField()
     remind_at = models.DateTimeField()
-    status = models.CharField(max_length=120, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=120, choices=StatusChoices.choices)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -47,18 +49,19 @@ class Reminder(models.Model):
         ]
 
 
-CHANNEL_CHOICES = {"A": "All",
-                    "T":"Text",
-                   "E": "Email",
-                   "D": "Discord",
-                   "I": "In App",
-                   }
+class ChannelChoices(models.TextChoices):
+    ALL = "A", "All",
+    TEXT = "T", "Text",
+    EMAIL = "E",  "Email",
+    DISCORD = "D",  "Discord",
+    IN_APP = "I",  "In App",
+
 
 
 class NotificationPreferences(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notification_preferences')
-    category = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
-    channel = models.CharField(max_length=100, choices=CHANNEL_CHOICES)
+    category = models.CharField(max_length=100, choices=CategoryChoices.choices)
+    channel = models.CharField(max_length=100, choices=ChannelChoices.choices)
     enabled_flag = models.BooleanField(default=True)
     quiet_hours_start=models.TimeField()
     quiet_hours_end=models.TimeField()
@@ -76,14 +79,14 @@ class NotificationPreferences(models.Model):
 
 
 class NotificationDelivery(models.Model):
-    STATUS_CHOICES = {"P": "Pending",
-                               "S": "Sent",
-                               "F":"Failed",
-                               "SK": "Skipped"
-                               }
+    class StatusChoices(models.TextChoices):
+        PENDING = "P", "Pending"
+        SENT = "S", "Sent"
+        CANCELED = "C", "Canceled"
+        SKIPPED = "SK", "Skipped"
     notification = models.ForeignKey(Notification, on_delete=models.CASCADE, related_name='deliveries')
-    channel = models.CharField(max_length=100, choices=CHANNEL_CHOICES)
-    status = models.CharField(max_length=100, choices=STATUS_CHOICES)
+    channel = models.CharField(max_length=100, choices=ChannelChoices.choices)
+    status = models.CharField(max_length=100, choices=StatusChoices.choices)
     attempted_at = models.DateTimeField(auto_now_add=True)
     provider_response = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
