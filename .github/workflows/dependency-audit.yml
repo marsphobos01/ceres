@@ -1,4 +1,4 @@
-name: Temporary dependency verification
+name: Temporary issue relationship verification
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Export final dependency graph
+      - name: Export dependency and sub-issue graphs
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -24,9 +24,9 @@ jobs:
 
           repo = os.environ['REPO']
 
-          def numbers(path: str) -> str:
+          def values(path: str, jq: str) -> str:
               result = subprocess.run(
-                  ['gh', 'api', '--paginate', path, '--jq', '.[].number'],
+                  ['gh', 'api', '--paginate', path, '--jq', jq],
                   check=False,
                   capture_output=True,
                   text=True,
@@ -36,26 +36,45 @@ jobs:
               return ','.join(line for line in result.stdout.splitlines() if line)
 
           def audit(issue: int):
-              blocked_by = numbers(f'repos/{repo}/issues/{issue}/dependencies/blocked_by?per_page=100')
-              blocks = numbers(f'repos/{repo}/issues/{issue}/dependencies/blocking?per_page=100')
-              if blocked_by or blocks:
-                  return issue, blocked_by, blocks
-              return None
+              blocked_by = values(
+                  f'repos/{repo}/issues/{issue}/dependencies/blocked_by?per_page=100',
+                  '.[].number',
+              )
+              blocks = values(
+                  f'repos/{repo}/issues/{issue}/dependencies/blocking?per_page=100',
+                  '.[].number',
+              )
+              sub_issues = values(
+                  f'repos/{repo}/issues/{issue}/sub_issues?per_page=100',
+                  '.[].number',
+              )
+              parent = values(
+                  f'repos/{repo}/issues/{issue}/parent',
+                  '.number',
+              )
+              return issue, blocked_by, blocks, parent, sub_issues
 
           with concurrent.futures.ThreadPoolExecutor(max_workers=12) as executor:
-              rows = [row for row in executor.map(audit, range(1, 257)) if row]
+              rows = list(executor.map(audit, range(1, 257)))
 
           with open('dependency-graph-final.tsv', 'w', encoding='utf-8') as output:
               output.write('issue\tblocked_by\tblocks\n')
-              for issue, blocked_by, blocks in rows:
-                  output.write(f'{issue}\t{blocked_by}\t{blocks}\n')
+              for issue, blocked_by, blocks, _, _ in rows:
+                  if blocked_by or blocks:
+                      output.write(f'{issue}\t{blocked_by}\t{blocks}\n')
 
-          print(f'Exported {len(rows)} issues with native dependencies.')
+          with open('sub-issue-graph.tsv', 'w', encoding='utf-8') as output:
+              output.write('issue\tparent\tsub_issues\n')
+              for issue, _, _, parent, sub_issues in rows:
+                  if parent or sub_issues:
+                      output.write(f'{issue}\t{parent}\t{sub_issues}\n')
           PY
 
-      - name: Upload final dependency graph
+      - name: Upload relationship graphs
         uses: actions/upload-artifact@v4
         with:
-          name: dependency-graph-final
-          path: dependency-graph-final.tsv
+          name: issue-relationship-graphs
+          path: |
+            dependency-graph-final.tsv
+            sub-issue-graph.tsv
           if-no-files-found: error
