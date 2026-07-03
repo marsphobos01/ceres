@@ -57,3 +57,21 @@ class TaggedContent(models.Model):
             models.UniqueConstraint(fields=["tag", "content_type", "object_id"],
                                     name="tagged_content_unique"),
         ]
+
+class Flashcard(models.Model):
+    class Confidence(models.TextChoices):
+        RED = 'red', 'Red'
+        AMBER = 'amber', 'Amber'
+        GREEN = 'green', 'Green'
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='flashcards')
+    module = models.ForeignKey(
+        'academics.Module', on_delete=models.CASCADE, related_name='flashcards', null=True, blank=True
+    )
+    revision_topic = models.ForeignKey(
+        'academics.RevisionTopic', on_delete=models.CASCADE, related_name='flashcards', null=True, blank=True
+    )
+    front = models.TextField()
+    back = models.TextField()
+    confidence = models.CharField(max_length=10, choices=Confidence.choices, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
