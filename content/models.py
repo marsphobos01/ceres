@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
 # Create your models here.
 
 class Note(models.Model):
@@ -18,3 +19,17 @@ class Note(models.Model):
     colour = models.CharField(max_length=6, null=True, blank=True)  # Hex colour code
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class NoteLink(models.Model):
+    note = models.ForeignKey(Note, on_delete=models.CASCADE, related_name='note_links')
+    content_type = models.ForeignKey('contenttypes.ContentType', on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["note", "content_type", "object_id"],
+                                    name="note_link_unique"),
+        ]
