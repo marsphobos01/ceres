@@ -2,6 +2,7 @@ name: Temporary dependency correction
 
 on:
   push:
+  pull_request:
 
 permissions:
   contents: read
@@ -66,8 +67,7 @@ jobs:
               return subprocess.run(args, check=check, capture_output=True, text=True)
 
           def issue_id(number):
-              result = run(['gh', 'api', f'repos/{repo}/issues/{number}', '--jq', '.id'])
-              return result.stdout.strip()
+              return run(['gh', 'api', f'repos/{repo}/issues/{number}', '--jq', '.id']).stdout.strip()
 
           id_cache = {}
           def cached_id(number):
@@ -81,9 +81,7 @@ jobs:
                   f'repos/{repo}/issues/{issue}/dependencies/blocked_by?per_page=100',
                   '--jq', '.[].id',
               ], check=False)
-              if result.returncode != 0:
-                  return set()
-              return set(result.stdout.split())
+              return set(result.stdout.split()) if result.returncode == 0 else set()
 
           log = []
           for issue, blocker in add_edges:
@@ -96,10 +94,10 @@ jobs:
                   f'repos/{repo}/issues/{issue}/dependencies/blocked_by',
                   '-F', f'issue_id={blocker_id}',
               ], check=False)
-              if result.returncode == 0:
-                  log.append(f'ADD #{blocker} -> #{issue}')
-              else:
-                  log.append(f'ERROR add #{blocker} -> #{issue}: {result.stderr.strip()}')
+              log.append(
+                  f'ADD #{blocker} -> #{issue}' if result.returncode == 0
+                  else f'ERROR add #{blocker} -> #{issue}: {result.stderr.strip()}'
+              )
               time.sleep(0.2)
 
           for issue, blocker in remove_edges:
@@ -111,10 +109,10 @@ jobs:
                   'gh', 'api', '--method', 'DELETE',
                   f'repos/{repo}/issues/{issue}/dependencies/blocked_by/{blocker_id}',
               ], check=False)
-              if result.returncode == 0:
-                  log.append(f'REMOVE #{blocker} -> #{issue}')
-              else:
-                  log.append(f'ERROR remove #{blocker} -> #{issue}: {result.stderr.strip()}')
+              log.append(
+                  f'REMOVE #{blocker} -> #{issue}' if result.returncode == 0
+                  else f'ERROR remove #{blocker} -> #{issue}: {result.stderr.strip()}'
+              )
               time.sleep(0.2)
 
           print('\n'.join(log))
