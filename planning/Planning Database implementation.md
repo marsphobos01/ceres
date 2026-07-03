@@ -153,26 +153,9 @@ A due date, optionally linked to any object via `contenttypes`.
 
 **Usage:** `content_type`/`object_id` are both optional, so a `Deadline` can exist without pointing at anything. Confirm that's intentional — a deadline that isn't a deadline *for* anything is a bit ambiguous — before building logic on top of it.
 
-## TimetableImport
+## TimetableImport (moved to `academics`)
 
-A record of a bulk timetable import job (e.g. an uploaded timetable file), tracking its processing status and row-level outcomes. This model isn't mentioned in `Planning Database plan.md` at all — it doesn't correspond to any of the plan's example tables.
-
-| Field | Type | Notes |
-| --- | --- | --- |
-| `id` | `BigAutoField` | Default primary key |
-| `owner` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='timetable_imports'` |
-| `filename` | `CharField(100)` | Required |
-| `status` | `CharField(21)`, choices | Nested `Status`: `pending`, `processing`, `completed`, `completed_with_errors`, `failed`; default `pending` |
-| `total_rows` | `PositiveIntegerField` | Default `0` |
-| `imported_rows` | `PositiveIntegerField` | Default `0` |
-| `skipped_rows` | `PositiveIntegerField` | Default `0` |
-| `error_rows` | `PositiveIntegerField` | Default `0` |
-| `error_detail` | `JSONField` | Blank allowed; default `list` — expected to hold structured per-row error info |
-| `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
-
-**Constraints:** none implemented — nothing enforces `imported_rows + skipped_rows + error_rows` against `total_rows`.
-
-**Usage:** created when a user uploads a timetable file for bulk import (presumably feeding `academics.TimetableEntry`/`Lecture` rows, though nothing in this app's code links the two directly). `status` tracks the job's lifecycle; `error_detail` should hold enough structure to show the user what went wrong per row. Since this model doesn't appear in the plan, treat its scope and any related schema issue as unconfirmed rather than assuming this documents an agreed design.
+`TimetableImport` briefly lived in this app (added by issue #219, migration `0004_timetableimport`) but was moved to `academics` in `0006_delete_timetableimport` / `academics.0008_timetableimport`: an import job exists to create `academics.TimetableEntry` rows, and keeping it in `planning` would force a future `academics -> planning` FK for import provenance, creating a circular dependency between the two apps. See `academics/Academics Database implementation.md` for its schema.
 
 ## Known open items across this app
 
@@ -180,7 +163,6 @@ A record of a bulk timetable import job (e.g. an uploaded timetable file), track
 - Several `choices` fields (`Task.priority`, `Task.status`, `StudySessionsParticipant.response`) use `max_length=100` for one-to-two-character codes.
 - Two generic-relation patterns (`TaskLink.linked_object`, `Deadline.links_to`) use different accessor names for the same `contenttypes` pattern.
 - Required `description` (on `Task` and `CalendarEvent`) and required `notes` (on `StudySession`) force text on every row; other apps make long-text fields optional.
-- `TimetableImport` has no constraint tying `imported_rows`/`skipped_rows`/`error_rows` to `total_rows`, and nothing in `planning` links an import job to the `academics` rows it presumably creates.
 
 Resolved in the 0005 migration pass: the `"Dayly"` label typo, the `ResponceChoices` class-name typo, the backwards `CA`/`CD` status codes, the duplicated `created_at` on `Deadline`, the missing `blank=True` on nullable fields (including `parent_task`, so admin forms no longer demand a parent for every task), the field-like `related_name`s, the non-updating `Task.updated_at`, and the missing uniqueness constraint on `StudySessionsParticipant`.
 
@@ -205,7 +187,4 @@ StudySession
 
 TaskLink / Deadline
   - linked_object / links_to -> any model, via contenttypes (ContentType + object_id)
-
-TimetableImport
-  - owner -> User (M:1); not otherwise linked to any other model in this app
 ```

@@ -137,21 +137,3 @@ class Deadline(models.Model):
     is_dismissed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-class TimetableImport(models.Model):
-    class Status(models.TextChoices):
-        PENDING = "pending", "Pending"
-        PROCESSING = "processing", "Processing"
-        COMPLETED = "completed", "Completed"
-        COMPLETED_WITH_ERRORS = "completed_with_errors", "Completed with Errors"
-        FAILED = "failed", "Failed"
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='timetable_imports')
-    filename = models.CharField(max_length=100)
-    status = models.CharField(max_length=21, choices=Status.choices,default=Status.PENDING)
-    total_rows = models.PositiveIntegerField(default=0)
-    imported_rows = models.PositiveIntegerField(default=0)
-    skipped_rows = models.PositiveIntegerField(default=0)
-    error_rows = models.PositiveIntegerField(default=0)
-    error_detail = models.JSONField(blank=True,default=list)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
