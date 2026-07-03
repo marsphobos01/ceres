@@ -108,3 +108,13 @@ class ContentCollection(models.Model):
     parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='sub_collections', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class Whiteboard(models.Model):
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='whiteboards')
+    title = models.CharField(max_length=255)
+    canvas_data = models.JSONField()  # Store the whiteboard data as JSON
+    content_type = models.ForeignKey('contenttypes.ContentType', on_delete=models.CASCADE, null=True, blank=True)
+    object_id = models.PositiveIntegerField(null=True, blank=True)
+    content_object = GenericForeignKey('content_type', 'object_id')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
