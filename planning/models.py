@@ -3,7 +3,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.db import models
 from django.db.models import Q, F
 from django.conf import settings
-#from academics.models import Module
+from academics.models import Module
 
 # Create your models here.
 class CalendarEvent(models.Model):
@@ -29,7 +29,7 @@ class CalendarEvent(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                condition=models.Q(end__gt=F("start")),
+                condition=Q(end__gt=F("start")),
                 name='calendarevent_end_gt_start'
             )
         ]
@@ -91,7 +91,7 @@ class TaskLink(models.Model):
 
 class StudySession(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='sessions')
-    #module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='sessions', null=True)
+    module = models.ForeignKey(Module, on_delete=models.CASCADE, related_name='sessions', null=True)
     title = models.CharField(max_length=100, null=True)
     start = models.DateTimeField()
     end = models.DateTimeField(null=True)
@@ -103,7 +103,7 @@ class StudySession(models.Model):
     class Meta:
         constraints = [
             models.CheckConstraint(
-                condition=models.Q(end__gt=F("start")),
+                condition=Q(end__gt=F("start")),
                 name='studysession_end_gt_start'
             )]
 
@@ -130,5 +130,3 @@ class Deadline(models.Model):
     is_dismissed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-#TODO: after academics created uncomment import and module field in StudySession Model
