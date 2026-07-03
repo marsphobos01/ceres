@@ -57,6 +57,31 @@ class Task(models.Model):
     parent_task = models.ForeignKey("self", on_delete=models.CASCADE, related_name='children', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
+    recurrence = models.ForeignKey('TaskRecurrence', on_delete=models.PROTECT,related_name='occurrences', null=True, blank=True)
+    scheduled_for = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    (
+                        Q(recurrence__isnull=True)
+                        & Q(scheduled_for__isnull=True)
+                    )
+                    |
+                    (
+                        Q(recurrence__isnull=False)
+                        & Q(scheduled_for__isnull=False)
+                    )
+                ),
+                name="task_recurrence_fields_together"
+            ),
+            models.UniqueConstraint(
+                fields=["recurrence", "scheduled_for"],
+                condition=Q(recurrence__isnull=False),
+                name="task_unique_recurrence_slot"
+            )
+        ]
 
 class TaskAssignment(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='assignments')
@@ -137,3 +162,48 @@ class Deadline(models.Model):
     is_dismissed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class TaskRecurrence(models.Model):
+    class Frequency(models.TextChoices):
+        DAILY = "D", "Daily"
+        WEEKLY = "W", "Weekly"
+        MONTHLY = "M", "Monthly"
+    template_task = models.OneToOneField(Task, on_delete=models.PROTECT, related_name='recurrence_rule')
+    frequency = models.CharField(max_length=1, choices=Frequency.choices)
+    interval = models.PositiveSmallIntegerField(default=1)
+    starts_at = models.DateTimeField()
+    ends_at = models.DateTimeField(null=True, blank=True)
+    next_occurrence_at = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=Q(interval__gte=1),
+                name="taskrecurrence_interval_gte_1"
+            ),
+            models.CheckConstraint(
+                condition=(
+                    Q(ends_at__isnull=True)
+                    | Q(ends_at__gte=F("starts_at"))
+                ),
+                name="taskrecurrence_end_gte_start"
+            ),
+            models.CheckConstraint(
+                condition=(
+                    Q(next_occurrence_at__isnull=True)
+                    | Q(next_occurrence_at__gte=F("starts_at"))
+                ),
+                name="taskrecurrence_next_gte_start"
+            ),
+            models.CheckConstraint(
+                condition=(
+                    Q(next_occurrence_at__isnull=True)
+                    | Q(ends_at__isnull=True)
+                    | Q(next_occurrence_at__lte=F("ends_at"))
+                ),
+                name="taskrecurrence_next_lte_end"
+            )
+        ]
