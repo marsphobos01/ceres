@@ -5,22 +5,24 @@ from django.conf import settings
 
 # Create your models here.
 class CategoryChoices(models.TextChoices):
-    ASSIGNMENT_REMIDER = "AR", "Assignment Reminder",
-    LECTURE_REMINDER= "LR", "Lecture Reminder",
-    CALENDAR_REMINDER= "CR", "Calendar Reminder",
-    GROUP_UPDATE = "GU", "Group Update",
-    FRIEDN_REQUEST = "FR", "Friend Request",
-    NEW_MESSAGE = "NM", "New Message",
-    STUDY_SESSION_INVITE = "SSI", "Study Session Invite"
+    # Current Vision — committed categories.
+    ASSIGNMENT_REMINDER = "assignment_reminder", "Assignment Reminder",
+    LECTURE_REMINDER = "lecture_reminder", "Lecture Reminder",
+    CALENDAR_REMINDER = "calendar_reminder", "Calendar Reminder",
+    GROUP_UPDATE = "group_update", "Group Update",
+    FRIEND_REQUEST = "friend_request", "Friend Request",
+    # Future/optional integrations — not yet committed scope.
+    NEW_MESSAGE = "new_message", "New Message",
+    STUDY_SESSION_INVITE = "study_session_invite", "Study Session Invite"
 
 
 class Notification(models.Model):
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="received_notifications")
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sent_notifications", null=True, blank=True)
-    category = models.CharField(choices=CategoryChoices.choices, max_length=3)
+    category = models.CharField(choices=CategoryChoices.choices, max_length=25)
     title = models.CharField(max_length=120)
     body = models.TextField()
-    source_app = models.CharField(max_length=120)
+    source_app_label = models.CharField(max_length=120)
     source_object_type = models.CharField(max_length=120)
     source_object_id = models.PositiveIntegerField()
     read_at = models.DateTimeField(null=True)
@@ -31,9 +33,9 @@ class Notification(models.Model):
 
 class Reminder(models.Model):
     class StatusChoices(models.TextChoices):
-        PENDING = "P", "Pending"
-        SENT = "S", "Sent"
-        CANCELED = "C", "Canceled"
+        PENDING = "pending", "Pending"
+        SENT = "sent", "Sent"
+        CANCELED = "canceled", "Canceled"
     recipient = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reminders")
     source_app_label = models.CharField(max_length=120)
     source_object_type = models.CharField(max_length=120)
@@ -45,16 +47,16 @@ class Reminder(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["recipient", "source_app", "source_object_type", "source_object_id", "remind_at"], name="unique_reminder")
+            models.UniqueConstraint(fields=["recipient", "source_app_label", "source_object_type", "source_object_id", "remind_at"], name="unique_reminder")
         ]
 
 
 class ChannelChoices(models.TextChoices):
-    ALL = "A", "All",
-    TEXT = "T", "Text",
-    EMAIL = "E",  "Email",
-    DISCORD = "D",  "Discord",
-    IN_APP = "I",  "In App",
+    ALL = "all", "All",
+    TEXT = "text", "Text",
+    EMAIL = "emial",  "Email",
+    DISCORD = "discord",  "Discord",
+    IN_APP = "in_app",  "In App",
 
 
 
@@ -80,10 +82,10 @@ class NotificationPreferences(models.Model):
 
 class NotificationDelivery(models.Model):
     class StatusChoices(models.TextChoices):
-        PENDING = "P", "Pending"
-        SENT = "S", "Sent"
-        CANCELED = "C", "Canceled"
-        SKIPPED = "SK", "Skipped"
+        PENDING = "pending", "Pending"
+        SENT = "sent", "Sent"
+        CANCELED = "canceled", "Canceled"
+        SKIPPED = "skipped", "Skipped"
     notification = models.ForeignKey(Notification, on_delete=models.CASCADE, related_name='deliveries')
     channel = models.CharField(max_length=100, choices=ChannelChoices.choices)
     status = models.CharField(max_length=100, choices=StatusChoices.choices)
@@ -99,7 +101,7 @@ class NotificationDelivery(models.Model):
 
 class MutedContent(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='muted_content')
-    source_app = models.CharField(max_length=120)
+    source_app_label = models.CharField(max_length=120)
     source_object_type = models.CharField(max_length=120)
     source_object_id = models.PositiveIntegerField()
     muted_until = models.DateTimeField()
@@ -109,7 +111,7 @@ class MutedContent(models.Model):
 
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "source_app", "source_object_type", "source_object_id"],
+                fields=["user", "source_app_label", "source_object_type", "source_object_id"],
                 name="unique_mute_per_user_and_source"
             )
         ]
