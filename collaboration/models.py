@@ -89,3 +89,10 @@ class DiscussionMessage(models.Model):
     parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class Conversation(models.Model):
+    class Type(models.TextChoices):
+        DIRECT = 'direct', 'Direct'
+        GROUP = 'group', 'Group'
+    type = models.CharField(max_length=10, choices=Type.choices)
+    created_at = models.DateTimeField(auto_now_add=True)
