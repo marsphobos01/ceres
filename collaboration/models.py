@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.contrib.contenttypes.fields import GenericForeignKey
 # Create your models here.
 
 class StudyGroup(models.Model):
@@ -72,3 +73,19 @@ class ProjectMembership(models.Model):
         constraints = [
             models.UniqueConstraint(fields=['user', 'group_project'], name='unique_project_membership')
         ]
+
+class DiscussionThread(models.Model):
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    content_type = models.ForeignKey('contenttypes.ContentType', on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class DiscussionMessage(models.Model):
+    thread = models.ForeignKey(DiscussionThread, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    body = models.TextField()
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
