@@ -91,7 +91,7 @@ A scheduled or informal study session, optionally tied to a module.
 | --- | --- | --- |
 | `id` | `BigAutoField` | Default primary key |
 | `owner` | `ForeignKey(AUTH_USER_MODEL)` | `related_name='sessions'` |
-| `module` | — | Commented out; FK to `academics.Module` is pending that app existing (see TODO at bottom of the file) |
+| `module` | `ForeignKey(academics.Module, on_delete=CASCADE)`, nullable | `related_name='sessions'` (added in `0003_studysession_module.py`) — shares the name `owner` also uses for its `related_name`, but since they target different models (`User` vs `Module`) there's no clash: `user.sessions` and `module.sessions` are distinct reverse managers |
 | `title` | `CharField(100)`, nullable | Optional |
 | `start` | `DateTimeField` | Required |
 | `end` | `DateTimeField`, nullable | Optional |
@@ -102,7 +102,7 @@ A scheduled or informal study session, optionally tied to a module.
 **Constraints:**
 - `studysession_end_gt_start` — `CheckConstraint` requiring `end` to be after `start`. Since `end` is nullable, a session saved with no `end` automatically satisfies the constraint (a `NULL` comparison doesn't fail a Postgres `CHECK`) — sessions with no end time bypass this rule. Worth confirming that's the intended behavior rather than an oversight.
 
-**Usage:** the `module` field is intentionally deferred until `academics` exists.
+**Usage:** `module` is optional (`null=True`), so ad hoc study sessions not tied to a specific module are valid. Now that `academics.Module` exists, this FK is live rather than deferred.
 
 ## StudySessionsParticipant
 
@@ -150,7 +150,6 @@ A due date, optionally linked to any object via `contenttypes`.
 - `Deadline` has a duplicated `created_at` field definition (harmless but should be cleaned up).
 - Several `related_name`s read like field names rather than reverse managers (`TaskAssignment.task` → `task_assignment`, `TaskLink.task` → `task_link`, `StudySessionsParticipant.session` → `session_key`, `StudySessionsParticipant.user` → `participant_user_key`).
 - No uniqueness constraint on `StudySessionsParticipant` — a user can be added to the same session more than once.
-- `StudySession.module` and its FK to `academics.Module` are commented out pending that app's existence.
 
 ## How the models relate
 

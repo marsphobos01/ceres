@@ -89,4 +89,4 @@ One preview record per file.
 ## Open items (non-blocking)
 
 - `StoredFile.file` and `FileVersion.file` both use `upload_to='files'` — same storage folder for originals and versioned copies. Not broken, but separating them (e.g. `upload_to='file_versions'`) would aid storage organisation.
-- All models are registered in `files/admin.py`; migrations have not yet been generated.
+- All models are registered in `files/admin.py`. Initial migration (`0001_initial.py`) has been generated.
