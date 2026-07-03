@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     dependencies = [
         ('academics', '0007_rename_notes_lecture_description'),
         ('contenttypes', '0002_remove_content_type_name'),
-        ('planning', '0003_studysession_module'),
+        ('planning', '0004_timetableimport'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
