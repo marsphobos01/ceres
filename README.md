@@ -47,4 +47,5 @@ Ceres is an academic workspace designed to help university students organise, ma
 - [Database Schema Overview](Documentation/database-schema-overview.md)
 - [Feature List](Documentation/feature_list.md)
 - [Contributor Workflow](Documentation/contributor-workflow.md)
+- [Feature Development Workflow](Documentation/feature-workflow.md)
 - [Issue Management Approach](Documentation/issue-management-approach.md)
