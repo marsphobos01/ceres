@@ -1,4 +1,4 @@
-name: Temporary dependency correction
+name: Temporary dependency verification
 
 on:
   push:
@@ -6,117 +6,56 @@ on:
 
 permissions:
   contents: read
-  issues: write
+  issues: read
 
 jobs:
-  correct:
+  verify:
     runs-on: ubuntu-latest
     steps:
-      - name: Apply native issue dependencies
+      - name: Export final dependency graph
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
         run: |
           python - <<'PY'
+          import concurrent.futures
           import os
           import subprocess
-          import time
 
           repo = os.environ['REPO']
-          add_edges = [
-              (239, 238), (240, 238), (249, 242),
-              *[(issue, 249) for issue in range(50, 59)],
-              (50, 66), (50, 59), (50, 107), (51, 78), (51, 135),
-              (52, 82), (54, 251), (56, 59), (57, 256),
-              *[(58, blocker) for blocker in range(50, 57)],
-              (246, 242), (246, 209),
-              *[(issue, 246) for issue in range(26, 35)],
-              (26, 70), (27, 250), (28, 251), (29, 78), (30, 35),
-              (31, 114), (32, 118), (32, 119), (33, 132), (34, 59),
-              (35, 242), *[(issue, 35) for issue in range(36, 42)],
-              (36, 255), (255, 189), (255, 193),
-              (250, 242), (250, 162), *[(issue, 250) for issue in range(74, 78)],
-              (43, 250),
-              (251, 242), (251, 173), *[(issue, 251) for issue in range(83, 92)],
-              (74, 251), (110, 251), (126, 251), (128, 251),
-              (252, 242), (252, 5), (252, 6), (252, 181),
-              *[(issue, 5) for issue in range(42, 47)],
-              *[(issue, 6) for issue in range(42, 47)],
-              (42, 78), (44, 59), (45, 117), (46, 115), (47, 5),
-              (253, 167), (138, 253),
-              (245, 164), (245, 167), (245, 169),
-              (79, 245), (79, 132),
-              (82, 245), (82, 133), (82, 134), (81, 82),
-              (254, 164), (80, 254),
-              (244, 163), (244, 219), (220, 244), (220, 66),
-              (123, 118), (123, 119),
-          ]
-          remove_edges = [
-              (38, 209), (90, 209), (123, 209),
-              (49, 195), (49, 209), (49, 242),
-              (228, 210),
-          ]
 
-          def run(args):
-              return subprocess.run(args, check=False, capture_output=True, text=True)
+          def numbers(path: str) -> str:
+              result = subprocess.run(
+                  ['gh', 'api', '--paginate', path, '--jq', '.[].number'],
+                  check=False,
+                  capture_output=True,
+                  text=True,
+              )
+              if result.returncode != 0:
+                  return ''
+              return ','.join(line for line in result.stdout.splitlines() if line)
 
-          ids = {}
-          def issue_id(number):
-              if number not in ids:
-                  result = run(['gh', 'api', f'repos/{repo}/issues/{number}', '--jq', '.id'])
-                  ids[number] = result.stdout.strip()
-              return ids[number]
+          def audit(issue: int):
+              blocked_by = numbers(f'repos/{repo}/issues/{issue}/dependencies/blocked_by?per_page=100')
+              blocks = numbers(f'repos/{repo}/issues/{issue}/dependencies/blocking?per_page=100')
+              if blocked_by or blocks:
+                  return issue, blocked_by, blocks
+              return None
 
-          def blockers(issue):
-              result = run([
-                  'gh', 'api', '--paginate',
-                  f'repos/{repo}/issues/{issue}/dependencies/blocked_by?per_page=100',
-                  '--jq', '.[].id',
-              ])
-              return set(result.stdout.split()) if result.returncode == 0 else set()
+          with concurrent.futures.ThreadPoolExecutor(max_workers=12) as executor:
+              rows = [row for row in executor.map(audit, range(1, 257)) if row]
 
-          lines = []
-          for issue, blocker in add_edges:
-              blocker_id = issue_id(blocker)
-              if blocker_id in blockers(issue):
-                  lines.append(f'SKIP ADD {blocker} {issue}')
-                  continue
-              result = run([
-                  'gh', 'api', '--method', 'POST',
-                  f'repos/{repo}/issues/{issue}/dependencies/blocked_by',
-                  '-F', f'issue_id={blocker_id}',
-              ])
-              if result.returncode == 0:
-                  lines.append(f'ADD {blocker} {issue}')
-              else:
-                  message = (result.stderr or result.stdout).strip().replace('\n', ' ')
-                  lines.append(f'ERROR ADD {blocker} {issue} {message}')
-              time.sleep(0.15)
+          with open('dependency-graph-final.tsv', 'w', encoding='utf-8') as output:
+              output.write('issue\tblocked_by\tblocks\n')
+              for issue, blocked_by, blocks in rows:
+                  output.write(f'{issue}\t{blocked_by}\t{blocks}\n')
 
-          for issue, blocker in remove_edges:
-              blocker_id = issue_id(blocker)
-              if blocker_id not in blockers(issue):
-                  lines.append(f'SKIP REMOVE {blocker} {issue}')
-                  continue
-              result = run([
-                  'gh', 'api', '--method', 'DELETE',
-                  f'repos/{repo}/issues/{issue}/dependencies/blocked_by/{blocker_id}',
-              ])
-              if result.returncode == 0:
-                  lines.append(f'REMOVE {blocker} {issue}')
-              else:
-                  message = (result.stderr or result.stdout).strip().replace('\n', ' ')
-                  lines.append(f'ERROR REMOVE {blocker} {issue} {message}')
-              time.sleep(0.15)
-
-          with open('dependency-correction.log', 'w', encoding='utf-8') as output:
-              output.write('\n'.join(lines) + '\n')
-          print(f'Processed {len(lines)} dependency operations.')
+          print(f'Exported {len(rows)} issues with native dependencies.')
           PY
 
-      - name: Upload correction results
+      - name: Upload final dependency graph
         uses: actions/upload-artifact@v4
         with:
-          name: dependency-correction-results
-          path: dependency-correction.log
+          name: dependency-graph-final
+          path: dependency-graph-final.tsv
           if-no-files-found: error
