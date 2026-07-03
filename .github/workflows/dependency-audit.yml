@@ -1,18 +1,17 @@
-name: Temporary sub-issue correction
+name: Temporary sub-issue cleanup
 
 on:
   push:
-  pull_request:
 
 permissions:
   contents: read
   issues: write
 
 jobs:
-  correct:
+  cleanup:
     runs-on: ubuntu-latest
     steps:
-      - name: Apply native sub-issue parents with GraphQL
+      - name: Remove invalid native sub-issues and verify audited parents
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
@@ -23,36 +22,54 @@ jobs:
           import subprocess
 
           owner, name = os.environ['REPO'].split('/', 1)
-          links = [
-              *[(235, child) for child in range(236, 243)],
-              (8, 249),
-              (10, 244), (10, 220),
-              (12, 250),
-              (13, 245), (13, 254),
-              (14, 251),
-              (21, 253),
-              (22, 255),
-              (23, 256),
-              (24, 252),
-              (25, 246),
-              (146, 219),
+          removals = [
+              (25, 49),
+              (23, 139),
+              (23, 140),
+              (23, 141),
+              (23, 142),
           ]
+          expected_parents = {
+              219: 146,
+              220: 10,
+              236: 235,
+              237: 235,
+              238: 235,
+              239: 235,
+              240: 235,
+              241: 235,
+              242: 235,
+              244: 10,
+              245: 13,
+              246: 25,
+              249: 8,
+              250: 12,
+              251: 14,
+              252: 24,
+              253: 21,
+              254: 13,
+              255: 22,
+              256: 23,
+          }
 
-          numbers = sorted({number for link in links for number in link})
+          all_numbers = sorted(
+              {number for pair in removals for number in pair}
+              | set(expected_parents)
+              | set(expected_parents.values())
+          )
           fields = '\n'.join(
               f'i{number}: issue(number: {number}) {{ id number }}'
-              for number in numbers
+              for number in all_numbers
           )
-          query = f'''query($owner: String!, $name: String!) {{
+          lookup_query = f'''query($owner: String!, $name: String!) {{
             repository(owner: $owner, name: $name) {{
               {fields}
             }}
           }}'''
-
           lookup = subprocess.run(
               [
                   'gh', 'api', 'graphql',
-                  '-f', f'query={query}',
+                  '-f', f'query={lookup_query}',
                   '-F', f'owner={owner}',
                   '-F', f'name={name}',
               ],
@@ -60,51 +77,96 @@ jobs:
               capture_output=True,
               text=True,
           )
-          payload = json.loads(lookup.stdout)
-          repository = payload['data']['repository']
+          repository = json.loads(lookup.stdout)['data']['repository']
           node_ids = {
               number: repository[f'i{number}']['id']
-              for number in numbers
+              for number in all_numbers
           }
 
           mutation_fields = []
-          for index, (parent, child) in enumerate(links):
+          for index, (parent, child) in enumerate(removals):
               mutation_fields.append(
-                  f'''m{index}: addSubIssue(input: {{
+                  f'''r{index}: removeSubIssue(input: {{
                     issueId: "{node_ids[parent]}"
                     subIssueId: "{node_ids[child]}"
-                    replaceParent: true
                   }}) {{
                     issue {{ number }}
                     subIssue {{ number }}
                   }}'''
               )
-
           mutation = 'mutation {\n' + '\n'.join(mutation_fields) + '\n}'
-          result = subprocess.run(
+          mutation_result = subprocess.run(
               ['gh', 'api', 'graphql', '-f', f'query={mutation}'],
               check=False,
               capture_output=True,
               text=True,
           )
 
-          with open('sub-issue-graphql-result.json', 'w', encoding='utf-8') as output:
-              output.write(result.stdout or result.stderr)
+          parent_fields = '\n'.join(
+              f'''i{child}: issue(number: {child}) {{
+                number
+                parent {{ number }}
+              }}'''
+              for child in sorted(set(expected_parents) | {49, 139, 140, 141, 142})
+          )
+          verify_query = f'''query($owner: String!, $name: String!) {{
+            repository(owner: $owner, name: $name) {{
+              {parent_fields}
+            }}
+          }}'''
+          verify = subprocess.run(
+              [
+                  'gh', 'api', 'graphql',
+                  '-f', f'query={verify_query}',
+                  '-F', f'owner={owner}',
+                  '-F', f'name={name}',
+              ],
+              check=True,
+              capture_output=True,
+              text=True,
+          )
+          verified = json.loads(verify.stdout)['data']['repository']
 
-          if result.returncode != 0:
-              raise SystemExit(result.stderr or result.stdout)
+          errors = []
+          for child, expected_parent in expected_parents.items():
+              actual = verified[f'i{child}']['parent']
+              actual_number = actual['number'] if actual else None
+              if actual_number != expected_parent:
+                  errors.append(
+                      f'#{child}: expected parent #{expected_parent}, got {actual_number}'
+                  )
+          for child in [49, 139, 140, 141, 142]:
+              actual = verified[f'i{child}']['parent']
+              if actual is not None:
+                  errors.append(
+                      f'#{child}: expected no parent, got #{actual["number"]}'
+                  )
 
-          response = json.loads(result.stdout)
-          if response.get('errors'):
-              raise SystemExit(json.dumps(response['errors'], indent=2))
+          report = {
+              'mutation_return_code': mutation_result.returncode,
+              'mutation_stdout': mutation_result.stdout,
+              'mutation_stderr': mutation_result.stderr,
+              'verified_parents': {
+                  str(child): (
+                      verified[f'i{child}']['parent']['number']
+                      if verified[f'i{child}']['parent'] else None
+                  )
+                  for child in sorted(set(expected_parents) | {49, 139, 140, 141, 142})
+              },
+              'verification_errors': errors,
+          }
+          with open('sub-issue-cleanup-result.json', 'w', encoding='utf-8') as output:
+              json.dump(report, output, indent=2)
 
-          print(f'Applied {len(links)} native sub-issue relationships.')
+          if errors:
+              raise SystemExit('\n'.join(errors))
+          print('Native sub-issue cleanup and parent verification succeeded.')
           PY
 
-      - name: Upload correction result
+      - name: Upload cleanup result
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: sub-issue-graphql-result
-          path: sub-issue-graphql-result.json
+          name: sub-issue-cleanup-result
+          path: sub-issue-cleanup-result.json
           if-no-files-found: error
