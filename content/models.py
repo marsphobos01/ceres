@@ -101,3 +101,10 @@ class NoteVersion(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["note", "version_number"], name="unique_note_version"),
         ]
+
+class ContentCollection(models.Model):
+    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='content_collections')
+    title = models.CharField(max_length=255)
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='sub_collections', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
