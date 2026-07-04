@@ -4,7 +4,7 @@ This document describes the models as actually implemented in `planning/models.p
 
 ## Differences from the earlier design plan
 
-Issue references for this app haven't been supplied yet, so the notes below describe each gap against `Planning Database plan.md` only, without attributing it to a specific epic or issue decision. (See `content`, `academics`, and `collaboration`'s implementation docs for the pattern once references are available — those cite the epic and per-model schema issue that scoped each divergence.)
+Issue references for this app haven't been supplied yet, so the notes below describe each gap against `Planning Database plan.md` only, without attributing it to a specific epic or issue decision. (See `content`, `academics`, and `collaboration`'s implementation docs for the pattern once references are available — those cite the epic and per-model schema issue that scoped each divergence.) The exception is task recurrence: `TaskRecurrence` and the recurrence fields on `Task` were scoped by issue #253, with the behaviour layer deferred to Feature: Recurring Tasks for Tasks #138 — see the `TaskRecurrence` section below.
 
 - `TaskLink` and `Deadline` both implement their generic links with a real `content_type`/`object_id` `GenericForeignKey`, rather than the plan's separate app-label/object-type text fields — a closer match to normal Django practice than the plan described.
 - `Deadline` has no uniqueness constraint ensuring the source object is unique when the deadline mirrors another app's object, and has no `reminder enabled` boolean flag, both of which the plan calls for.
@@ -50,12 +50,54 @@ A user's task, optionally nested under a parent task.
 | `status` | `CharField(100)`, choices | Nested `StatusChoices`: Not Started (`NS`) / In Progress (`IP`) / Completed (`CP`) / Canceled (`CN`). Same oversized `max_length` note |
 | `due_date` | `DateTimeField` | Required |
 | `parent_task` | `ForeignKey("self")`, nullable | `on_delete=CASCADE`, `related_name='children'` — deleting a parent task cascades to delete all its children recursively |
+| `recurrence` | `ForeignKey(TaskRecurrence)`, nullable | `on_delete=PROTECT`, `related_name='occurrences'` — set only on recurring occurrences (added by issue #253, migration `0007`); see `TaskRecurrence` below |
+| `scheduled_for` | `DateTimeField`, nullable | The recurrence slot that produced this occurrence. This — not `due_date` — is the stable occurrence identity, because an individual occurrence's due date may later be edited |
 | `created_at` | `DateTimeField` | Auto-set on create |
 | `updated_at` | `DateTimeField(auto_now=True)`, nullable | Auto-set on every save (column remains nullable for pre-existing rows) |
 
-**Constraints:** none implemented.
+**Constraints:**
+- `task_recurrence_fields_together` — `CheckConstraint`: `recurrence` and `scheduled_for` are either both null or both non-null. Normal tasks leave both null; recurring occurrences must have both populated.
+- `task_unique_recurrence_slot` — `UniqueConstraint` on `(recurrence, scheduled_for)`, conditional on `recurrence` being non-null: a series can't generate two occurrences for the same slot. Non-recurring tasks are exempt via the condition.
 
-**Usage:** a task's subtasks are `task.children.all()`. Note the status codes: `CP` = Completed, `CN` = Canceled (earlier drafts used `CA`/`CD`, which read backwards — any dev data saved with those codes should be recreated or updated).
+**Usage:** a task's subtasks are `task.children.all()`. Note the status codes: `CP` = Completed, `CN` = Canceled (earlier drafts used `CA`/`CD`, which read backwards — any dev data saved with those codes should be recreated or updated). For recurring tasks, the template task is also the first occurrence: it should point at its own series with `scheduled_for == starts_at`.
+
+## TaskRecurrence
+
+A recurrence series for `Task` (issue #253, migration `0007`; defined at the bottom of `models.py`). Core decision: recurring tasks create **separate `Task` rows per occurrence** — the same row is never reset and reused — because separate rows preserve completion and cancellation history.
+
+| Field | Type | Notes |
+| --- | --- | --- |
+| `id` | `BigAutoField` | Default primary key |
+| `template_task` | `OneToOneField(Task)` | `on_delete=PROTECT`, `related_name='recurrence_rule'` — one rule per template task; access via `task.recurrence_rule` |
+| `frequency` | `CharField(1)`, choices | Nested `Frequency`: Daily (`D`) / Weekly (`W`) / Monthly (`M`). Biweekly is represented as weekly with `interval=2`, not a separate frequency — unlike `CalendarEvent.RecurrenceTypeChoices`, which has a distinct Biweekly value |
+| `interval` | `PositiveSmallIntegerField` | Default `1` |
+| `starts_at` | `DateTimeField` | Required |
+| `ends_at` | `DateTimeField`, nullable | Optional series end. An occurrence may exist exactly at this time, but not after it (hence `>=`/`<=` in the constraints below, not strict inequality) |
+| `next_occurrence_at` | `DateTimeField`, nullable | The next recurrence slot **not yet generated** — not the next incomplete task. Null once the series is exhausted |
+| `is_active` | `BooleanField` | Default `True`. Disabling a series stops future generation and retains all existing occurrences |
+| `created_at`, `updated_at` | `DateTimeField` | Auto-set on create/update |
+
+**Constraints:**
+- `taskrecurrence_interval_gte_1` — `CheckConstraint`: `interval >= 1`.
+- `taskrecurrence_end_gte_start` — `CheckConstraint`: `ends_at` is null or `ends_at >= starts_at` (equality = single-occurrence window).
+- `taskrecurrence_next_gte_start` — `CheckConstraint`: `next_occurrence_at` is null or `next_occurrence_at >= starts_at`.
+- `taskrecurrence_next_lte_end` — `CheckConstraint`: when both `next_occurrence_at` and `ends_at` are set, `next_occurrence_at <= ends_at`.
+
+Every constraint on this model and on `Task`'s recurrence fields has per-boundary tests in `planning/tests.py`, and the model is registered in the admin — both part of #253's scope alongside this document.
+
+**Agreed occurrence semantics (design only — no code reads these fields yet):**
+- Daily repeats every `interval` days; weekly repeats every `interval` weeks on the weekday from `starts_at`; monthly uses the day-of-month from `starts_at`.
+- For anchor days like the 31st, shorter months use their final valid day; later months return to the original anchor day where possible.
+- Generation is **time-based, not completion-based**: an unfinished occurrence does not block later occurrences.
+- Completing or cancelling one occurrence does not affect the series or future occurrences; existing occurrences retain their own status and due-date history.
+- Editing a series affects future ungenerated occurrences only; existing task rows are not rewritten.
+
+**Deferred to Feature: Recurring Tasks for Tasks #138** (the schema above is inert until then):
+- Scheduler / background task / management command, and automatic occurrence creation (nothing currently populates `next_occurrence_at` or generates occurrence rows).
+- Forms and views, including edit-one versus edit-series behaviour.
+- Copying assignments and links from the template to new occurrences.
+- Notifications and calendar rendering.
+- Multiple weekday patterns, exclusions, skipped dates, and recurring subtasks.
 
 ## TaskAssignment
 
@@ -181,6 +223,12 @@ Task
   - children -> Task (1:M, self-referencing via parent_task)
   - assignments -> TaskAssignment (1:M)
   - links -> TaskLink (1:M)
+  - recurrence -> TaskRecurrence (M:1, nullable, PROTECT)
+  - recurrence_rule -> TaskRecurrence (1:1 reverse of template_task)
+
+TaskRecurrence
+  - template_task -> Task (1:1, PROTECT; the template is also the first occurrence)
+  - occurrences -> Task (1:M, reverse of Task.recurrence)
 
 StudySession
   - participants -> StudySessionsParticipant (1:M)
