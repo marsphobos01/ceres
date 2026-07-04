@@ -38,9 +38,11 @@ A teaching session attached to a Module. It stores a title, optional date, room,
 
 ## TimetableEntry
 
-A recurring or one-off timetable item. It belongs to a Module and may optionally link to a Lecture. It stores weekday, start and end times, room, recurrence type, optional one-off date, and timestamps.
+A recurring or one-off timetable item. It belongs to a Module and may optionally link to a Lecture. It stores weekday, start and end times, room, recurrence type, optional one-off date, an `is_manually_edited` flag, and timestamps.
 
-CSV imports (see `academics/CSV-TEST-DOC/Timetable-CSV-Import-Decisions.md`) always create `recurrence_type=one_off` entries with `date` set — every row in a MyTimetable export is already a concrete dated occurrence, not a pattern. That doc also specifies a pending schema prerequisite for #220: an `is_manually_edited` field, not yet added, needed so re-imports don't overwrite hand-edited entries.
+CSV imports (see `academics/CSV-TEST-DOC/Timetable-CSV-Import-Decisions.md`) always create `recurrence_type=one_off` entries with `date` set — every row in a MyTimetable export is already a concrete dated occurrence, not a pattern.
+
+`is_manually_edited` (`BooleanField`, default `False`; issue #267, migration `0011`) is the schema prerequisite that decisions doc specified for #220: it marks entries a user has edited by hand so re-imports don't overwrite them. Only the column exists so far — nothing sets it on user edits and the importer doesn't check it yet; both behaviours are scoped to #220.
 
 ## TimetableImport
 
