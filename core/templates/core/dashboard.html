@@ -1,10 +1,61 @@
 {% extends "base.html" %}
 
 {% block title %}Dashboard - Ceres{% endblock %}
+{% block breadcrumb %}Dashboard{% endblock %}
+
 {% block header %}
-    <h1>Dashboard</h1>
+    <div class="page-header-copy">
+        <span class="eyebrow">Workspace</span>
+        <h1>Dashboard</h1>
+        <p>Your shared Ceres foundation is ready for the feature pages that will build on it.</p>
+    </div>
+    <div class="page-actions">
+        <a class="button button--secondary" href="{% url 'planning:index' %}">
+            <svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>
+            Open calendar
+        </a>
+    </div>
 {% endblock %}
 
 {% block content %}
-    <p>Welcome to your dashboard.</p>
+    <div class="stack stack--lg">
+        <div class="message-banner message-banner--info" role="status">
+            <p><strong>Frontend foundation active.</strong> Shared buttons, forms, messages and empty states now inherit the selected Ceres design tokens.</p>
+        </div>
+
+        <div class="grid grid--2">
+            <section class="card" aria-labelledby="foundation-search-title">
+                <div class="card__header">
+                    <span class="eyebrow">Shared form</span>
+                    <h2 id="foundation-search-title">Search your workspace</h2>
+                    <p>Use the standard field, help-text and button patterns on every feature page.</p>
+                </div>
+                <form class="card__body stack" action="{% url 'search:index' %}" method="get">
+                    <div class="field">
+                        <label for="workspace-search">Search Ceres</label>
+                        <input class="input" id="workspace-search" name="q" type="search" placeholder="Modules, notes, assignments" aria-describedby="workspace-search-help">
+                        <p class="field__help" id="workspace-search-help">Search results open in the shared search area.</p>
+                    </div>
+                    <div class="cluster">
+                        <button class="button button--primary" type="submit">
+                            <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
+                            Search
+                        </button>
+                        <button class="button button--secondary" type="button" disabled>Advanced filters</button>
+                    </div>
+                </form>
+            </section>
+
+            <section class="card" aria-labelledby="foundation-empty-title">
+                <div class="empty-state">
+                    <div class="empty-state__icon" aria-hidden="true">
+                        <svg class="icon"><use href="#i-check"></use></svg>
+                    </div>
+                    <h2 id="foundation-empty-title">Nothing scheduled yet</h2>
+                    <p>Empty states explain what is missing and give the user one clear next action.</p>
+                    <a class="button button--primary" href="{% url 'planning:index' %}">Open planning</a>
+                </div>
+            </section>
+        </div>
+    </div>
 {% endblock %}

@@ -1,134 +1,153 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="moonlit">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ceres academic workspace">
     <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components/buttons.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components/forms.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components/messages.css' %}">
+    <link rel="stylesheet" href="{% static 'css/components/empty.css' %}">
     <script src="{% static 'js/base.js' %}" defer></script>
     <title>{% block title %}Ceres{% endblock %}</title>
 </head>
 <body>
-    <a href="#main-content">Skip to main content</a>
+    <svg class="svg-sprite" aria-hidden="true">
+        <symbol id="i-logo" viewBox="0 0 56 60"><path d="M8 34A20 14 0 0 1 48 34" transform="rotate(-8 28 34)" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" opacity=".72"/><path d="M28 56C28 48 27.5 41 28 34C28.5 27 32.5 19 41 13" fill="none" stroke="var(--accent-pale)" stroke-width="2.4" stroke-linecap="round"/><path d="M28.4 31C24.5 27.5 20.5 24 16 21" fill="none" stroke="var(--accent-pale)" stroke-width="1.9" stroke-linecap="round"/><path d="M16 21C11 21 7 18 6 12C12 11 17 14 20 19C19 20 17.5 21 16 21Z" fill="var(--accent)"/><path d="M41 13C46 12 50 8 50 3C44 3 39 6 36 11C37 12 39 13 41 13Z" fill="var(--accent-pale)"/><path d="M48 34A20 14 0 0 1 8 34" transform="rotate(-8 28 34)" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"/><circle cx="28" cy="56" r="3" fill="var(--gold-pale)"/></symbol>
+        <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M9.5 20v-6h5v6"/></symbol>
+        <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M5 3v3M19 3v3M3.5 8.5h17M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2Z"/></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+        <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H11v17H7.5A3.5 3.5 0 0 0 4 22Zm16 0A3.5 3.5 0 0 0 16.5 2H13v17h3.5A3.5 3.5 0 0 1 20 22Z"/></symbol>
+        <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V4h6v3M3 12h18M10 12v2h4v-2"/></symbol>
+        <symbol id="i-note" viewBox="0 0 24 24"><path d="M5 3h10l4 4v14H5Z"/><path d="M15 3v5h5M8 12h8M8 16h6"/></symbol>
+        <symbol id="i-revision" viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2Z"/><path d="M7 4v16M10 8h6M10 12h6"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="m7.5 12 3 3 6-7"/></symbol>
+        <symbol id="i-session" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2M8 2h8"/></symbol>
+        <symbol id="i-files" viewBox="0 0 24 24"><path d="M4 5h6l2 2h8v12H4Z"/></symbol>
+        <symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="15" rx="2"/><path d="M8 21h8M12 18v3M7 8h4v4H7Zm7 0h3M14 11h3"/></symbol>
+        <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0M14 20a4 4 0 0 1 7 0"/></symbol>
+        <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 4h16v12H9l-5 4Z"/><path d="M8 9h8M8 12h5"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+        <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17h12l-1.5-2V10a4.5 4.5 0 0 0-9 0v5ZM10 20h4"/></symbol>
+        <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+        <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    </svg>
+
+    <a class="skip-link" href="#main-content">Skip to main content</a>
 
     <div class="application-shell">
-        <aside>
-            <p>
-                <a href="{% url 'core:dashboard' %}">Ceres</a>
-            </p>
+        <aside id="sidebar" class="sidebar" aria-label="Main navigation" data-sidebar>
+            <div class="sidebar-brand-row">
+                <a class="brand-lockup" href="{% url 'core:dashboard' %}" aria-label="Ceres dashboard">
+                    <svg class="brand-mark" aria-hidden="true"><use href="#i-logo"></use></svg>
+                    <span>ceres</span>
+                </a>
+                <button class="icon-button sidebar-close mobile-only" type="button" data-sidebar-close aria-label="Close navigation">
+                    <svg class="icon" aria-hidden="true"><use href="#i-x"></use></svg>
+                </button>
+            </div>
+
+            {% block nav %}
+                <nav class="sidebar-nav" aria-label="Primary navigation">
+                    <div class="nav-group">
+                        <span class="nav-group-title">Workspace</span>
+                        <ul class="navigation-list">
+                            <li><a class="navigation-link" href="{% url 'core:dashboard' %}"><svg class="icon" aria-hidden="true"><use href="#i-home"></use></svg><span>Dashboard</span></a></li>
+                            <li><a class="navigation-link" href="{% url 'planning:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg><span>Calendar</span></a></li>
+                            <li><a class="navigation-link" href="{% url 'academics:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-clock"></use></svg><span>Timetable</span></a></li>
+                            <li><a class="navigation-link" href="{% url 'academics:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-book"></use></svg><span>Modules</span></a></li>
+                            <li><a class="navigation-link" href="{% url 'academics:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-briefcase"></use></svg><span>Assignments</span></a></li>
+                            <li><a class="navigation-link" href="{% url 'academics:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-revision"></use></svg><span>Lecture Hub</span></a></li>
+                            <li><a class="navigation-link" href="{% url 'content:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-note"></use></svg><span>Notes</span></a></li>
+                            <li><a class="navigation-link" href="{% url 'academics:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-revision"></use></svg><span>Revision</span></a></li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-group">
+                        <span class="nav-group-title">Plan and create</span>
+                        <ul class="navigation-list">
+                            <li><a class="navigation-link" href="{% url 'planning:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-check"></use></svg><span>Tasks</span></a></li>
+                            <li><a class="navigation-link" href="{% url 'planning:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-session"></use></svg><span>Study Sessions</span></a></li>
+                            <li><a class="navigation-link" href="{% url 'files:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-files"></use></svg><span>Files</span></a></li>
+                            <li><a class="navigation-link" href="{% url 'content:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-board"></use></svg><span>Whiteboard</span></a></li>
+                        </ul>
+                    </div>
+
+                    <div class="nav-group">
+                        <span class="nav-group-title">Collaborate</span>
+                        <ul class="navigation-list">
+                            <li><a class="navigation-link" href="{% url 'collaboration:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-users"></use></svg><span>Friends</span></a></li>
+                            <li><a class="navigation-link" href="{% url 'collaboration:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-message"></use></svg><span>Messaging</span></a></li>
+                        </ul>
+                    </div>
+                </nav>
+            {% endblock %}
 
             {% if user.is_authenticated %}
-                <section aria-label="User account">
-                    <p>
-                        Signed in as
-                        <strong>{{ user.get_username }}</strong>
-                    </p>
-
+                <div class="sidebar-profile">
+                    <div class="profile-summary">
+                        <span class="avatar" aria-hidden="true">{{ user.get_username|first|upper }}</span>
+                        <span class="profile-copy">
+                            <strong>{{ user.get_username }}</strong>
+                            <small>Signed in</small>
+                        </span>
+                    </div>
                     <form method="post" action="{% url 'accounts:logout' %}">
                         {% csrf_token %}
-                        <button type="submit">Log out</button>
+                        <button class="button button--ghost button--small sidebar-logout" type="submit">Log out</button>
                     </form>
-                </section>
+                </div>
             {% endif %}
-
-            <details class="navigation" data-navigation open>
-                <summary>Navigation</summary>
-
-                {% block nav %}
-                    <nav aria-label="Main navigation">
-                        <ul>
-                            <li>
-                                <a href="{% url 'planning:index' %}">
-                                    Calendar
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'academics:index' %}">
-                                    Timetable
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'academics:index' %}">
-                                    Modules
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'content:index' %}">
-                                    Notes
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'planning:index' %}">
-                                    Tasks
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'academics:index' %}">
-                                    Assignments
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'academics:index' %}">
-                                    Lecture Hub
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'collaboration:index' %}">
-                                    Friends
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'collaboration:index' %}">
-                                    Messaging
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'academics:index' %}">
-                                    Revision
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'content:index' %}">
-                                    Whiteboard
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'planning:index' %}">
-                                    Study Sessions
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'search:index' %}">
-                                    Search
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                {% endblock %}
-            </details>
         </aside>
 
-        <div>
-            {% if messages %}
-                <section aria-label="Messages">
-                    <ul>
-                        {% for message in messages %}
-                            <li>{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                </section>
-            {% endif %}
-
-            <header>
-                {% block header %}{% endblock %}
+        <section class="app-main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="icon-button mobile-only" type="button" data-sidebar-open aria-controls="sidebar" aria-expanded="false" aria-label="Open navigation">
+                        <svg class="icon" aria-hidden="true"><use href="#i-menu"></use></svg>
+                    </button>
+                    <nav class="breadcrumb" aria-label="Breadcrumb">
+                        <a href="{% url 'core:dashboard' %}">Ceres</a>
+                        <svg class="icon" aria-hidden="true"><use href="#i-chevron"></use></svg>
+                        <strong>{% block breadcrumb %}Workspace{% endblock %}</strong>
+                    </nav>
+                </div>
+                <div class="topbar-actions">
+                    <a class="global-search" href="{% url 'search:index' %}" aria-label="Open search">
+                        <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
+                        <span>Search Ceres</span>
+                    </a>
+                    <a class="icon-button notification-button" href="{% url 'notifications:index' %}" aria-label="Notifications">
+                        <svg class="icon" aria-hidden="true"><use href="#i-bell"></use></svg>
+                        <span class="notification-dot" aria-hidden="true"></span>
+                    </a>
+                </div>
             </header>
 
-            <main id="main-content">
+            {% if messages %}
+                <ul class="message-stack" aria-label="Messages">
+                    {% for message in messages %}
+                        <li class="message-banner {% if 'success' in message.tags %}message-banner--success{% elif 'warning' in message.tags %}message-banner--warning{% elif 'error' in message.tags %}message-banner--error{% else %}message-banner--info{% endif %}" role="status">
+                            <p>{{ message }}</p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <main id="main-content" class="screen" tabindex="-1">
+                <header class="page-header">
+                    {% block header %}{% endblock %}
+                </header>
                 {% block content %}{% endblock %}
             </main>
-        </div>
+        </section>
     </div>
+
+    <button class="sidebar-scrim" type="button" data-sidebar-scrim hidden aria-label="Close navigation"></button>
     {% block scripts %}{% endblock %}
 </body>
 </html>

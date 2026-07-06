@@ -19,6 +19,10 @@
     color: inherit;
 }
 
+.message-banner strong {
+    font-weight: 800;
+}
+
 .message-banner--success {
     border-color: var(--success);
 }

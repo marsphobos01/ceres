@@ -2,9 +2,18 @@
 
 ## Purpose
 
-The base template provides the shared application structure used by authenticated Ceres pages.
+The base template provides the shared authenticated Ceres application shell. It follows the structure and visual language in `Design/Mockups/application-prototype` while keeping feature-specific content inside Django template blocks.
 
-It contains the main navigation, user information, logout control, message display, page header and main content area.
+It contains:
+
+- the Ceres SVG logo and shared icon sprite
+- grouped sidebar navigation
+- responsive mobile navigation and scrim
+- signed-in user summary and logout control
+- sticky top bar with search and notifications
+- Django message banners
+- page heading and main-content regions
+- the shared CSS token and component stylesheets
 
 ## Location
 
@@ -12,7 +21,7 @@ It contains the main navigation, user information, logout control, message displ
 core/templates/base.html
 ```
 
-Pages should extend the template using:
+Pages extend the template with:
 
 ```django
 {% extends "base.html" %}
@@ -22,83 +31,93 @@ Pages should extend the template using:
 
 ### `title`
 
-Sets the text displayed in the browser tab.
+Sets the browser-tab title.
 
 ```django
 {% block title %}Dashboard - Ceres{% endblock %}
 ```
 
-If the block is not overridden, the title defaults to `Ceres`.
+The default is `Ceres`.
 
 ### `nav`
 
-Contains the main application navigation.
+Contains the grouped primary navigation. Most pages should use the shared navigation and should not override this block.
 
-Most pages should use the navigation supplied by `base.html` and should not override this block.
+### `breadcrumb`
+
+Sets the current-page label in the desktop top bar.
+
+```django
+{% block breadcrumb %}Dashboard{% endblock %}
+```
 
 ### `header`
 
-Contains the page-level heading or breadcrumbs.
+Contains the visible page heading and optional actions. Use the shared `page-header-copy` and `page-actions` classes.
 
 ```django
 {% block header %}
-    <h1>Dashboard</h1>
+    <div class="page-header-copy">
+        <span class="eyebrow">Workspace</span>
+        <h1>Dashboard</h1>
+        <p>A short description of the page.</p>
+    </div>
+    <div class="page-actions">
+        <a class="button button--primary" href="#">Primary action</a>
+    </div>
 {% endblock %}
 ```
 
 ### `content`
 
-Contains the main content of the page.
+Contains the page's main content. It is rendered inside `main#main-content.screen`.
 
 ```django
 {% block content %}
-    <p>Welcome to your dashboard.</p>
+    <section class="card">
+        <div class="card__body">Page content</div>
+    </section>
 {% endblock %}
 ```
 
 ### `scripts`
 
-Loads JavaScript required only by an individual page.
-
-JavaScript should remain in separate static files rather than being written inline.
+Loads JavaScript required only by an individual page. Keep JavaScript in static files rather than writing it inline.
 
 ```django
 {% load static %}
 
 {% block scripts %}
-    <script src="{% static 'core/js/dashboard.js' %}" defer></script>
+    <script src="{% static 'js/dashboard.js' %}" defer></script>
 {% endblock %}
 ```
 
-The shared `base.js` file is loaded by `base.html` and should contain behaviour used across the application.
-
-## Static files
-
-Shared application-shell assets are located at:
+## Shared static files
 
 ```text
-core/static/core/css/base.css
-core/static/core/js/base.js
+static/css/tokens.css
+static/css/base.css
+static/css/components/buttons.css
+static/css/components/forms.css
+static/css/components/messages.css
+static/css/components/empty.css
+static/js/base.js
+static/img/
 ```
 
-## Responsive navigation
+`tokens.css` owns the semantic theme colours. `base.css` owns the reset, typography, layout utilities, icon rules and application shell. Component files own reusable controls and states.
 
-The application shell displays the navigation beside the page content on larger screens.
+## Responsive behaviour
 
-On smaller screens, the navigation is collapsed and can be opened using the Navigation control.
+The full sidebar is shown on wide screens. It collapses to an icon rail on medium screens and becomes an off-canvas drawer below 900px. `static/js/base.js` manages the drawer's expanded state, focus return, scrim, Escape-key handling, `aria-hidden` and `inert` state.
 
-## Example page
+## Accessibility conventions
 
-```django
-{% extends "base.html" %}
-
-{% block title %}Dashboard - Ceres{% endblock %}
-
-{% block header %}
-    <h1>Dashboard</h1>
-{% endblock %}
-
-{% block content %}
-    <p>Welcome to your dashboard.</p>
-{% endblock %}
-```
+- Keep the skip link as the first focusable control.
+- Give icon-only controls an accessible name with `aria-label`.
+- Mark decorative SVGs with `aria-hidden="true"`.
+- Use visible labels for form controls.
+- Connect help and error text using `aria-describedby`.
+- Use `aria-invalid="true"` for invalid fields.
+- Do not remove the global `:focus-visible` outline.
+- Use real links for navigation and real buttons for actions.
