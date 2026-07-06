@@ -94,3 +94,5 @@
   --active-bg:rgba(164,94,67,.13);--button:#a45e43;--button-hover:#934f37;
   --shadow:0 20px 52px rgba(82,56,43,.14);
 }
+
+.nav .active{box-shadow:none!important}
