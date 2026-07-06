@@ -1,0 +1,58 @@
+/* Dashboard hero illustration refinement.
+   The planet/orbits remain the celestial half of the Ceres identity while the
+   foreground plant makes the cultivation theme visible in the product itself. */
+.hero-plant{
+  position:absolute;
+  right:34px;
+  bottom:-9px;
+  z-index:-1;
+  width:184px;
+  height:208px;
+  overflow:visible;
+  pointer-events:none;
+  opacity:.96;
+  filter:drop-shadow(0 16px 18px rgba(0,0,0,.2));
+}
+.hero-plant .plant-stem{
+  fill:none;
+  stroke:var(--plant);
+  stroke-width:3;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.hero-plant .plant-stem.secondary{
+  stroke-width:2.25;
+  opacity:.88;
+}
+.hero-plant .plant-leaf{
+  fill:color-mix(in srgb,var(--plant) 78%,var(--accent));
+  stroke:color-mix(in srgb,var(--accent-pale) 62%,transparent);
+  stroke-width:1;
+}
+.hero-plant .plant-leaf.soft{
+  fill:color-mix(in srgb,var(--plant) 56%,var(--accent-soft));
+  opacity:.88;
+}
+.hero-plant .plant-pot{
+  fill:color-mix(in srgb,var(--surface-2) 84%,var(--hero-c));
+  stroke:color-mix(in srgb,var(--gold) 54%,var(--line));
+  stroke-width:1.4;
+}
+.hero-plant .plant-rim{
+  fill:color-mix(in srgb,var(--surface-3) 82%,var(--gold));
+  stroke:color-mix(in srgb,var(--gold) 58%,var(--line));
+  stroke-width:1.2;
+}
+.hero-plant .plant-seed{fill:var(--gold-pale)}
+.hero-plant .plant-glow{
+  fill:none;
+  stroke:color-mix(in srgb,var(--gold) 31%,transparent);
+  stroke-width:1;
+  stroke-dasharray:4 6;
+}
+@media (max-width:1100px){
+  .hero-plant{right:8px;width:148px;height:170px;opacity:.78}
+}
+@media (max-width:760px){
+  .hero-plant{right:-20px;bottom:-14px;width:128px;height:148px;opacity:.62}
+}
