@@ -4,7 +4,7 @@ This directory contains a standalone design concept for the next Ceres dashboard
 
 ## Open the mockups
 
-Open `index.html` in a modern browser and choose the desktop dashboard, mobile dashboard, or identity system. The pages do not require Django or a build process.
+Open `index.html` in a modern browser and choose the desktop dashboard, mobile dashboard, identity system, or theme studio. The pages do not require Django or a build process.
 
 ## Product direction
 
@@ -37,6 +37,17 @@ Open `index.html` in a modern browser and choose the desktop dashboard, mobile d
 - Removed the large outer shadow from the desktop workspace.
 - Replaced the surrounding gradient with a flat forest surface.
 - The workspace now uses its border and surface contrast for consistent separation on every side.
+
+## V2.4 theme studio
+
+Open `theme-options.html` to compare four complete dashboard palettes using the same layout and content:
+
+- **Forest** — the original deep botanical Ceres palette.
+- **Moonlit** — navy, periwinkle and gold. This is the recommended balanced default.
+- **Clay** — charcoal, terracotta and warm gold.
+- **Linen** — a warm light, paper-inspired academic theme.
+
+The theme studio remembers the selected option in local storage and accepts direct query links such as `theme-options.html?theme=clay`. Reusable design tokens are defined in `assets/theme-tokens.css` so the palettes can later be connected to Django user preferences without duplicating component CSS.
 
 Reusable logo assets are available in `assets/ceres-icon.svg` and `assets/ceres-logo.svg`.
 
