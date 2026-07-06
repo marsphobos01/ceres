@@ -1,48 +1,40 @@
 "use strict";
 
-const sidebar = document.querySelector("[data-sidebar]");
-const openButton = document.querySelector("[data-sidebar-open]");
-const closeButton = document.querySelector("[data-sidebar-close]");
-const scrim = document.querySelector("[data-sidebar-scrim]");
+const sidebar = document.querySelector("#sidebar");
+const menuButton = document.querySelector("#menu-button");
+const scrim = document.querySelector("#sidebar-scrim");
 const mobileNavigation = window.matchMedia("(max-width: 900px)");
 
-function setNavigationState(isOpen) {
-  if (!sidebar || !openButton || !scrim) {
-    return;
-  }
+function setSidebarOpen(isOpen, restoreFocus = false) {
+  if (!sidebar || !menuButton || !scrim) return;
 
   const shouldOpen = mobileNavigation.matches && isOpen;
-
-  sidebar.classList.toggle("is-open", shouldOpen);
-  sidebar.toggleAttribute("inert", mobileNavigation.matches && !shouldOpen);
-  sidebar.setAttribute("aria-hidden", String(mobileNavigation.matches && !shouldOpen));
-  openButton.setAttribute("aria-expanded", String(shouldOpen));
-  scrim.hidden = !shouldOpen;
+  sidebar.classList.toggle("open", shouldOpen);
+  scrim.classList.toggle("visible", shouldOpen);
+  scrim.setAttribute("aria-hidden", String(!shouldOpen));
+  menuButton.setAttribute("aria-expanded", String(shouldOpen));
   document.body.classList.toggle("navigation-open", shouldOpen);
-}
 
-function closeNavigation({ restoreFocus = false } = {}) {
-  const wasOpen = sidebar?.classList.contains("is-open");
-  setNavigationState(false);
-
-  if (restoreFocus && wasOpen) {
-    openButton?.focus();
+  if (mobileNavigation.matches) {
+    sidebar.toggleAttribute("inert", !shouldOpen);
+    sidebar.setAttribute("aria-hidden", String(!shouldOpen));
+  } else {
+    sidebar.removeAttribute("inert");
+    sidebar.removeAttribute("aria-hidden");
   }
+
+  if (!shouldOpen && restoreFocus) menuButton.focus();
 }
 
-openButton?.addEventListener("click", () => setNavigationState(true));
-closeButton?.addEventListener("click", () => closeNavigation({ restoreFocus: true }));
-scrim?.addEventListener("click", () => closeNavigation({ restoreFocus: true }));
-
-sidebar?.querySelectorAll("a").forEach((link) => {
-  link.addEventListener("click", () => closeNavigation());
-});
+menuButton?.addEventListener("click", () => setSidebarOpen(true));
+scrim?.addEventListener("click", () => setSidebarOpen(false, true));
+sidebar?.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => setSidebarOpen(false)));
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
-    closeNavigation({ restoreFocus: true });
-  }
+  if (event.key === "Escape") setSidebarOpen(false, true);
 });
 
-mobileNavigation.addEventListener("change", () => setNavigationState(false));
-setNavigationState(false);
+mobileNavigation.addEventListener("change", () => setSidebarOpen(false));
+setSidebarOpen(false);
+
+/* Theme panel, toasts and page-specific controls remain disabled until their owning issues. */
