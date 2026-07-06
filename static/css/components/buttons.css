@@ -17,22 +17,22 @@
     transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
 }
 
-.button:hover:not(:disabled) {
+.button:hover:not(:disabled):not([aria-disabled="true"]) {
     border-color: var(--accent-soft);
     background: var(--surface-2);
 }
 
-.button:active:not(:disabled) {
+.button:active:not(:disabled):not([aria-disabled="true"]) {
     transform: translateY(1px);
 }
 
 .button--primary {
     border-color: var(--button);
     background: var(--button);
-    color: #ffffff;
+    color: var(--on-button, #ffffff);
 }
 
-.button--primary:hover:not(:disabled) {
+.button--primary:hover:not(:disabled):not([aria-disabled="true"]) {
     background: var(--button-hover);
 }
 
@@ -43,7 +43,7 @@
 .button--danger {
     border-color: var(--danger);
     background: var(--danger);
-    color: #ffffff;
+    color: var(--on-danger, #ffffff);
 }
 
 .button--ghost {
