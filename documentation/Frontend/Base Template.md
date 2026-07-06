@@ -2,26 +2,20 @@
 
 ## Purpose
 
-The base template provides the shared authenticated Ceres application shell. It follows the structure and visual language in `Design/Mockups/application-prototype` while keeping feature-specific content inside Django template blocks.
+`core/templates/base.html` is the shared authenticated Ceres shell. Its markup and active CSS class names mirror `Design/Mockups/application-prototype/index.html` rather than approximating the prototype.
 
-It contains:
+It provides:
 
 - the Ceres SVG logo and shared icon sprite
-- grouped sidebar navigation
-- responsive mobile navigation and scrim
-- signed-in user summary and logout control
-- sticky top bar with search and notifications
-- Django message banners
-- page heading and main-content regions
-- the shared CSS token and component stylesheets
+- the exact prototype sidebar, navigation groups and profile area
+- the exact prototype sticky top bar, search control and notification control
+- responsive icon-rail and mobile drawer behaviour
+- Django message rendering
+- page heading and main-content template blocks
 
-## Location
+Only routes and controls that currently exist are active. Future controls such as Settings and the theme panel remain commented in the template until their owning issues are implemented.
 
-```text
-core/templates/base.html
-```
-
-Pages extend the template with:
+## Extending the template
 
 ```django
 {% extends "base.html" %}
@@ -31,21 +25,19 @@ Pages extend the template with:
 
 ### `title`
 
-Sets the browser-tab title.
+Sets the browser title.
 
 ```django
 {% block title %}Dashboard - Ceres{% endblock %}
 ```
 
-The default is `Ceres`.
-
 ### `nav`
 
-Contains the grouped primary navigation. Most pages should use the shared navigation and should not override this block.
+Contains the shared grouped sidebar navigation. Most pages should not override this block.
 
 ### `breadcrumb`
 
-Sets the current-page label in the desktop top bar.
+Sets the final label in the prototype top-bar breadcrumb.
 
 ```django
 {% block breadcrumb %}Dashboard{% endblock %}
@@ -53,71 +45,69 @@ Sets the current-page label in the desktop top bar.
 
 ### `header`
 
-Contains the visible page heading and optional actions. Use the shared `page-header-copy` and `page-actions` classes.
+Use the prototype page-header structure inside this block.
 
 ```django
 {% block header %}
+<header class="page-header">
     <div class="page-header-copy">
         <span class="eyebrow">Workspace</span>
         <h1>Dashboard</h1>
         <p>A short description of the page.</p>
     </div>
     <div class="page-actions">
-        <a class="button button--primary" href="#">Primary action</a>
+        <a class="button primary" href="#">Primary action</a>
     </div>
+</header>
 {% endblock %}
 ```
 
 ### `content`
 
-Contains the page's main content. It is rendered inside `main#main-content.screen`.
+Contains page content rendered inside `main#screen.screen`.
 
 ```django
 {% block content %}
-    <section class="card">
-        <div class="card__body">Page content</div>
-    </section>
+<section class="card">
+    <div class="card-body">Page content</div>
+</section>
 {% endblock %}
 ```
 
 ### `scripts`
 
-Loads JavaScript required only by an individual page. Keep JavaScript in static files rather than writing it inline.
+Loads JavaScript required by one page. Keep JavaScript in a static file.
 
 ```django
 {% load static %}
 
 {% block scripts %}
-    <script src="{% static 'js/dashboard.js' %}" defer></script>
+<script src="{% static 'js/dashboard.js' %}" defer></script>
 {% endblock %}
 ```
 
-## Shared static files
+## Active static files
 
 ```text
 static/css/tokens.css
-static/css/base.css
-static/css/components/buttons.css
-static/css/components/forms.css
-static/css/components/messages.css
-static/css/components/empty.css
+static/css/prototype-foundation.css
 static/js/base.js
-static/img/
 ```
 
-`tokens.css` owns the semantic theme colours. `base.css` owns the reset, typography, layout utilities, icon rules and application shell. Component files own reusable controls and states.
+`tokens.css` mirrors the prototype theme tokens. `prototype-foundation.css` contains the exact shared foundation and responsive CSS from the connected prototype, followed only by small Django integration rules.
 
-## Responsive behaviour
+The older approximation files remain in the branch but their `<link>` elements are commented in `base.html`, so they do not affect rendering.
 
-The full sidebar is shown on wide screens. It collapses to an icon rail on medium screens and becomes an off-canvas drawer below 900px. `static/js/base.js` manages the drawer's expanded state, focus return, scrim, Escape-key handling, `aria-hidden` and `inert` state.
+## Future prototype styles
+
+The feature-specific prototype stylesheet imports are listed and commented at the top of `static/css/prototype-foundation.css`. Do not enable them under issue #239. Enable or migrate each file only when its owning feature issue is implemented.
 
 ## Accessibility conventions
 
 - Keep the skip link as the first focusable control.
-- Give icon-only controls an accessible name with `aria-label`.
+- Give icon-only controls an `aria-label`.
 - Mark decorative SVGs with `aria-hidden="true"`.
 - Use visible labels for form controls.
-- Connect help and error text using `aria-describedby`.
-- Use `aria-invalid="true"` for invalid fields.
-- Do not remove the global `:focus-visible` outline.
-- Use real links for navigation and real buttons for actions.
+- Do not remove the shared focus outline.
+- Use links for navigation and buttons for actions.
+- Preserve the mobile drawer's `aria-expanded`, `aria-hidden` and `inert` behaviour.
