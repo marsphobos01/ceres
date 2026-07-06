@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
+    <script src="{% static 'core/js/base.js' %}" defer></script>
+    <title>{% block title %}Ceres{% endblock %}</title>
+</head>
+<body>
+    <a href="#main-content">Skip to main content</a>
+
+    <div class="application-shell">
+        <aside>
+            <p>
+                <a href="{% url 'core:dashboard' %}">Ceres</a>
+            </p>
+
+            {% if user.is_authenticated %}
+                <section aria-label="User account">
+                    <p>
+                        Signed in as
+                        <strong>{{ user.get_username }}</strong>
+                    </p>
+
+                    <form method="post" action="{% url 'accounts:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit">Log out</button>
+                    </form>
+                </section>
+            {% endif %}
+
+            <details class="navigation" data-navigation open>
+                <summary>Navigation</summary>
+
+                {% block nav %}
+                    <nav aria-label="Main navigation">
+                        <ul>
+                            <li>
+                                <a href="{% url 'planning:index' %}">
+                                    Calendar
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'academics:index' %}">
+                                    Timetable
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'academics:index' %}">
+                                    Modules
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'content:index' %}">
+                                    Notes
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'planning:index' %}">
+                                    Tasks
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'academics:index' %}">
+                                    Assignments
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'academics:index' %}">
+                                    Lecture Hub
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'collaboration:index' %}">
+                                    Friends
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'collaboration:index' %}">
+                                    Messaging
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'academics:index' %}">
+                                    Revision
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'content:index' %}">
+                                    Whiteboard
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'planning:index' %}">
+                                    Study Sessions
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'search:index' %}">
+                                    Search
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                {% endblock %}
+            </details>
+        </aside>
+
+        <div>
+            {% if messages %}
+                <section aria-label="Messages">
+                    <ul>
+                        {% for message in messages %}
+                            <li>{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                </section>
+            {% endif %}
+
+            <header>
+                {% block header %}{% endblock %}
+            </header>
+
+            <main id="main-content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

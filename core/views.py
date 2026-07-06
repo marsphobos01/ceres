@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 
 
 def root_redirect(request):
@@ -15,4 +14,4 @@ def root_redirect(request):
 def dashboard(request):
     """Temporary application landing shell."""
 
-    return HttpResponse("Ceres dashboard")
+    return render(request, "core/dashboard.html")

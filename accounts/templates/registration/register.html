@@ -10,7 +10,6 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <input type="hidden" value="{{ next }}">
     <button type="submit" >Register</button>
 </form>
 

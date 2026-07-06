@@ -1,0 +1,21 @@
+.application-shell {
+    display: grid;
+    grid-template-columns: 16rem minmax(0, 1fr);
+    gap: 1rem;
+}
+
+.navigation summary {
+    cursor: pointer;
+}
+
+@media (min-width: 769px) {
+    .navigation > summary {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .application-shell {
+        display: block;
+    }
+}
