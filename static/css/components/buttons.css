@@ -1,3 +1,5 @@
+@import url("../accessibility.css");
+
 .button {
     min-height: var(--control-height);
     display: inline-flex;
