@@ -4,57 +4,131 @@
 {% block breadcrumb %}Dashboard{% endblock %}
 
 {% block header %}
-<header class="page-header">
-    <div class="page-header-copy">
-        <span class="eyebrow">Workspace</span>
-        <h1>Dashboard</h1>
-        <p>Your shared Ceres foundation is ready for the feature pages that will build on it.</p>
+<link rel="stylesheet" href="/static/css/prototype-dashboard.css">
+
+<section class="dashboard-hero">
+    <div class="hero-stars" aria-hidden="true"></div>
+    <div class="hero-system" aria-hidden="true">
+        <div class="hero-orbit one"></div>
+        <div class="hero-orbit two"></div>
+        <div class="hero-orbit three"></div>
+        <div class="hero-planet"></div>
+        <div class="hero-moon"></div>
     </div>
-    <div class="page-actions">
-        <a class="button" href="{% url 'planning:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>Open calendar</a>
+    <div class="hero-hills" aria-hidden="true"></div>
+    <div class="hero-plant" aria-hidden="true">
+        <span class="plant-glow"></span>
+        <i class="plant-stem main"></i>
+        <i class="plant-stem branch-left"></i>
+        <i class="plant-stem branch-right"></i>
+        <i class="plant-stem branch-low"></i>
+        <b class="plant-leaf leaf-top"></b>
+        <b class="plant-leaf leaf-left"></b>
+        <b class="plant-leaf leaf-right"></b>
+        <b class="plant-leaf leaf-low"></b>
+        <span class="plant-pot-rim"></span>
+        <span class="plant-pot"></span>
+        <span class="plant-seed"></span>
     </div>
-</header>
+
+    <h1>Good morning, {{ user.get_username|default:"student" }}</h1>
+    <p class="hero-date">{% now "l j F" %} · Your Ceres workspace</p>
+
+    <article class="current-event">
+        <span class="eyebrow">Frontend foundation</span>
+        <h2>Dashboard</h2>
+        <div class="event-meta">The shared shell and connected prototype styling are active.</div>
+        <div class="current-actions">
+            <b>Ready for feature pages</b>
+            <a class="button primary round" href="{% url 'planning:index' %}">
+                <svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>
+                Open calendar
+            </a>
+        </div>
+    </article>
+</section>
 {% endblock %}
 
 {% block content %}
-<div class="foundation-stack">
-    <div class="message-banner" role="status">
-        <p><strong>Frontend foundation active.</strong> Shared controls now use the connected prototype styling.</p>
-    </div>
-
-    <div class="grid-2">
-        <section class="card" aria-labelledby="foundation-search-title">
-            <header class="card-header">
-                <div>
-                    <span class="eyebrow">Shared form</span>
-                    <h2 id="foundation-search-title">Search your workspace</h2>
-                </div>
-            </header>
-            <form class="card-body" action="{% url 'search:index' %}" method="get">
-                <div class="field">
-                    <label for="workspace-search">Search Ceres</label>
-                    <div class="search-input">
-                        <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
-                        <input class="input" id="workspace-search" name="q" type="search" placeholder="Modules, notes, assignments" aria-describedby="workspace-search-help">
-                    </div>
-                    <small class="field-help" id="workspace-search-help">Search results open in the shared search area.</small>
-                </div>
-                <div class="divider"></div>
-                <div class="page-actions">
-                    <button class="button primary" type="submit"><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>Search</button>
-                    <button class="button" type="button" disabled>Advanced filters</button>
-                </div>
-            </form>
-        </section>
-
-        <section class="card" aria-labelledby="foundation-empty-title">
-            <div class="empty-state">
-                <div class="empty-icon" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></div>
-                <h3 id="foundation-empty-title">Nothing scheduled yet</h3>
-                <p>Empty states explain what is missing and give the user one clear next action.</p>
-                <a class="button primary" href="{% url 'planning:index' %}">Open planning</a>
+<section class="dashboard-workspace">
+    <article class="dashboard-cell" aria-labelledby="foundation-search-title">
+        <header class="section-heading">
+            <div>
+                <span class="eyebrow">Shared form</span>
+                <h2 id="foundation-search-title">Search your workspace</h2>
             </div>
-        </section>
-    </div>
-</div>
+            <span>Prototype component</span>
+        </header>
+
+        <form class="card-body" action="{% url 'search:index' %}" method="get">
+            <div class="field">
+                <label for="workspace-search">Search Ceres</label>
+                <div class="search-input">
+                    <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
+                    <input class="input" id="workspace-search" name="q" type="search" placeholder="Modules, notes, assignments" aria-describedby="workspace-search-help">
+                </div>
+                <small class="field-help" id="workspace-search-help">Search results open in the shared search area.</small>
+            </div>
+            <div class="divider"></div>
+            <div class="page-actions">
+                <button class="button primary" type="submit">
+                    <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
+                    Search
+                </button>
+                <button class="button" type="button" disabled>Advanced filters</button>
+            </div>
+        </form>
+    </article>
+
+    <aside class="dashboard-cell" aria-labelledby="foundation-empty-title">
+        <div class="empty-state">
+            <div class="empty-icon" aria-hidden="true">
+                <svg class="icon"><use href="#i-check"></use></svg>
+            </div>
+            <h3 id="foundation-empty-title">Nothing scheduled yet</h3>
+            <p>Empty states explain what is missing and give the user one clear next action.</p>
+            <a class="button primary" href="{% url 'planning:index' %}">Open planning</a>
+        </div>
+    </aside>
+
+    <article class="dashboard-cell" aria-labelledby="foundation-status-title">
+        <header class="section-heading">
+            <div>
+                <span class="eyebrow">Foundation</span>
+                <h2 id="foundation-status-title">Shared components</h2>
+            </div>
+            <span>Active</span>
+        </header>
+
+        <div class="foundation-status">
+            <div class="foundation-status-item">
+                <span class="list-item-icon" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
+                <div><b>Prototype styling active</b><small>The production page now uses the connected dashboard presentation.</small></div>
+            </div>
+            <div class="foundation-status-item">
+                <span class="list-item-icon" aria-hidden="true"><svg class="icon"><use href="#i-board"></use></svg></span>
+                <div><b>Feature content remains separate</b><small>Future dashboard widgets stay commented until their own issues.</small></div>
+            </div>
+        </div>
+    </article>
+
+    <aside class="dashboard-cell" aria-labelledby="foundation-actions-title">
+        <header class="section-heading">
+            <div>
+                <span class="eyebrow">Current routes</span>
+                <h2 id="foundation-actions-title">Quick actions</h2>
+            </div>
+        </header>
+
+        <div class="quick-grid">
+            <a class="quick-action" href="{% url 'planning:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg><span>Open calendar</span></a>
+            <a class="quick-action" href="{% url 'search:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg><span>Search Ceres</span></a>
+            <a class="quick-action" href="{% url 'files:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-files"></use></svg><span>Open files</span></a>
+            <a class="quick-action" href="{% url 'content:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-note"></use></svg><span>Open notes</span></a>
+        </div>
+
+        <!-- Prototype assignment, agenda and study widgets are intentionally not
+             rendered here until their individual feature issues are implemented. -->
+    </aside>
+</section>
 {% endblock %}
