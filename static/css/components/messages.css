@@ -1,0 +1,36 @@
+.message-stack {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-4) clamp(var(--space-4), 3vw, var(--space-8)) 0;
+}
+
+.message-banner {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--line-strong);
+    border-left-width: 0.25rem;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
+}
+
+.message-banner p {
+    margin: 0;
+    color: inherit;
+}
+
+.message-banner--success {
+    border-color: var(--success);
+}
+
+.message-banner--warning {
+    border-color: var(--warning);
+}
+
+.message-banner--error {
+    border-color: var(--danger);
+}
+
+.message-banner--info {
+    border-color: var(--accent);
+}
