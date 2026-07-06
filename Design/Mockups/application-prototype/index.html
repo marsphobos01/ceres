@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" data-theme="moonlit">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Connected product prototype for the Ceres academic workspace.">
+  <title>Ceres Product Prototype</title>
+  <link rel="stylesheet" href="assets/theme-tokens.css">
+  <link rel="stylesheet" href="assets/prototype.css">
+</head>
+<body>
+<svg class="svg-sprite" aria-hidden="true">
+  <symbol id="i-logo" viewBox="0 0 56 60"><path d="M8 34A20 14 0 0 1 48 34" transform="rotate(-8 28 34)" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" opacity=".72"/><path d="M28 56C28 48 27.5 41 28 34C28.5 27 32.5 19 41 13" fill="none" stroke="var(--accent-pale)" stroke-width="2.4" stroke-linecap="round"/><path d="M28.4 31C24.5 27.5 20.5 24 16 21" fill="none" stroke="var(--accent-pale)" stroke-width="1.9" stroke-linecap="round"/><path d="M16 21C11 21 7 18 6 12C12 11 17 14 20 19C19 20 17.5 21 16 21Z" fill="var(--accent)"/><path d="M41 13C46 12 50 8 50 3C44 3 39 6 36 11C37 12 39 13 41 13Z" fill="var(--accent-pale)"/><path d="M48 34A20 14 0 0 1 8 34" transform="rotate(-8 28 34)" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"/><circle cx="28" cy="56" r="3" fill="var(--gold-pale)"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M9.5 20v-6h5v6"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M5 3v3M19 3v3M3.5 8.5h17M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2Z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H11v17H7.5A3.5 3.5 0 0 0 4 22Zm16 0A3.5 3.5 0 0 0 16.5 2H13v17h3.5A3.5 3.5 0 0 1 20 22Z"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V4h6v3M3 12h18M10 12v2h4v-2"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M5 3h10l4 4v14H5Z"/><path d="M15 3v5h5M8 12h8M8 16h6"/></symbol>
+  <symbol id="i-revision" viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2Z"/><path d="M7 4v16M10 8h6M10 12h6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="m7.5 12 3 3 6-7"/></symbol>
+  <symbol id="i-session" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2M8 2h8"/></symbol>
+  <symbol id="i-files" viewBox="0 0 24 24"><path d="M4 5h6l2 2h8v12H4Z"/></symbol>
+  <symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="15" rx="2"/><path d="M8 21h8M12 18v3M7 8h4v4H7Zm7 0h3M14 11h3"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0M14 20a4 4 0 0 1 7 0"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 4h16v12H9l-5 4Z"/><path d="M8 9h8M8 12h5"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17h12l-1.5-2V10a4.5 4.5 0 0 0-9 0v5ZM10 20h4"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a8 8 0 0 0-1.7-1L14.5 3h-5l-.4 3.1a8 8 0 0 0-1.7 1L5 6.1 3 9.5 5 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1a8 8 0 0 0 1.7 1l.4 3.1h5l.4-3.1a8 8 0 0 0 1.7-1l2.4 1 2-3.4L19 13a7 7 0 0 0 .1-1Z"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18h1.2a1.8 1.8 0 0 0 1.2-3.2 1.8 1.8 0 0 1 1.2-3.2H18A3 3 0 0 0 21 12a9 9 0 0 0-9-9Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="14" cy="7" r="1"/><circle cx="17" cy="10" r="1"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 7l5 5-5 5"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h1M3 12h1M3 18h1"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 5h16l-6 7v6l-4 2v-8Z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="m10 13 4-4M8 16H6a4 4 0 0 1 0-8h4M16 8h2a4 4 0 1 1 0 8h-4"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="m4 20 4-.8L19 8.2 15.8 5 4.8 16Z"/><path d="m14 6.8 3.2 3.2"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+</svg>
+
+<div id="app" class="app-shell">
+  <aside id="sidebar" class="sidebar" aria-label="Main navigation">
+    <a class="brand-lockup" href="#dashboard" data-route="dashboard" aria-label="Ceres dashboard">
+      <svg class="brand-mark"><use href="#i-logo"/></svg><span>ceres</span>
+    </a>
+    <div id="sidebar-nav" class="sidebar-nav"></div>
+    <div class="sidebar-profile">
+      <button class="profile-button" data-route="profile">
+        <span class="avatar">M</span>
+        <span class="profile-copy"><b>Morgan</b><small>Networks &amp; Cybersecurity</small></span>
+        <svg class="icon"><use href="#i-chevron"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <section class="app-main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button id="menu-button" class="icon-button mobile-only" aria-label="Open navigation"><svg class="icon"><use href="#i-menu"/></svg></button>
+        <div id="breadcrumb" class="breadcrumb"></div>
+      </div>
+      <div class="topbar-actions">
+        <button class="global-search" data-route="search" aria-label="Open search"><svg class="icon"><use href="#i-search"/></svg><span>Search Ceres</span><kbd>/</kbd></button>
+        <button id="theme-button" class="icon-button" aria-haspopup="dialog" aria-controls="theme-panel" aria-expanded="false" aria-label="Choose theme"><svg class="icon"><use href="#i-palette"/></svg></button>
+        <button class="icon-button notification-button" data-route="notifications" aria-label="Notifications"><svg class="icon"><use href="#i-bell"/></svg><span class="notification-dot"></span></button>
+        <button class="top-avatar" data-route="profile" aria-label="Open profile">M</button>
+      </div>
+    </header>
+    <main id="screen" class="screen" tabindex="-1"></main>
+  </section>
+</div>
+
+<div id="sidebar-scrim" class="sidebar-scrim"></div>
+<section id="theme-panel" class="theme-panel" role="dialog" aria-modal="false" aria-labelledby="theme-title" hidden>
+  <header><div><span class="eyebrow">Appearance</span><h2 id="theme-title">Choose a theme</h2></div><button id="theme-close" class="icon-button" aria-label="Close themes"><svg class="icon"><use href="#i-x"/></svg></button></header>
+  <div class="theme-section"><h3>Dark</h3><div class="theme-grid" data-theme-group="dark"></div></div>
+  <div class="theme-section"><h3>Light</h3><div class="theme-grid" data-theme-group="light"></div></div>
+  <footer><span>Saved automatically to this browser.</span><button class="text-button" data-route="settings">More appearance settings</button></footer>
+</section>
+
+<div id="toast-region" class="toast-region" aria-live="polite"></div>
+<script src="assets/prototype.js"></script>
+</body>
+</html>
