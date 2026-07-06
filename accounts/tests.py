@@ -46,6 +46,22 @@ class RegistrationTests(TestCase):
         self.assertFalse(User.objects.filter(username="noemail").exists())
 
 
+    def test_registration_rejects_common_password(self):
+        response = self.client.post(
+            reverse("accounts:register"),
+            {
+                "username": "weakpassword",
+                "email": "weak@example.com",
+                "password1": "password",
+                "password2": "password",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(User.objects.filter(username="weakpassword").exists())
+
+
+
 class LoginTests(TestCase):
     def setUp(self):
         self.user = User.objects.create_user(username="existing", password=VALID_PASSWORD)
@@ -94,18 +110,3 @@ class ProtectedViewRedirectTests(TestCase): # Check ALL routes, not just core.
                 )
 
                 self.assertRedirects(response, expected_redirect)
-
-
-def test_registration_rejects_common_password(self):
-    response = self.client.post(
-        reverse("accounts:register"),
-        {
-            "username": "weakpassword",
-            "email": "weak@example.com",
-            "password1": "password",
-            "password2": "password",
-        },
-    )
-
-    self.assertEqual(response.status_code, 200)
-    self.assertFalse(User.objects.filter(username="weakpassword").exists())
