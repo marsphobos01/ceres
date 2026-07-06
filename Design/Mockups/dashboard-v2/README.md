@@ -32,6 +32,12 @@ Open `index.html` in a modern browser and choose the desktop dashboard, mobile d
 - Lowered the orbit crossing so the stem no longer appears to end at the ring.
 - Preserved the centred gold seed and rear/front orbit layering.
 
+## V2.3.1 surface polish
+
+- Removed the large outer shadow from the desktop workspace.
+- Replaced the surrounding gradient with a flat forest surface.
+- The workspace now uses its border and surface contrast for consistent separation on every side.
+
 Reusable logo assets are available in `assets/ceres-icon.svg` and `assets/ceres-logo.svg`.
 
 ## Implementation boundary
