@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1382" height="330" viewBox="0 0 1382 330">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0c1430"/>
+      <stop offset=".62" stop-color="#171d3c"/>
+      <stop offset="1" stop-color="#24284a"/>
+    </linearGradient>
+    <linearGradient id="shade" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#070b1a" stop-opacity=".9"/>
+      <stop offset=".44" stop-color="#070b1a" stop-opacity=".48"/>
+      <stop offset=".76" stop-color="#070b1a" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="planet" cx="28%" cy="24%" r="80%">
+      <stop offset="0" stop-color="#d7e0ff" stop-opacity=".42"/>
+      <stop offset=".24" stop-color="#b5a67c"/>
+      <stop offset=".57" stop-color="#69779b"/>
+      <stop offset="1" stop-color="#323d67"/>
+    </radialGradient>
+    <radialGradient id="moon" cx="30%" cy="25%" r="80%">
+      <stop offset="0" stop-color="#f2d79d"/>
+      <stop offset=".62" stop-color="#69779b"/>
+      <stop offset="1" stop-color="#323d67"/>
+    </radialGradient>
+    <pattern id="stars" width="93" height="80" patternUnits="userSpaceOnUse">
+      <circle cx="12" cy="15" r="1" fill="#f2d79d" opacity=".54"/>
+      <circle cx="61" cy="48" r=".8" fill="#d7e0ff" opacity=".4"/>
+    </pattern>
+    <filter id="planetShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="10" stdDeviation="13" flood-color="#000" flood-opacity=".3"/>
+    </filter>
+  </defs>
+  <rect width="1382" height="330" fill="url(#sky)"/>
+  <rect width="1382" height="330" fill="url(#stars)" opacity=".65"/>
+  <g transform="translate(1052 126) rotate(-10)" fill="none" stroke="#dfb96d" stroke-opacity=".38">
+    <ellipse rx="285" ry="107.5"/>
+    <ellipse rx="210" ry="77.5"/>
+    <ellipse rx="132.5" ry="49"/>
+  </g>
+  <circle cx="1052" cy="126" r="43.5" fill="url(#planet)" filter="url(#planetShadow)"/>
+  <circle cx="1262" cy="114" r="12" fill="url(#moon)"/>
+  <path d="M0 292 138 258 276 287 415 251 581 292 747 260 926 288 1105 247 1257 279 1382 261V330H0Z" fill="#121a34"/>
+  <g transform="translate(1184 122)" filter="url(#planetShadow)">
+    <ellipse cx="92" cy="177" rx="77" ry="22" fill="none" stroke="#dfb96d" stroke-opacity=".31" stroke-dasharray="4 6"/>
+    <path d="M94 164C94 132 94 97 108 61C114 47 122 35 135 24" fill="none" stroke="#7987b4" stroke-width="3" stroke-linecap="round"/>
+    <path d="M97 126C85 109 72 96 54 88M102 95C116 82 129 75 147 73M96 142C109 129 122 122 140 120" fill="none" stroke="#7987b4" stroke-width="2.25" stroke-linecap="round"/>
+    <path d="M135 24C149 20 161 9 162 0C148 0 135 8 127 20C129 23 132 24 135 24Z" fill="#9fb5ff" stroke="#d7e0ff" stroke-opacity=".62"/>
+    <path d="M54 88C41 88 28 80 24 68C38 65 53 71 62 82C60 86 57 88 54 88Z" fill="#7180a7" stroke="#d7e0ff" stroke-opacity=".48"/>
+    <path d="M147 73C160 72 172 64 176 53C162 50 148 56 139 67C141 71 144 73 147 73Z" fill="#9fb5ff" stroke="#d7e0ff" stroke-opacity=".62"/>
+    <path d="M140 120C152 120 164 113 169 103C156 99 142 104 133 114C134 118 137 120 140 120Z" fill="#7180a7" stroke="#d7e0ff" stroke-opacity=".48"/>
+    <rect x="63" y="153" width="63" height="14" rx="6" fill="#3b456b" stroke="#dfb96d" stroke-opacity=".58"/>
+    <path d="M69 165H120L114 202H75Z" fill="#1b2542" stroke="#dfb96d" stroke-opacity=".54"/>
+    <circle cx="94" cy="185" r="3.4" fill="#f2d79d"/>
+  </g>
+  <rect width="1382" height="330" fill="url(#shade)"/>
+</svg>
