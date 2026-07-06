@@ -4,7 +4,7 @@ This directory contains a standalone design concept for the next Ceres dashboard
 
 ## Open the mockups
 
-Open `index.html` in a modern browser and choose the desktop dashboard, mobile dashboard, identity system, or theme studio. The pages do not require Django or a build process.
+Open `index.html` in a modern browser and choose the desktop dashboard, mobile dashboard, identity system, or balanced theme studio. The pages do not require Django or a build process.
 
 ## Product direction
 
@@ -20,34 +20,35 @@ Open `index.html` in a modern browser and choose the desktop dashboard, mobile d
 - Kept the moon positioned on its orbit.
 - Attached the next event directly beneath the current lecture.
 - Anchored the desktop agenda line and nodes to one shared CSS coordinate.
-- Restored a solid terracotta-brown attention card with no blur or transparent glass effect.
+- Restored a solid terracotta-brown attention card without a transparent glass effect.
 - Applied the same attention card on mobile and removed the side highlight.
 
-## V2.3 logo refinement
+## V2.3 identity and surface refinements
 
 - Retained the rounded gold orbit.
 - Extended the plant well above the orbit crossing point.
 - Continued the central stem naturally into the upper-right leaf.
 - Moved the lower-left leaf onto one clear secondary branch.
-- Lowered the orbit crossing so the stem no longer appears to end at the ring.
 - Preserved the centred gold seed and rear/front orbit layering.
+- Removed the inconsistent outer workspace shadow.
 
-## V2.3.1 surface polish
+## V2.5 balanced theme collection
 
-- Removed the large outer shadow from the desktop workspace.
-- Replaced the surrounding gradient with a flat forest surface.
-- The workspace now uses its border and surface contrast for consistent separation on every side.
+Open `theme-options-balanced.html` to compare six complete dashboard palettes, deliberately divided into three dark and three light options.
 
-## V2.4 theme studio
-
-Open `theme-options.html` to compare four complete dashboard palettes using the same layout and content:
+### Dark
 
 - **Forest** — the original deep botanical Ceres palette.
-- **Moonlit** — navy, periwinkle and gold. This is the recommended balanced default.
+- **Moonlit** — navy, periwinkle and gold.
 - **Clay** — charcoal, terracotta and warm gold.
-- **Linen** — a warm light, paper-inspired academic theme.
 
-The theme studio remembers the selected option in local storage and accepts direct query links such as `theme-options.html?theme=clay`. Reusable design tokens are defined in `assets/theme-tokens.css` so the palettes can later be connected to Django user preferences without duplicating component CSS.
+### Light
+
+- **Daybreak** — mist blue, periwinkle and gold; the daytime counterpart to Moonlit.
+- **Linen** — a neutral, paper-inspired academic theme.
+- **Harvest** — warm cream, terracotta and gold; the daytime counterpart to Clay.
+
+The balanced studio remembers the selected option in local storage and accepts direct query links such as `theme-options-balanced.html?theme=harvest`. Reusable design tokens are defined in `assets/theme-tokens-balanced.css`, ready to be connected to a future Django user preference.
 
 Reusable logo assets are available in `assets/ceres-icon.svg` and `assets/ceres-logo.svg`.
 
