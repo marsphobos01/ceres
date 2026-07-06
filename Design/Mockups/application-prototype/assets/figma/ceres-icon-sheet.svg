@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="840" height="600" viewBox="0 0 840 600">
+  <rect width="840" height="600" rx="24" fill="#0c1123"/>
+  <g fill="none" stroke="#d7e0ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+    <g id="home"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M9.5 20v-6h5v6"/></g>
+    <g id="calendar"><path d="M5 3v3M19 3v3M3.5 8.5h17M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2Z"/></g>
+    <g id="clock"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></g>
+    <g id="book"><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H11v17H7.5A3.5 3.5 0 0 0 4 22Zm16 0A3.5 3.5 0 0 0 16.5 2H13v17h3.5A3.5 3.5 0 0 1 20 22Z"/></g>
+    <g id="briefcase"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V4h6v3M3 12h18M10 12v2h4v-2"/></g>
+    <g id="note"><path d="M5 3h10l4 4v14H5Z"/><path d="M15 3v5h5M8 12h8M8 16h6"/></g>
+    <g id="revision"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2Z"/><path d="M7 4v16M10 8h6M10 12h6"/></g>
+    <g id="check"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="m7.5 12 3 3 6-7"/></g>
+    <g id="session"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2M8 2h8"/></g>
+    <g id="files"><path d="M4 5h6l2 2h8v12H4Z"/></g>
+    <g id="board"><rect x="3" y="3" width="18" height="15" rx="2"/><path d="M8 21h8M12 18v3M7 8h4v4H7Zm7 0h3M14 11h3"/></g>
+    <g id="users"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0M14 20a4 4 0 0 1 7 0"/></g>
+    <g id="message"><path d="M4 4h16v12H9l-5 4Z"/><path d="M8 9h8M8 12h5"/></g>
+    <g id="search"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></g>
+    <g id="bell"><path d="M6 17h12l-1.5-2V10a4.5 4.5 0 0 0-9 0v5ZM10 20h4"/></g>
+    <g id="settings"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a8 8 0 0 0-1.7-1L14.5 3h-5l-.4 3.1a8 8 0 0 0-1.7 1L5 6.1 3 9.5 5 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1a8 8 0 0 0 1.7 1l.4 3.1h5l.4-3.1a8 8 0 0 0 1.7-1l2.4 1 2-3.4L19 13a7 7 0 0 0 .1-1Z"/></g>
+    <g id="palette"><path d="M12 3a9 9 0 1 0 0 18h1.2a1.8 1.8 0 0 0 1.2-3.2 1.8 1.8 0 0 1 1.2-3.2H18A3 3 0 0 0 21 12a9 9 0 0 0-9-9Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="14" cy="7" r="1"/><circle cx="17" cy="10" r="1"/></g>
+    <g id="plus"><path d="M12 5v14M5 12h14"/></g>
+    <g id="chevron"><path d="m9 6 6 6-6 6"/></g>
+    <g id="arrow"><path d="M5 12h13M13 7l5 5-5 5"/></g>
+    <g id="menu"><path d="M4 7h16M4 12h16M4 17h16"/></g>
+    <g id="x"><path d="m6 6 12 12M18 6 6 18"/></g>
+    <g id="grid"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></g>
+    <g id="list"><path d="M8 6h13M8 12h13M8 18h13M3 6h1M3 12h1M3 18h1"/></g>
+    <g id="filter"><path d="M4 5h16l-6 7v6l-4 2v-8Z"/></g>
+    <g id="download"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></g>
+    <g id="upload"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></g>
+    <g id="link"><path d="m10 13 4-4M8 16H6a4 4 0 0 1 0-8h4M16 8h2a4 4 0 1 1 0 8h-4"/></g>
+    <g id="more"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></g>
+    <g id="edit"><path d="m4 20 4-.8L19 8.2 15.8 5 4.8 16Z"/><path d="m14 6.8 3.2 3.2"/></g>
+    <g id="eye"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></g>
+    <g id="lock"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></g>
+    <g id="mail"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></g>
+    <g id="user"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></g>
+  </g>
+  <g font-family="Inter,Arial,sans-serif" font-size="12" fill="#9ba7c5" text-anchor="middle">
+    <g transform="translate(0 0)"><use href="#home" transform="translate(58 22)"/><text x="70" y="72">home</text></g>
+    <g transform="translate(140 0)"><use href="#calendar" transform="translate(58 22)"/><text x="70" y="72">calendar</text></g>
+    <g transform="translate(280 0)"><use href="#clock" transform="translate(58 22)"/><text x="70" y="72">clock</text></g>
+    <g transform="translate(420 0)"><use href="#book" transform="translate(58 22)"/><text x="70" y="72">book</text></g>
+    <g transform="translate(560 0)"><use href="#briefcase" transform="translate(58 22)"/><text x="70" y="72">briefcase</text></g>
+    <g transform="translate(700 0)"><use href="#note" transform="translate(58 22)"/><text x="70" y="72">note</text></g>
+    <g transform="translate(0 100)"><use href="#revision" transform="translate(58 22)"/><text x="70" y="72">revision</text></g>
+    <g transform="translate(140 100)"><use href="#check" transform="translate(58 22)"/><text x="70" y="72">check</text></g>
+    <g transform="translate(280 100)"><use href="#session" transform="translate(58 22)"/><text x="70" y="72">session</text></g>
+    <g transform="translate(420 100)"><use href="#files" transform="translate(58 22)"/><text x="70" y="72">files</text></g>
+    <g transform="translate(560 100)"><use href="#board" transform="translate(58 22)"/><text x="70" y="72">board</text></g>
+    <g transform="translate(700 100)"><use href="#users" transform="translate(58 22)"/><text x="70" y="72">users</text></g>
+    <g transform="translate(0 200)"><use href="#message" transform="translate(58 22)"/><text x="70" y="72">message</text></g>
+    <g transform="translate(140 200)"><use href="#search" transform="translate(58 22)"/><text x="70" y="72">search</text></g>
+    <g transform="translate(280 200)"><use href="#bell" transform="translate(58 22)"/><text x="70" y="72">bell</text></g>
+    <g transform="translate(420 200)"><use href="#settings" transform="translate(58 22)"/><text x="70" y="72">settings</text></g>
+    <g transform="translate(560 200)"><use href="#palette" transform="translate(58 22)"/><text x="70" y="72">palette</text></g>
+    <g transform="translate(700 200)"><use href="#plus" transform="translate(58 22)"/><text x="70" y="72">plus</text></g>
+    <g transform="translate(0 300)"><use href="#chevron" transform="translate(58 22)"/><text x="70" y="72">chevron</text></g>
+    <g transform="translate(140 300)"><use href="#arrow" transform="translate(58 22)"/><text x="70" y="72">arrow</text></g>
+    <g transform="translate(280 300)"><use href="#menu" transform="translate(58 22)"/><text x="70" y="72">menu</text></g>
+    <g transform="translate(420 300)"><use href="#x" transform="translate(58 22)"/><text x="70" y="72">close</text></g>
+    <g transform="translate(560 300)"><use href="#grid" transform="translate(58 22)"/><text x="70" y="72">grid</text></g>
+    <g transform="translate(700 300)"><use href="#list" transform="translate(58 22)"/><text x="70" y="72">list</text></g>
+    <g transform="translate(0 400)"><use href="#filter" transform="translate(58 22)"/><text x="70" y="72">filter</text></g>
+    <g transform="translate(140 400)"><use href="#download" transform="translate(58 22)"/><text x="70" y="72">download</text></g>
+    <g transform="translate(280 400)"><use href="#upload" transform="translate(58 22)"/><text x="70" y="72">upload</text></g>
+    <g transform="translate(420 400)"><use href="#link" transform="translate(58 22)"/><text x="70" y="72">link</text></g>
+    <g transform="translate(560 400)"><use href="#more" transform="translate(58 22)"/><text x="70" y="72">more</text></g>
+    <g transform="translate(700 400)"><use href="#edit" transform="translate(58 22)"/><text x="70" y="72">edit</text></g>
+    <g transform="translate(0 500)"><use href="#eye" transform="translate(58 22)"/><text x="70" y="72">eye</text></g>
+    <g transform="translate(140 500)"><use href="#lock" transform="translate(58 22)"/><text x="70" y="72">lock</text></g>
+    <g transform="translate(280 500)"><use href="#mail" transform="translate(58 22)"/><text x="70" y="72">mail</text></g>
+    <g transform="translate(420 500)"><use href="#user" transform="translate(58 22)"/><text x="70" y="72">user</text></g>
+  </g>
+</svg>
