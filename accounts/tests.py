@@ -30,6 +30,21 @@ class RegistrationTests(TestCase):
         shown_messages = [str(message) for message in response.context["messages"]]
         self.assertTrue(any("created" in message for message in shown_messages))
 
+    def test_registration_requires_email(self):
+        response = self.client.post(
+            reverse("accounts:register"),
+            {
+                "username": "noemail",
+                "email": "",
+                "password1": VALID_PASSWORD,
+                "password2": VALID_PASSWORD,
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response.context["form"], "email", "This field is required.")
+        self.assertFalse(User.objects.filter(username="noemail").exists())
+
 
 class LoginTests(TestCase):
     def setUp(self):
@@ -56,10 +71,41 @@ class LogoutTests(TestCase):
         self.assertNotIn("_auth_user_id", self.client.session)
 
 
-class ProtectedViewRedirectTests(TestCase):
-    def test_anonymous_user_is_redirected_to_login_with_next(self):
-        dashboard_url = reverse("core:dashboard")
-        response = self.client.get(dashboard_url)
+class ProtectedViewRedirectTests(TestCase): # Check ALL routes, not just core.
+    protected_routes = [
+        "core:dashboard",
+        "academics:index",
+        "planning:index",
+        "content:index",
+        "collaboration:index",
+        "files:index",
+        "notifications:index",
+        "search:index",
+    ]
 
-        expected_redirect = f"{reverse('accounts:login')}?next={dashboard_url}"
-        self.assertRedirects(response, expected_redirect)
+    def test_anonymous_users_are_redirected_to_login(self):
+        for route_name in self.protected_routes:
+            with self.subTest(route=route_name):
+                url = reverse(route_name)
+                response = self.client.get(url)
+
+                expected_redirect = (
+                    f"{reverse('accounts:login')}?next={url}"
+                )
+
+                self.assertRedirects(response, expected_redirect)
+
+
+def test_registration_rejects_common_password(self):
+    response = self.client.post(
+        reverse("accounts:register"),
+        {
+            "username": "weakpassword",
+            "email": "weak@example.com",
+            "password1": "password",
+            "password2": "password",
+        },
+    )
+
+    self.assertEqual(response.status_code, 200)
+    self.assertFalse(User.objects.filter(username="weakpassword").exists())
