@@ -1,20 +1,31 @@
-/* Single connected SVG plant. The earlier absolutely positioned CSS plant is no longer rendered. */
+/* Single connected SVG plant used by the dashboard hero. */
 .hero-plant-svg{
   position:absolute;
   left:50%;
   right:auto;
-  bottom:-5px;
+  bottom:7px;
   z-index:-1;
-  width:190px;
-  height:222px;
+  width:200px;
+  height:234px;
   overflow:visible;
   pointer-events:none;
   opacity:.96;
   transform:translateX(-50%);
   filter:drop-shadow(0 16px 18px rgba(0,0,0,.2));
 }
-.hero-plant-svg .plant-ground{
-  display:none;
+.hero-plant-svg .plant-orbit-back,
+.hero-plant-svg .plant-orbit-front{
+  fill:none;
+  stroke:color-mix(in srgb,var(--gold) 38%,transparent);
+  stroke-width:1;
+  stroke-dasharray:4 6;
+  stroke-linecap:round;
+}
+.hero-plant-svg .plant-orbit-back{
+  opacity:.42;
+}
+.hero-plant-svg .plant-orbit-front{
+  opacity:.88;
 }
 .hero-plant-svg .plant-stem-line{
   fill:none;
@@ -54,7 +65,7 @@
   .hero-plant-svg{
     left:50%;
     right:auto;
-    bottom:-24px;
+    bottom:-10px;
     transform:translateX(-50%) scale(.82);
     transform-origin:center bottom;
     opacity:.8;
@@ -64,7 +75,7 @@
   .hero-plant-svg{
     left:50%;
     right:auto;
-    bottom:-34px;
+    bottom:-22px;
     transform:translateX(-50%) scale(.67);
     transform-origin:center bottom;
     opacity:.62;
