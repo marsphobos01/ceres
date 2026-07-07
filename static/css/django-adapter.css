@@ -4,9 +4,9 @@
 .skip-link:focus{transform:none}
 .visually-hidden{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
 .message-stack{display:grid;gap:8px;margin:0;padding:14px 28px 0;list-style:none}
-.message-banner{padding:11px 13px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;background:var(--surface);color:var(--text);font-size:10px}
+.message-banner{padding:11px 13px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);font-size:10px}
 .message-banner p{margin:0;color:inherit}
-.message-banner--success{border-left-color:var(--success)}
-.message-banner--warning{border-left-color:var(--warning)}
-.message-banner--error{border-left-color:var(--danger)}
+.message-banner--success{border-color:var(--success);background:color-mix(in srgb,var(--success) 8%,var(--surface))}
+.message-banner--warning{border-color:var(--warning);background:color-mix(in srgb,var(--warning) 8%,var(--surface))}
+.message-banner--error{border-color:var(--danger);background:color-mix(in srgb,var(--danger) 8%,var(--surface))}
 body.navigation-open{overflow:hidden}
