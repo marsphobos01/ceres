@@ -14,10 +14,7 @@
   filter:drop-shadow(0 16px 18px rgba(0,0,0,.2));
 }
 .hero-plant-svg .plant-ground{
-  fill:none;
-  stroke:color-mix(in srgb,var(--gold) 32%,transparent);
-  stroke-width:1;
-  stroke-dasharray:4 5;
+  display:none;
 }
 .hero-plant-svg .plant-stem-line{
   fill:none;
