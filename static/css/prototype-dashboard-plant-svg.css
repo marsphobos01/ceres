@@ -1,16 +1,16 @@
 /* Single connected SVG plant used by the dashboard hero. */
 .hero-plant-svg{
   position:absolute;
-  left:56.5%;
-  right:auto;
-  bottom:2px;
+  left:auto;
+  right:34px;
+  bottom:-2px;
   z-index:-1;
-  width:228px;
-  height:268px;
+  width:184px;
+  height:216px;
   overflow:visible;
   pointer-events:none;
-  opacity:1;
-  transform:translateX(-50%);
+  opacity:.96;
+  transform:none;
   filter:drop-shadow(0 15px 17px rgba(0,0,0,.2));
 }
 .hero-plant-svg .plant-orbit-back,
@@ -55,19 +55,21 @@
 }
 @media(max-width:1100px){
   .hero-plant-svg{
-    left:57%;
-    bottom:0;
-    transform:translateX(-50%) scale(.82);
-    transform-origin:center bottom;
-    opacity:.86;
+    left:auto;
+    right:8px;
+    bottom:-10px;
+    transform:scale(.82);
+    transform-origin:right bottom;
+    opacity:.8;
   }
 }
 @media(max-width:760px){
   .hero-plant-svg{
-    left:68%;
-    bottom:-4px;
-    transform:translateX(-50%) scale(.62);
-    transform-origin:center bottom;
-    opacity:.56;
+    left:auto;
+    right:-28px;
+    bottom:-18px;
+    transform:scale(.67);
+    transform-origin:right bottom;
+    opacity:.6;
   }
 }
