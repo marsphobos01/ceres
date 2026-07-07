@@ -48,17 +48,14 @@
             <path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"></path>
             <path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"></path>
         </g>
-
         <g transform="translate(47 80) rotate(225) scale(.82)">
             <path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"></path>
             <path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"></path>
         </g>
-
         <g transform="translate(140 45) rotate(-38) scale(.92)">
             <path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"></path>
             <path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"></path>
         </g>
-
         <g transform="translate(142 111) rotate(-18) scale(.78)">
             <path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"></path>
             <path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"></path>
@@ -69,19 +66,25 @@
         <circle class="plant-seed-svg" cx="95" cy="205" r="4"></circle>
     </svg>
 
-    <h1>Good morning, {{ user.get_username|default:"student" }}</h1>
-    <p class="hero-date">{% now "l j F" %} · Your Ceres workspace</p>
+    <h1>Good morning, {{ user.get_username|default:"Morgan" }}</h1>
+    <p class="hero-date">{% now "l j F" %} · Week 4 of 12</p>
 
     <article class="current-event">
-        <span class="eyebrow">Frontend foundation</span>
-        <h2>Dashboard</h2>
-        <div class="event-meta">The shared shell and connected prototype styling are active.</div>
+        <span class="eyebrow">Happening now</span>
+        <h2>Linear Algebra</h2>
+        <div class="event-meta">09:00–10:00 · LT1 · Northampton Building</div>
+        <div class="event-progress" aria-hidden="true"><span></span></div>
         <div class="current-actions">
-            <b>Ready for feature pages</b>
-            <a class="button primary round" href="{% url 'planning:index' %}">
-                <svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg>
-                Open calendar
+            <strong>27 min remaining</strong>
+            <a class="button primary round" href="{% url 'academics:index' %}">
+                Open lecture
+                <svg class="icon" aria-hidden="true"><use href="#i-chevron"></use></svg>
             </a>
+        </div>
+        <div class="next-event">
+            <span class="next-event-icon" aria-hidden="true"><svg class="icon"><use href="#i-chevron"></use></svg></span>
+            <span><small>Next · 11:00</small><b>Study Session · Library, Floor 2</b></span>
+            <em>In 48 min</em>
         </div>
     </article>
 </section>
@@ -89,84 +92,73 @@
 
 {% block content %}
 <section class="dashboard-workspace">
-    <article class="dashboard-cell" aria-labelledby="foundation-search-title">
+    <article class="dashboard-panel" aria-labelledby="agenda-title">
         <header class="section-heading">
             <div>
-                <span class="eyebrow">Shared form</span>
-                <h2 id="foundation-search-title">Search your workspace</h2>
+                <span class="eyebrow">Your day</span>
+                <h2 id="agenda-title">Today’s agenda</h2>
             </div>
-            <span>Prototype component</span>
+            <span>5 commitments · Ends 17:30</span>
         </header>
 
-        <form class="card-body" action="{% url 'search:index' %}" method="get">
-            <div class="field">
-                <label for="workspace-search">Search Ceres</label>
-                <div class="search-input">
-                    <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
-                    <input class="input" id="workspace-search" name="q" type="search" placeholder="Modules, notes, assignments" aria-describedby="workspace-search-help">
-                </div>
-                <small class="field-help" id="workspace-search-help">Search results open in the shared search area.</small>
+        <div class="dashboard-agenda">
+            <div class="agenda-event agenda-event--now">
+                <time datetime="09:00">09:00</time>
+                <span class="agenda-node" aria-hidden="true"></span>
+                <div><b>Linear Algebra</b><small>LT1 · Northampton Building</small></div>
+                <span class="agenda-tag">Now</span>
             </div>
-            <div class="divider"></div>
-            <div class="page-actions">
-                <button class="button primary" type="submit">
-                    <svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg>
-                    Search
-                </button>
-                <button class="button" type="button" disabled>Advanced filters</button>
+            <div class="agenda-event">
+                <time datetime="11:00">11:00</time>
+                <span class="agenda-node" aria-hidden="true"></span>
+                <div><b>Study Session</b><small>Library, Floor 2</small></div>
+                <span class="agenda-tag">Personal</span>
             </div>
-        </form>
-    </article>
-
-    <aside class="dashboard-cell" aria-labelledby="foundation-empty-title">
-        <div class="empty-state">
-            <div class="empty-icon" aria-hidden="true">
-                <svg class="icon"><use href="#i-check"></use></svg>
+            <div class="agenda-event">
+                <time datetime="13:00">13:00</time>
+                <span class="agenda-node" aria-hidden="true"></span>
+                <div><b>Data Structures</b><small>LT2 · Northampton Building</small></div>
+                <span class="agenda-tag">Lecture</span>
             </div>
-            <h3 id="foundation-empty-title">Nothing scheduled yet</h3>
-            <p>Empty states explain what is missing and give the user one clear next action.</p>
-            <a class="button primary" href="{% url 'planning:index' %}">Open planning</a>
-        </div>
-    </aside>
-
-    <article class="dashboard-cell" aria-labelledby="foundation-status-title">
-        <header class="section-heading">
-            <div>
-                <span class="eyebrow">Foundation</span>
-                <h2 id="foundation-status-title">Shared components</h2>
+            <div class="agenda-event">
+                <time datetime="15:00">15:00</time>
+                <span class="agenda-node" aria-hidden="true"></span>
+                <div><b>Project Team Alpha</b><small>Online · Group workspace</small></div>
+                <span class="agenda-tag">Group</span>
             </div>
-            <span>Active</span>
-        </header>
-
-        <div class="foundation-status">
-            <div class="foundation-status-item">
-                <span class="list-item-icon" aria-hidden="true"><svg class="icon"><use href="#i-check"></use></svg></span>
-                <div><b>Prototype styling active</b><small>The production page now uses the connected dashboard presentation.</small></div>
-            </div>
-            <div class="foundation-status-item">
-                <span class="list-item-icon" aria-hidden="true"><svg class="icon"><use href="#i-board"></use></svg></span>
-                <div><b>Feature content remains separate</b><small>Future dashboard widgets stay commented until their own issues.</small></div>
+            <div class="agenda-event">
+                <time datetime="16:30">16:30</time>
+                <span class="agenda-node" aria-hidden="true"></span>
+                <div><b>Gym</b><small>City Campus Sport</small></div>
+                <span class="agenda-tag">Personal</span>
             </div>
         </div>
     </article>
 
-    <aside class="dashboard-cell" aria-labelledby="foundation-actions-title">
+    <aside class="dashboard-panel dashboard-panel--side" aria-labelledby="attention-title">
         <header class="section-heading">
             <div>
-                <span class="eyebrow">Current routes</span>
-                <h2 id="foundation-actions-title">Quick actions</h2>
+                <span class="eyebrow">Prioritised for you</span>
+                <h2 id="attention-title">Needs attention</h2>
             </div>
+            <span>1 item</span>
         </header>
 
-        <div class="quick-grid">
-            <a class="quick-action" href="{% url 'planning:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-calendar"></use></svg><span>Open calendar</span></a>
-            <a class="quick-action" href="{% url 'search:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-search"></use></svg><span>Search Ceres</span></a>
-            <a class="quick-action" href="{% url 'files:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-files"></use></svg><span>Open files</span></a>
-            <a class="quick-action" href="{% url 'content:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-note"></use></svg><span>Open notes</span></a>
-        </div>
-
-        <!-- Prototype assignment, agenda and study widgets are intentionally not
-             rendered here until their individual feature issues are implemented. -->
+        <article class="attention-card">
+            <div class="attention-card__top"><span>Assignment</span><strong>Due in 2 days</strong></div>
+            <h3>Essay Draft</h3>
+            <p>Environmental Ethics · Thursday at 16:00</p>
+            <hr>
+            <div class="attention-progress"><strong>45% complete</strong><span>3 of 7 steps</span></div>
+            <div class="attention-bar" aria-hidden="true"><span></span></div>
+            <hr>
+            <span class="attention-next">Next action</span>
+            <p><strong>Complete the first argument and add two supporting sources.</strong></p>
+            <a class="button" href="{% url 'academics:index' %}">Continue working</a>
+        </article>
     </aside>
 </section>
+
+<!-- These values are presentation placeholders from the approved dashboard draft.
+     Later dashboard and academic issues should replace them with real query data. -->
 {% endblock %}
