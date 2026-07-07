@@ -18,6 +18,37 @@ It contains the prototype's application shell, navigation, top bar, typography, 
 
 Feature-specific prototype stylesheet imports are retained as comments at the top of `prototype-foundation.css`. They must stay disabled until their owning feature issues are implemented.
 
+## Permanent visual rule: no side highlights
+
+Do not use a coloured strip, thickened border or inset shadow on only the left or right edge of a UI component.
+
+This includes:
+
+- active navigation items
+- alerts and message banners
+- calendar and timetable items
+- cards, list rows and empty states
+- form validation states
+- selected, warning, success and error states
+
+Do not introduce patterns such as:
+
+```css
+border-left: 0.25rem solid var(--accent);
+border-left-width: 0.25rem;
+box-shadow: inset 0.25rem 0 var(--accent);
+```
+
+Use one or more of these instead:
+
+- a full border around the component
+- a subtle tinted background
+- an icon or badge
+- a text colour change
+- a normal focus outline around the whole component
+
+Structural dividers between major layout regions are allowed, provided they are neutral separators rather than coloured state indicators.
+
 ## Buttons
 
 Use `.button` as the base class and the same modifier names as the prototype.
@@ -69,6 +100,8 @@ Available variants:
 - `.message-banner--success`
 - `.message-banner--warning`
 - `.message-banner--error`
+
+Message variants use a full border and subtle tinted background. They must never use a one-sided accent strip.
 
 ## Empty states
 
