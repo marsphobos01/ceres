@@ -1,4 +1,7 @@
-/* Single connected SVG plant used by the dashboard hero. */
+@import url("prototype-responsive.css");
+
+/* Intentional application-prototype deviation: one connected SVG plant replaces
+   the source prototype's disconnected absolutely positioned plant pieces. */
 .hero-plant-svg{
   position:absolute;
   left:auto;
