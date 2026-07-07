@@ -11,7 +11,7 @@
 .dashboard-hero h1{margin:0;font:600 40px/1.05 Newsreader,Georgia,serif}.hero-date,.hero-summary{color:var(--muted);font-size:11px}.hero-date{margin:8px 0 0}.hero-summary{max-width:430px;margin:30px 0 0}
 .dashboard-workspace{display:grid;grid-template-columns:minmax(0,1.48fr) minmax(300px,.78fr);border:1px solid var(--line);border-radius:22px;overflow:hidden;background:var(--surface)}
 .dashboard-cell{padding:24px}.dashboard-cell:nth-child(even){border-left:1px solid var(--line);background:var(--surface-side)}.dashboard-cell:nth-child(n+3){border-top:1px solid var(--line)}
-.section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:15px}.section-heading h2{margin:4px 0 0;font-size:16px}.section-heading>span{color:var(--muted-2);font-size:8px}
+.section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:15px}.section-heading h2{margin:4px 0 0;font-size:16px}.section-heading>span{color:color-mix(in srgb,var(--text) 70%,var(--surface));font-size:8px}
 .dashboard-form,.dashboard-cell>.message-banner,.quick-grid{margin-top:17px}.dashboard-cell>.empty-state{min-height:220px;padding:16px}.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.quick-action{min-height:68px;display:flex;flex-direction:column;justify-content:space-between;padding:12px;border:1px solid var(--line);border-radius:11px;background:var(--surface);font-size:10px;font-weight:800}.quick-action .icon{color:var(--accent)}
 
 /* FOR HAPPENING NOW / CURRENT EVENT: .current-event, .event-meta, .current-progress and .current-actions stay disabled until live timetable data exists. */
