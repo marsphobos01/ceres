@@ -1,164 +1,110 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Dashboard - Ceres{% endblock %}
+{% block title %}Ceres — Dashboard{% endblock %}
 {% block breadcrumb %}Dashboard{% endblock %}
 
-{% block header %}
-<link rel="stylesheet" href="/static/css/prototype-dashboard.css">
-<link rel="stylesheet" href="/static/css/prototype-dashboard-plant-svg.css">
-
-<section class="dashboard-hero">
-    <div class="hero-stars" aria-hidden="true"></div>
-    <div class="hero-system" aria-hidden="true">
-        <div class="hero-orbit one"></div>
-        <div class="hero-orbit two"></div>
-        <div class="hero-orbit three"></div>
-        <div class="hero-planet"></div>
-        <div class="hero-moon"></div>
-    </div>
-    <div class="hero-hills" aria-hidden="true"></div>
-
-    <svg class="hero-plant-svg" viewBox="0 0 190 224" aria-hidden="true">
-        <defs>
-            <linearGradient id="plant-stem-gradient" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="var(--plant)"></stop>
-                <stop offset="1" stop-color="var(--accent-soft)"></stop>
-            </linearGradient>
-            <linearGradient id="plant-leaf-gradient" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stop-color="var(--accent)"></stop>
-                <stop offset="0.55" stop-color="var(--plant)"></stop>
-                <stop offset="1" stop-color="var(--hero-c)"></stop>
-            </linearGradient>
-            <linearGradient id="plant-rim-gradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="var(--gold)"></stop>
-                <stop offset="1" stop-color="var(--surface-3)"></stop>
-            </linearGradient>
-            <linearGradient id="plant-pot-gradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="var(--surface-2)"></stop>
-                <stop offset="1" stop-color="var(--hero-c)"></stop>
-            </linearGradient>
-        </defs>
-
-        <path class="plant-stem-line" d="M95 178 C90 154 91 130 95 104 C99 79 98 54 106 31"></path>
-        <path class="plant-stem-line" d="M94 118 C76 111 60 96 47 80"></path>
-        <path class="plant-stem-line" d="M97 90 C114 80 128 62 140 45"></path>
-        <path class="plant-stem-line" d="M93 145 C111 138 127 125 142 111"></path>
-
-        <g transform="translate(106 31) rotate(-118) scale(.9)">
-            <path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"></path>
-            <path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"></path>
-        </g>
-        <g transform="translate(47 80) rotate(225) scale(.82)">
-            <path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"></path>
-            <path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"></path>
-        </g>
-        <g transform="translate(140 45) rotate(-38) scale(.92)">
-            <path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"></path>
-            <path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"></path>
-        </g>
-        <g transform="translate(142 111) rotate(-18) scale(.78)">
-            <path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"></path>
-            <path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"></path>
-        </g>
-
-        <rect class="plant-pot-rim-svg" x="61" y="176" width="68" height="13" rx="6.5"></rect>
-        <path class="plant-pot-svg" d="M66 188 H124 L116 219 Q95 223 74 219 Z"></path>
-        <circle class="plant-seed-svg" cx="95" cy="205" r="4"></circle>
-    </svg>
-
-    <h1>Good morning, {{ user.get_username|default:"Morgan" }}</h1>
-    <p class="hero-date">{% now "l j F" %} · Week 4 of 12</p>
-
-    <article class="current-event">
-        <span class="eyebrow">Happening now</span>
-        <h2>Linear Algebra</h2>
-        <div class="event-meta">09:00–10:00 · LT1 · Northampton Building</div>
-        <div class="event-progress" aria-hidden="true"><span></span></div>
-        <div class="current-actions">
-            <strong>27 min remaining</strong>
-            <a class="button primary round" href="{% url 'academics:index' %}">
-                Open lecture
-                <svg class="icon" aria-hidden="true"><use href="#i-chevron"></use></svg>
-            </a>
-        </div>
-        <div class="next-event">
-            <span class="next-event-icon" aria-hidden="true"><svg class="icon"><use href="#i-chevron"></use></svg></span>
-            <span><small>Next · 11:00</small><b>Study Session · Library, Floor 2</b></span>
-            <em>In 48 min</em>
-        </div>
-    </article>
-</section>
+{% block page_styles %}
+  <link rel="stylesheet" href="{% static 'css/prototype-dashboard.css' %}">
+  <link rel="stylesheet" href="{% static 'css/prototype-dashboard-plant-svg.css' %}">
 {% endblock %}
 
 {% block content %}
-<section class="dashboard-workspace">
-    <article class="dashboard-panel" aria-labelledby="agenda-title">
-        <header class="section-heading">
-            <div>
-                <span class="eyebrow">Your day</span>
-                <h2 id="agenda-title">Today’s agenda</h2>
-            </div>
-            <span>5 commitments · Ends 17:30</span>
-        </header>
+<section class="dashboard-hero">
+  <div class="hero-stars" aria-hidden="true"></div>
+  <div class="hero-system" aria-hidden="true">
+    <div class="hero-orbit one"></div>
+    <div class="hero-orbit two"></div>
+    <div class="hero-orbit three"></div>
+    <div class="hero-planet"></div>
+    <div class="hero-moon"></div>
+  </div>
+  <div class="hero-hills" aria-hidden="true"></div>
 
-        <div class="dashboard-agenda">
-            <div class="agenda-event agenda-event--now">
-                <time datetime="09:00">09:00</time>
-                <span class="agenda-node" aria-hidden="true"></span>
-                <div><b>Linear Algebra</b><small>LT1 · Northampton Building</small></div>
-                <span class="agenda-tag">Now</span>
-            </div>
-            <div class="agenda-event">
-                <time datetime="11:00">11:00</time>
-                <span class="agenda-node" aria-hidden="true"></span>
-                <div><b>Study Session</b><small>Library, Floor 2</small></div>
-                <span class="agenda-tag">Personal</span>
-            </div>
-            <div class="agenda-event">
-                <time datetime="13:00">13:00</time>
-                <span class="agenda-node" aria-hidden="true"></span>
-                <div><b>Data Structures</b><small>LT2 · Northampton Building</small></div>
-                <span class="agenda-tag">Lecture</span>
-            </div>
-            <div class="agenda-event">
-                <time datetime="15:00">15:00</time>
-                <span class="agenda-node" aria-hidden="true"></span>
-                <div><b>Project Team Alpha</b><small>Online · Group workspace</small></div>
-                <span class="agenda-tag">Group</span>
-            </div>
-            <div class="agenda-event">
-                <time datetime="16:30">16:30</time>
-                <span class="agenda-node" aria-hidden="true"></span>
-                <div><b>Gym</b><small>City Campus Sport</small></div>
-                <span class="agenda-tag">Personal</span>
-            </div>
-        </div>
-    </article>
+  <!-- Intentional deviation from the source prototype: one connected SVG plant
+       replaces the original disconnected CSS stems and leaves. -->
+  <svg class="hero-plant-svg" viewBox="0 0 190 224" aria-hidden="true">
+    <defs>
+      <linearGradient id="plant-stem-gradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--plant)"/><stop offset="1" stop-color="var(--accent-soft)"/></linearGradient>
+      <linearGradient id="plant-leaf-gradient" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--accent)"/><stop offset=".55" stop-color="var(--plant)"/><stop offset="1" stop-color="var(--hero-c)"/></linearGradient>
+      <linearGradient id="plant-rim-gradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--gold)"/><stop offset="1" stop-color="var(--surface-3)"/></linearGradient>
+      <linearGradient id="plant-pot-gradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--surface-2)"/><stop offset="1" stop-color="var(--hero-c)"/></linearGradient>
+    </defs>
+    <path class="plant-stem-line" d="M95 178 C90 154 91 130 95 104 C99 79 98 54 106 31"/>
+    <path class="plant-stem-line" d="M94 118 C76 111 60 96 47 80"/>
+    <path class="plant-stem-line" d="M97 90 C114 80 128 62 140 45"/>
+    <path class="plant-stem-line" d="M93 145 C111 138 127 125 142 111"/>
+    <g transform="translate(106 31) rotate(-118) scale(.9)"><path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"/><path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"/></g>
+    <g transform="translate(47 80) rotate(225) scale(.82)"><path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"/><path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"/></g>
+    <g transform="translate(140 45) rotate(-38) scale(.92)"><path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"/><path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"/></g>
+    <g transform="translate(142 111) rotate(-18) scale(.78)"><path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"/><path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"/></g>
+    <rect class="plant-pot-rim-svg" x="61" y="176" width="68" height="13" rx="6.5"/>
+    <path class="plant-pot-svg" d="M66 188 H124 L116 219 Q95 223 74 219 Z"/>
+    <circle class="plant-seed-svg" cx="95" cy="205" r="4"/>
+  </svg>
 
-    <aside class="dashboard-panel dashboard-panel--side" aria-labelledby="attention-title">
-        <header class="section-heading">
-            <div>
-                <span class="eyebrow">Prioritised for you</span>
-                <h2 id="attention-title">Needs attention</h2>
-            </div>
-            <span>1 item</span>
-        </header>
-
-        <article class="attention-card">
-            <div class="attention-card__top"><span>Assignment</span><strong>Due in 2 days</strong></div>
-            <h3>Essay Draft</h3>
-            <p>Environmental Ethics · Thursday at 16:00</p>
-            <hr>
-            <div class="attention-progress"><strong>45% complete</strong><span>3 of 7 steps</span></div>
-            <div class="attention-bar" aria-hidden="true"><span></span></div>
-            <hr>
-            <span class="attention-next">Next action</span>
-            <p><strong>Complete the first argument and add two supporting sources.</strong></p>
-            <a class="button" href="{% url 'academics:index' %}">Continue working</a>
-        </article>
-    </aside>
+  <h1>Good morning, {{ user.get_username|default:"Morgan" }}</h1>
+  <p class="hero-date">{% now "l j F" %} · Week 4 of 12</p>
+  <article class="current-event">
+    <span class="eyebrow">Happening now</span>
+    <h2>Linear Algebra</h2>
+    <div class="event-meta">09:00–10:00 · LT1 · Northampton Building</div>
+    <div class="current-progress" aria-hidden="true"><i></i></div>
+    <div class="current-actions"><b>27 min remaining</b><a class="button primary round" href="{% url 'academics:index' %}">Open lecture <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+  </article>
+  <article class="next-event">
+    <span class="next-event-icon"><svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+    <div><small>Next · 11:00</small><b>Study Session · Library, Floor 2</b></div>
+    <em>In 48 min</em>
+  </article>
 </section>
 
-<!-- These values are presentation placeholders from the approved dashboard draft.
-     Later dashboard and academic issues should replace them with real query data. -->
+<section class="dashboard-workspace">
+  <article class="dashboard-cell">
+    <header class="section-heading"><div><span class="eyebrow">Your day</span><h2>Today’s agenda</h2></div><span>5 commitments · Ends 17:30</span></header>
+    <div class="timeline">
+      <div class="timeline-row now"><time>09:00</time><i class="timeline-node"></i><div><b>Linear Algebra</b><small>LT1 · Northampton Building</small></div><span class="status-pill">Now</span></div>
+      <div class="timeline-row"><time>11:00</time><i class="timeline-node"></i><div><b>Study Session</b><small>Library, Floor 2</small></div><span class="status-pill">Personal</span></div>
+      <div class="timeline-row"><time>13:00</time><i class="timeline-node"></i><div><b>Data Structures</b><small>LT2 · Northampton Building</small></div><span class="status-pill">Lecture</span></div>
+      <div class="timeline-row"><time>15:00</time><i class="timeline-node"></i><div><b>Project Team Alpha</b><small>Online · Group workspace</small></div><span class="status-pill">Group</span></div>
+      <div class="timeline-row"><time>16:30</time><i class="timeline-node"></i><div><b>Gym</b><small>City Campus Sport</small></div><span class="status-pill">Personal</span></div>
+    </div>
+  </article>
+
+  <aside class="dashboard-cell">
+    <header class="section-heading"><div><span class="eyebrow">Prioritised for you</span><h2>Needs attention</h2></div><span>1 item</span></header>
+    <article class="attention-card">
+      <header><span>Assignment</span><b>Due in 2 days</b></header>
+      <h3>Essay Draft</h3>
+      <p>Environmental Ethics · Thursday at 16:00</p>
+      <div class="divider"></div>
+      <div class="metric-row"><b>45% complete</b><small>3 of 7 steps</small></div>
+      <div class="progress-bar"><i style="width:45%"></i></div>
+      <div class="next-action"><small>Next action</small><b>Complete the first argument and add two supporting sources.</b></div>
+      <a class="button danger" style="width:100%;margin-top:14px" href="{% url 'academics:index' %}">Continue working</a>
+    </article>
+  </aside>
+
+  <article class="dashboard-cell">
+    <header class="section-heading"><div><span class="eyebrow">This semester</span><h2>Assignment progress</h2></div><span>View assignments</span></header>
+    <div class="assignment-progress-list">
+      <div class="assignment-progress"><div><b>Data Structures Portfolio</b><small>Due 28 May</small></div><div class="progress-bar"><i style="width:68%"></i></div><em>68%</em></div>
+      <div class="assignment-progress"><div><b>Network Design Report</b><small>Due 4 June</small></div><div class="progress-bar"><i style="width:34%"></i></div><em>34%</em></div>
+      <div class="assignment-progress"><div><b>Environmental Ethics Essay</b><small>Draft due 14 May</small></div><div class="progress-bar"><i style="width:45%"></i></div><em>45%</em></div>
+    </div>
+  </article>
+
+  <aside class="dashboard-cell">
+    <header class="section-heading"><div><span class="eyebrow">Create</span><h2>Quick actions</h2></div></header>
+    <div class="quick-grid">
+      <a class="quick-action" href="{% url 'planning:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>Add task</span></a>
+      <a class="quick-action" href="{% url 'content:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-note"/></svg><span>New note</span></a>
+      <a class="quick-action" href="{% url 'academics:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg><span>Timetable</span></a>
+      <a class="quick-action" href="{% url 'planning:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-session"/></svg><span>Study session</span></a>
+    </div>
+  </aside>
+</section>
+
+<!-- The visible dashboard values match the application prototype and remain
+     presentation placeholders until their owning feature issues supply real data. -->
 {% endblock %}
