@@ -18,7 +18,7 @@
     </div>
     <div class="hero-hills" aria-hidden="true"></div>
 
-    <svg class="hero-plant-svg" viewBox="0 0 190 222" aria-hidden="true">
+    <svg class="hero-plant-svg" viewBox="0 0 190 224" aria-hidden="true">
         <defs>
             <linearGradient id="plant-stem-gradient" x1="0" y1="0" x2="1" y2="1">
                 <stop offset="0" stop-color="var(--plant)"></stop>
@@ -39,36 +39,42 @@
             </linearGradient>
         </defs>
 
-        <ellipse class="plant-ground" cx="95" cy="112" rx="88" ry="28" transform="rotate(-8 95 112)"></ellipse>
+        <g transform="rotate(-8 95 124)">
+            <path class="plant-orbit-back" d="M13 124 A82 23 0 0 1 177 124"></path>
+        </g>
 
-        <path class="plant-stem-line" d="M95 178 C94 153 94 127 95 101 C96 77 97 52 105 31"></path>
-        <path class="plant-stem-line" d="M95 116 C76 106 61 94 47 78"></path>
-        <path class="plant-stem-line" d="M96 88 C113 76 128 61 140 44"></path>
-        <path class="plant-stem-line" d="M95 143 C112 136 128 124 142 109"></path>
+        <path class="plant-stem-line" d="M95 178 C90 154 91 130 95 104 C99 79 98 54 106 31"></path>
+        <path class="plant-stem-line" d="M94 118 C76 111 60 96 47 80"></path>
+        <path class="plant-stem-line" d="M97 90 C114 80 128 62 140 45"></path>
+        <path class="plant-stem-line" d="M93 145 C111 138 127 125 142 111"></path>
 
-        <g transform="translate(105 31) rotate(-52) scale(1.05)">
+        <g transform="translate(106 31) rotate(-118) scale(.9)">
             <path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"></path>
             <path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"></path>
         </g>
 
-        <g transform="translate(47 78) rotate(225) scale(.92)">
+        <g transform="translate(47 80) rotate(225) scale(.82)">
             <path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"></path>
             <path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"></path>
         </g>
 
-        <g transform="translate(140 44) rotate(-38)">
+        <g transform="translate(140 45) rotate(-38) scale(.92)">
             <path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"></path>
             <path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"></path>
         </g>
 
-        <g transform="translate(142 109) rotate(-18) scale(.88)">
+        <g transform="translate(142 111) rotate(-18) scale(.78)">
             <path class="plant-leaf-shape" d="M0 0 C10 -13 29 -15 42 -4 C32 9 14 12 0 0 Z"></path>
             <path class="plant-leaf-vein" d="M1 0 C14 -1 27 -2 39 -4"></path>
         </g>
 
-        <rect class="plant-pot-rim-svg" x="58" y="174" width="74" height="15" rx="7.5"></rect>
-        <path class="plant-pot-svg" d="M64 188 H126 L117 220 H73 Z"></path>
-        <circle class="plant-seed-svg" cx="95" cy="207" r="4"></circle>
+        <g transform="rotate(-8 95 124)">
+            <path class="plant-orbit-front" d="M177 124 A82 23 0 0 1 13 124"></path>
+        </g>
+
+        <rect class="plant-pot-rim-svg" x="61" y="176" width="68" height="13" rx="6.5"></rect>
+        <path class="plant-pot-svg" d="M66 188 H124 L116 219 Q95 223 74 219 Z"></path>
+        <circle class="plant-seed-svg" cx="95" cy="205" r="4"></circle>
     </svg>
 
     <h1>Good morning, {{ user.get_username|default:"student" }}</h1>
