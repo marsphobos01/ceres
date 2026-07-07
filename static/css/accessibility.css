@@ -1,0 +1,33 @@
+:root[data-theme="moonlit"] {
+    --muted-2: #7482a6;
+    --on-danger: #1b0d0a;
+}
+
+:root[data-theme="forest"] {
+    --muted-2: #798e85;
+    --on-danger: #1b0d0a;
+}
+
+:root[data-theme="clay"] {
+    --muted-2: #9c837a;
+    --on-danger: #1b0d0a;
+}
+
+:root[data-theme="daybreak"] {
+    --muted-2: #667087;
+    --accent: #586fab;
+    --button: #586fab;
+    --button-hover: #4f65a2;
+    --on-danger: #ffffff;
+}
+
+:root[data-theme="linen"] {
+    --muted: #5f6f68;
+    --muted-2: #64726b;
+    --on-danger: #ffffff;
+}
+
+:root[data-theme="harvest"] {
+    --muted-2: #79665d;
+    --on-danger: #ffffff;
+}

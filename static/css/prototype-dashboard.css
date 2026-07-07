@@ -1,0 +1,22 @@
+/* Active dashboard foundation from Design/Mockups/application-prototype. */
+.dashboard-hero{position:relative;min-height:330px;margin:-28px -28px 20px;padding:32px 38px;overflow:hidden;background:linear-gradient(180deg,var(--hero-a),var(--hero-b) 62%,var(--hero-c));isolation:isolate}
+.dashboard-hero:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,var(--hero-overlay),transparent 76%)}
+.hero-stars{position:absolute;inset:0;z-index:-3;opacity:.5;background-image:radial-gradient(circle,var(--gold-pale) 0 1px,transparent 1.2px);background-size:93px 80px}
+.hero-system{position:absolute;right:18px;top:28px;width:590px;height:238px;z-index:-2;transform:rotate(-10deg)}
+.hero-orbit{position:absolute;left:50%;top:50%;border:1px solid color-mix(in srgb,var(--gold) 38%,transparent);border-radius:50%;transform:translate(-50%,-50%)}
+.hero-orbit.one{width:570px;height:215px}.hero-orbit.two{width:420px;height:155px}.hero-orbit.three{width:265px;height:98px}
+.hero-planet{position:absolute;left:50%;top:50%;width:87px;height:87px;border-radius:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,var(--planet-a),var(--planet-b) 56%,var(--planet-c))}
+.hero-moon{position:absolute;left:calc(50% + 198px);top:calc(50% - 12px);width:24px;height:24px;border-radius:50%;background:var(--gold-pale)}
+.hero-hills{position:absolute;inset:auto -5% -31px;height:112px;z-index:-2;background:var(--horizon);clip-path:polygon(0 70%,10% 40%,20% 68%,30% 37%,42% 70%,54% 41%,67% 68%,80% 34%,91% 62%,100% 45%,100% 100%,0 100%)}
+.dashboard-hero h1{margin:0;font:600 40px/1.05 Newsreader,Georgia,serif}.hero-date,.hero-summary{color:var(--muted);font-size:11px}.hero-date{margin:8px 0 0}.hero-summary{max-width:430px;margin:30px 0 0}
+.dashboard-workspace{display:grid;grid-template-columns:minmax(0,1.48fr) minmax(300px,.78fr);border:1px solid var(--line);border-radius:22px;overflow:hidden;background:var(--surface)}
+.dashboard-cell{padding:24px}.dashboard-cell:nth-child(even){border-left:1px solid var(--line);background:var(--surface-side)}.dashboard-cell:nth-child(n+3){border-top:1px solid var(--line)}
+.section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:15px}.section-heading h2{margin:4px 0 0;font-size:16px}.section-heading>span{color:color-mix(in srgb,var(--text) 70%,var(--surface));font-size:8px}
+.dashboard-form,.dashboard-cell>.message-banner,.quick-grid{margin-top:17px}.dashboard-cell>.empty-state{min-height:220px;padding:16px}.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.quick-action{min-height:68px;display:flex;flex-direction:column;justify-content:space-between;padding:12px;border:1px solid var(--line);border-radius:11px;background:var(--surface);font-size:10px;font-weight:800}.quick-action .icon{color:var(--accent)}
+
+/* FOR HAPPENING NOW / CURRENT EVENT: .current-event, .event-meta, .current-progress and .current-actions stay disabled until live timetable data exists. */
+/* FOR NEXT EVENT: .next-event and .next-event-icon stay disabled until the next timetable item can be queried. */
+/* FOR TODAY'S AGENDA: .timeline, .timeline-row and .timeline-node stay disabled until calendar data exists. */
+/* FOR NEEDS ATTENTION NOTIFICATION: .attention-card and .next-action stay disabled until real deadline data exists. */
+/* FOR ASSIGNMENT PROGRESS: .assignment-progress-list and .assignment-progress stay disabled until progress values exist. */
+/* FOR CALENDAR FEATURE: .calendar-shell, .calendar-card and related rules stay in the prototype source until that issue. */

@@ -1,0 +1,15 @@
+/* FOR NEEDS ATTENTION NOTIFICATION — enable when real deadline data exists.
+.attention-card{margin-top:17px;padding:17px;border:1px solid var(--attention-line);border-radius:15px;background:var(--attention)}
+.attention-card header{display:flex;align-items:center;justify-content:space-between;color:var(--danger-pale);font-size:8px}
+.attention-card h3{margin:16px 0 0;font-size:17px}
+.attention-card p{margin:6px 0 0;color:var(--attention-muted);font-size:8px}
+.attention-card .progress-bar{margin-top:8px}
+.next-action{margin-top:14px;padding-top:13px;border-top:1px solid var(--line)}
+.next-action small{display:block;color:var(--attention-muted);font-size:7px;text-transform:uppercase}
+.next-action b{display:block;margin-top:5px;font-size:9px}
+*/
+
+/* FOR HAPPENING NOW / CURRENT EVENT — enable with live timetable data. */
+/* FOR NEXT EVENT — enable when the next timetable item can be queried. */
+/* FOR TODAY'S AGENDA — enable when calendar data is connected. */
+/* FOR ASSIGNMENT PROGRESS — enable when real progress values exist. */

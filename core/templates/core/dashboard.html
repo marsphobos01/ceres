@@ -1,10 +1,20 @@
 {% extends "base.html" %}
-
-{% block title %}Dashboard - Ceres{% endblock %}
-{% block header %}
-    <h1>Dashboard</h1>
+{% load static %}
+{% block title %}Ceres — Dashboard{% endblock %}
+{% block breadcrumb %}Dashboard{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/prototype-dashboard.css' %}">
+<link rel="stylesheet" href="{% static 'css/prototype-dashboard-plant-svg.css' %}">
 {% endblock %}
-
 {% block content %}
-    <p>Welcome to your dashboard.</p>
+<section class="dashboard-hero">
+  <div class="hero-stars" aria-hidden="true"></div>
+  <div class="hero-system" aria-hidden="true"><div class="hero-orbit one"></div><div class="hero-orbit two"></div><div class="hero-orbit three"></div><div class="hero-planet"></div><div class="hero-moon"></div></div>
+  <div class="hero-hills" aria-hidden="true"></div>
+  {% include "core/_dashboard_plant.html" %}
+  <h1>Good morning, {{ user.get_username|default:"student" }}</h1>
+  <p class="hero-date">{% now "l j F" %}</p>
+  <p class="hero-summary">Your Ceres workspace is ready for real feature data as each page is connected.</p>
+</section>
+{% include "core/dashboard_foundation.html" %}
 {% endblock %}

@@ -1,133 +1,159 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="moonlit">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'core/css/base.css' %}">
-    <script src="{% static 'core/js/base.js' %}" defer></script>
-    <title>{% block title %}Ceres{% endblock %}</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Connected product interface for the Ceres academic workspace.">
+  <title>{% block title %}Ceres{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/tokens.css' %}">
+  <link rel="stylesheet" href="{% static 'css/prototype-foundation.css' %}">
+  <link rel="stylesheet" href="{% static 'css/prototype-calendar-2.css' %}">
+  <link rel="stylesheet" href="{% static 'css/prototype-theme-panel.css' %}">
+  <link rel="stylesheet" href="{% static 'css/prototype-toast.css' %}">
+  <link rel="stylesheet" href="{% static 'css/prototype-responsive.css' %}">
+  <link rel="stylesheet" href="{% static 'css/django-adapter.css' %}">
+  {% block page_styles %}{% endblock %}
+  <script src="{% static 'js/base.js' %}" defer></script>
 </head>
-<body>
-    <a href="#main-content">Skip to main content</a>
+<body data-search-url="{% url 'search:index' %}">
+<svg class="svg-sprite" aria-hidden="true">
+  <symbol id="i-logo" viewBox="0 0 56 60"><path d="M8 34A20 14 0 0 1 48 34" transform="rotate(-8 28 34)" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round" opacity=".72"/><path d="M28 56C28 48 27.5 41 28 34C28.5 27 32.5 19 41 13" fill="none" stroke="var(--accent-pale)" stroke-width="2.4" stroke-linecap="round"/><path d="M28.4 31C24.5 27.5 20.5 24 16 21" fill="none" stroke="var(--accent-pale)" stroke-width="1.9" stroke-linecap="round"/><path d="M16 21C11 21 7 18 6 12C12 11 17 14 20 19C19 20 17.5 21 16 21Z" fill="var(--accent)"/><path d="M41 13C46 12 50 8 50 3C44 3 39 6 36 11C37 12 39 13 41 13Z" fill="var(--accent-pale)"/><path d="M48 34A20 14 0 0 1 8 34" transform="rotate(-8 28 34)" fill="none" stroke="var(--gold)" stroke-width="1.5" stroke-linecap="round"/><circle cx="28" cy="56" r="3" fill="var(--gold-pale)"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5M5.5 10v10h13V10M9.5 20v-6h5v6"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M5 3v3M19 3v3M3.5 8.5h17M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2Z"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A3.5 3.5 0 0 1 7.5 2H11v17H7.5A3.5 3.5 0 0 0 4 22Zm16 0A3.5 3.5 0 0 0 16.5 2H13v17h3.5A3.5 3.5 0 0 1 20 22Z"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V4h6v3M3 12h18M10 12v2h4v-2"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M5 3h10l4 4v14H5Z"/><path d="M15 3v5h5M8 12h8M8 16h6"/></symbol>
+  <symbol id="i-revision" viewBox="0 0 24 24"><path d="M5 4h12a2 2 0 0 1 2 2v14H7a2 2 0 0 1-2-2Z"/><path d="M7 4v16M10 8h6M10 12h6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="m7.5 12 3 3 6-7"/></symbol>
+  <symbol id="i-session" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2M8 2h8"/></symbol>
+  <symbol id="i-files" viewBox="0 0 24 24"><path d="M4 5h6l2 2h8v12H4Z"/></symbol>
+  <symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="15" rx="2"/><path d="M8 21h8M12 18v3M7 8h4v4H7Zm7 0h3M14 11h3"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3.5 20a5.5 5.5 0 0 1 11 0M14 20a4 4 0 0 1 7 0"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M4 4h16v12H9l-5 4Z"/><path d="M8 9h8M8 12h5"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17h12l-1.5-2V10a4.5 4.5 0 0 0-9 0v5ZM10 20h4"/></symbol>
+  <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a8 8 0 0 0-1.7-1L14.5 3h-5l-.4 3.1a8 8 0 0 0-1.7 1L5 6.1 3 9.5 5 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.4-1a8 8 0 0 0 1.7 1l.4 3.1h5l.4-3.1a8 8 0 0 0 1.7-1l2.4 1 2-3.4L19 13a7 7 0 0 0 .1-1Z"/></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18h1.2a1.8 1.8 0 0 0 1.2-3.2 1.8 1.8 0 0 1 1.2-3.2H18A3 3 0 0 0 21 12a9 9 0 0 0-9-9Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7.5" r="1"/><circle cx="14" cy="7" r="1"/><circle cx="17" cy="10" r="1"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 7l5 5-5 5"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h1M3 12h1M3 18h1"/></symbol>
+  <symbol id="i-filter" viewBox="0 0 24 24"><path d="M4 5h16l-6 7v6l-4 2v-8Z"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 20h16"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="m10 13 4-4M8 16H6a4 4 0 0 1 0-8h4M16 8h2a4 4 0 1 1 0 8h-4"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="m4 20 4-.8L19 8.2 15.8 5 4.8 16Z"/><path d="m14 6.8 3.2 3.2"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.5"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+</svg>
 
-    <div class="application-shell">
-        <aside>
-            <p>
-                <a href="{% url 'core:dashboard' %}">Ceres</a>
-            </p>
+<a class="skip-link" href="#screen">Skip to main content</a>
 
-            {% if user.is_authenticated %}
-                <section aria-label="User account">
-                    <p>
-                        Signed in as
-                        <strong>{{ user.get_username }}</strong>
-                    </p>
+<div id="app" class="app-shell">
+  <aside id="sidebar" class="sidebar" aria-label="Main navigation">
+    <a class="brand-lockup" href="{% url 'core:dashboard' %}" aria-label="Ceres dashboard">
+      <svg class="brand-mark" aria-hidden="true"><use href="#i-logo"/></svg><span>ceres</span>
+    </a>
 
-                    <form method="post" action="{% url 'accounts:logout' %}">
-                        {% csrf_token %}
-                        <button type="submit">Log out</button>
-                    </form>
-                </section>
-            {% endif %}
+    <nav id="sidebar-nav" class="sidebar-nav" aria-label="Primary navigation">
+      <section class="nav-group">
+        <span class="nav-group-title">Workspace</span>
+        <a class="nav-link active" href="{% url 'core:dashboard' %}"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg><span>Dashboard</span></a>
+        <a class="nav-link" href="{% url 'planning:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg><span>Calendar</span></a>
+        <a class="nav-link" href="{% url 'academics:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg><span>Timetable</span></a>
+      </section>
+      <section class="nav-group">
+        <span class="nav-group-title">Academic</span>
+        <a class="nav-link" href="{% url 'academics:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg><span>Modules</span></a>
+        <a class="nav-link" href="{% url 'academics:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-briefcase"/></svg><span>Assignments</span><span class="nav-link-badge">3</span></a>
+        <a class="nav-link" href="{% url 'content:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-note"/></svg><span>Notes</span></a>
+        <a class="nav-link" href="{% url 'academics:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-revision"/></svg><span>Revision</span></a>
+      </section>
+      <section class="nav-group">
+        <span class="nav-group-title">Planning</span>
+        <a class="nav-link" href="{% url 'planning:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg><span>Tasks</span><span class="nav-link-badge">6</span></a>
+        <a class="nav-link" href="{% url 'planning:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-session"/></svg><span>Study sessions</span></a>
+      </section>
+      <section class="nav-group">
+        <span class="nav-group-title">Collaboration</span>
+        <a class="nav-link" href="{% url 'collaboration:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg><span>Groups</span></a>
+        <a class="nav-link" href="{% url 'collaboration:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-message"/></svg><span>Messages</span><span class="nav-link-badge">2</span></a>
+        <a class="nav-link" href="{% url 'collaboration:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg><span>Friends</span></a>
+      </section>
+      <section class="nav-group">
+        <span class="nav-group-title">Library</span>
+        <a class="nav-link" href="{% url 'files:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-files"/></svg><span>Files</span></a>
+        <a class="nav-link" href="{% url 'content:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg><span>Whiteboards</span></a>
+      </section>
+      <section class="nav-group">
+        <span class="nav-group-title">More</span>
+        <a class="nav-link" href="{% url 'search:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span>Search</span></a>
+        <a class="nav-link" href="{% url 'notifications:index' %}"><svg class="icon" aria-hidden="true"><use href="#i-bell"/></svg><span>Notifications</span><span class="nav-link-badge">4</span></a>
+        <!-- Settings remains commented until the settings route exists.
+        <a class="nav-link" href="#"><svg class="icon"><use href="#i-settings"/></svg><span>Settings</span></a>
+        -->
+      </section>
+    </nav>
 
-            <details class="navigation" data-navigation open>
-                <summary>Navigation</summary>
-
-                {% block nav %}
-                    <nav aria-label="Main navigation">
-                        <ul>
-                            <li>
-                                <a href="{% url 'planning:index' %}">
-                                    Calendar
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'academics:index' %}">
-                                    Timetable
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'academics:index' %}">
-                                    Modules
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'content:index' %}">
-                                    Notes
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'planning:index' %}">
-                                    Tasks
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'academics:index' %}">
-                                    Assignments
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'academics:index' %}">
-                                    Lecture Hub
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'collaboration:index' %}">
-                                    Friends
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'collaboration:index' %}">
-                                    Messaging
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'academics:index' %}">
-                                    Revision
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'content:index' %}">
-                                    Whiteboard
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'planning:index' %}">
-                                    Study Sessions
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{% url 'search:index' %}">
-                                    Search
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                {% endblock %}
-            </details>
-        </aside>
-
-        <div>
-            {% if messages %}
-                <section aria-label="Messages">
-                    <ul>
-                        {% for message in messages %}
-                            <li>{{ message }}</li>
-                        {% endfor %}
-                    </ul>
-                </section>
-            {% endif %}
-
-            <header>
-                {% block header %}{% endblock %}
-            </header>
-
-            <main id="main-content">
-                {% block content %}{% endblock %}
-            </main>
-        </div>
+    {% if user.is_authenticated %}
+    <div class="sidebar-profile">
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button class="profile-button" type="submit" title="Log out">
+          <span class="avatar">{{ user.get_username|first|upper }}</span>
+          <span class="profile-copy"><b>{{ user.get_username }}</b><small>Networks &amp; Cybersecurity</small></span>
+          <svg class="icon" aria-hidden="true"><use href="#i-chevron"/></svg>
+        </button>
+      </form>
     </div>
-    {% block scripts %}{% endblock %}
+    {% endif %}
+  </aside>
+
+  <section class="app-main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button id="menu-button" class="icon-button mobile-only" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg></button>
+        <div id="breadcrumb" class="breadcrumb"><strong>{% block breadcrumb %}Dashboard{% endblock %}</strong></div>
+      </div>
+      <div class="topbar-actions">
+        <a class="global-search" href="{% url 'search:index' %}" aria-label="Open search"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span>Search Ceres</span><kbd>/</kbd></a>
+        <button id="theme-button" class="icon-button" type="button" aria-haspopup="dialog" aria-controls="theme-panel" aria-expanded="false" aria-label="Choose theme"><svg class="icon" aria-hidden="true"><use href="#i-palette"/></svg></button>
+        <a class="icon-button notification-button" href="{% url 'notifications:index' %}" aria-label="Notifications"><svg class="icon" aria-hidden="true"><use href="#i-bell"/></svg><span class="notification-dot" aria-hidden="true"></span></a>
+        {% if user.is_authenticated %}<span class="top-avatar" aria-hidden="true">{{ user.get_username|first|upper }}</span>{% endif %}
+      </div>
+    </header>
+
+    {% if messages %}
+    <ul class="message-stack" aria-label="Messages">
+      {% for message in messages %}
+      <li class="message-banner {% if 'success' in message.tags %}message-banner--success{% elif 'warning' in message.tags %}message-banner--warning{% elif 'error' in message.tags %}message-banner--error{% endif %}" role="status"><p>{{ message }}</p></li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    <main id="screen" class="screen" tabindex="-1">
+      {% block content %}{% endblock %}
+    </main>
+  </section>
+</div>
+
+<div id="sidebar-scrim" class="sidebar-scrim" aria-hidden="true"></div>
+<section id="theme-panel" class="theme-panel" role="dialog" aria-modal="false" aria-labelledby="theme-title" hidden>
+  <header><div><span class="eyebrow">Appearance</span><h2 id="theme-title">Choose a theme</h2></div><button id="theme-close" class="icon-button" type="button" aria-label="Close themes"><svg class="icon" aria-hidden="true"><use href="#i-x"/></svg></button></header>
+  <div class="theme-section"><h3>Dark</h3><div class="theme-grid" data-theme-group="dark"></div></div>
+  <div class="theme-section"><h3>Light</h3><div class="theme-grid" data-theme-group="light"></div></div>
+  <footer><span>Saved automatically to this browser.</span><!-- More appearance settings will be linked when its route exists. --></footer>
+</section>
+<div id="toast-region" class="toast-region" aria-live="polite"></div>
+
+{% block scripts %}{% endblock %}
 </body>
 </html>

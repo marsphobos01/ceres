@@ -1,0 +1,70 @@
+@import url("../accessibility.css");
+
+.button {
+    min-height: var(--control-height);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--text);
+    font-size: var(--font-size-sm);
+    font-weight: 750;
+    line-height: 1;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.button:hover:not(:disabled):not([aria-disabled="true"]) {
+    border-color: var(--accent-soft);
+    background: var(--surface-2);
+}
+
+.button:active:not(:disabled):not([aria-disabled="true"]) {
+    transform: translateY(1px);
+}
+
+.button--primary {
+    border-color: var(--button);
+    background: var(--button);
+    color: var(--on-button, #ffffff);
+}
+
+.button--primary:hover:not(:disabled):not([aria-disabled="true"]) {
+    background: var(--button-hover);
+}
+
+.button--secondary {
+    background: var(--surface);
+}
+
+.button--danger {
+    border-color: var(--danger);
+    background: var(--danger);
+    color: var(--on-danger, #ffffff);
+}
+
+.button--ghost {
+    border-color: transparent;
+    background: transparent;
+}
+
+.button--small {
+    min-height: 2rem;
+    padding-inline: var(--space-3);
+    font-size: var(--font-size-xs);
+}
+
+.button--round {
+    border-radius: var(--radius-round);
+}
+
+.button:disabled,
+.button[aria-disabled="true"] {
+    opacity: 0.5;
+    pointer-events: none;
+}

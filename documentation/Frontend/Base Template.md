@@ -2,17 +2,20 @@
 
 ## Purpose
 
-The base template provides the shared application structure used by authenticated Ceres pages.
+`core/templates/base.html` is the shared authenticated Ceres shell. Its markup and active CSS class names mirror `Design/Mockups/application-prototype/index.html` rather than approximating the prototype.
 
-It contains the main navigation, user information, logout control, message display, page header and main content area.
+It provides:
 
-## Location
+- the Ceres SVG logo and shared icon sprite
+- the exact prototype sidebar, navigation groups and profile area
+- the exact prototype sticky top bar, search control and notification control
+- responsive icon-rail and mobile drawer behaviour
+- Django message rendering
+- page heading and main-content template blocks
 
-```text
-core/templates/base.html
-```
+Only routes and controls that currently exist are active. Future controls such as Settings and the theme panel remain commented in the template until their owning issues are implemented.
 
-Pages should extend the template using:
+## Extending the template
 
 ```django
 {% extends "base.html" %}
@@ -22,83 +25,89 @@ Pages should extend the template using:
 
 ### `title`
 
-Sets the text displayed in the browser tab.
+Sets the browser title.
 
 ```django
 {% block title %}Dashboard - Ceres{% endblock %}
 ```
 
-If the block is not overridden, the title defaults to `Ceres`.
-
 ### `nav`
 
-Contains the main application navigation.
+Contains the shared grouped sidebar navigation. Most pages should not override this block.
 
-Most pages should use the navigation supplied by `base.html` and should not override this block.
+### `breadcrumb`
+
+Sets the final label in the prototype top-bar breadcrumb.
+
+```django
+{% block breadcrumb %}Dashboard{% endblock %}
+```
 
 ### `header`
 
-Contains the page-level heading or breadcrumbs.
+Use the prototype page-header structure inside this block.
 
 ```django
 {% block header %}
-    <h1>Dashboard</h1>
+<header class="page-header">
+    <div class="page-header-copy">
+        <span class="eyebrow">Workspace</span>
+        <h1>Dashboard</h1>
+        <p>A short description of the page.</p>
+    </div>
+    <div class="page-actions">
+        <a class="button primary" href="#">Primary action</a>
+    </div>
+</header>
 {% endblock %}
 ```
 
 ### `content`
 
-Contains the main content of the page.
+Contains page content rendered inside `main#screen.screen`.
 
 ```django
 {% block content %}
-    <p>Welcome to your dashboard.</p>
+<section class="card">
+    <div class="card-body">Page content</div>
+</section>
 {% endblock %}
 ```
 
 ### `scripts`
 
-Loads JavaScript required only by an individual page.
-
-JavaScript should remain in separate static files rather than being written inline.
+Loads JavaScript required by one page. Keep JavaScript in a static file.
 
 ```django
 {% load static %}
 
 {% block scripts %}
-    <script src="{% static 'core/js/dashboard.js' %}" defer></script>
+<script src="{% static 'js/dashboard.js' %}" defer></script>
 {% endblock %}
 ```
 
-The shared `base.js` file is loaded by `base.html` and should contain behaviour used across the application.
-
-## Static files
-
-Shared application-shell assets are located at:
+## Active static files
 
 ```text
-core/static/core/css/base.css
-core/static/core/js/base.js
+static/css/tokens.css
+static/css/prototype-foundation.css
+static/js/base.js
 ```
 
-## Responsive navigation
+`tokens.css` mirrors the prototype theme tokens. `prototype-foundation.css` contains the exact shared foundation and responsive CSS from the connected prototype, followed only by small Django integration rules.
 
-The application shell displays the navigation beside the page content on larger screens.
+The older approximation files remain in the branch but their `<link>` elements are commented in `base.html`, so they do not affect rendering.
 
-On smaller screens, the navigation is collapsed and can be opened using the Navigation control.
+## Future prototype styles
 
-## Example page
+The feature-specific prototype stylesheet imports are listed and commented at the top of `static/css/prototype-foundation.css`. Do not enable them under issue #239. Enable or migrate each file only when its owning feature issue is implemented.
 
-```django
-{% extends "base.html" %}
+## Accessibility conventions
 
-{% block title %}Dashboard - Ceres{% endblock %}
-
-{% block header %}
-    <h1>Dashboard</h1>
-{% endblock %}
-
-{% block content %}
-    <p>Welcome to your dashboard.</p>
-{% endblock %}
-```
+- Keep the skip link as the first focusable control.
+- Give icon-only controls an `aria-label`.
+- Mark decorative SVGs with `aria-hidden="true"`.
+- Use visible labels for form controls.
+- Do not remove the shared focus outline.
+- Use links for navigation and buttons for actions.
+- Preserve the mobile drawer's `aria-expanded`, `aria-hidden` and `inert` behaviour.

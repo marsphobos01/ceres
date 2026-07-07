@@ -1,0 +1,14 @@
+<section class="dashboard-workspace">
+  <article class="dashboard-cell">
+    <header class="section-heading"><div><span class="eyebrow">Shared form</span><h2>Search your workspace</h2></div><span>Available now</span></header>
+    <form class="dashboard-form" action="{% url 'search:index' %}" method="get">
+      <div class="field"><label for="workspace-search">Search Ceres</label><div class="search-input"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><input class="input" id="workspace-search" name="q" type="search" placeholder="Search your workspace" aria-describedby="search-help"></div><small class="field-help" id="search-help">Results open in the shared search area.</small></div>
+      <div class="page-actions" style="margin-top:14px"><button class="button primary" type="submit">Search</button><button class="button" type="button" disabled>Advanced filters</button></div>
+    </form>
+  </article>
+  <aside class="dashboard-cell">
+    <header class="section-heading"><div><span class="eyebrow">Foundation</span><h2>Frontend status</h2></div></header>
+    <div class="message-banner" role="status"><p><strong>Shared components are active.</strong> Feature content will appear only when its issue is implemented.</p></div>
+    <div class="empty-state"><div class="empty-icon" aria-hidden="true"><svg class="icon"><use href="#i-check"/></svg></div><h3>No dashboard data yet</h3><p>Agenda items, deadlines and assignment progress will appear once real data is connected.</p><a class="button" href="{% url 'planning:index' %}">Open planning</a></div>
+  </aside>
+</section>
