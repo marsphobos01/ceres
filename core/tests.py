@@ -123,3 +123,26 @@ class FrontendVisualRulesTests(SimpleTestCase):
             "Side highlight strips are banned from Ceres UI components:\n"
             + "\n".join(failures),
         )
+
+
+class DashboardTemplateTests(TestCase):
+    def test_dashboard_renders_using_base_template_when_authenticated(self):
+        user = get_user_model().objects.create_user(
+            username="dashboard-template-user",
+            password="test-password-123",
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("core:dashboard"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "base.html")
+
+
+class StaticAssetTests(SimpleTestCase):
+    def test_base_stylesheet_is_served(self):
+        # STATIC_URL is normalised by Django to already include a leading
+        # slash, even though settings.py defines it as 'static/'.
+        response = self.client.get(f"{settings.STATIC_URL}css/base.css")
+
+        self.assertEqual(response.status_code, 200)
