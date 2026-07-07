@@ -1,0 +1,12 @@
+/* Django-only integration around the application prototype styles. */
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.skip-link{position:fixed;left:16px;top:12px;z-index:1000;padding:8px 12px;border:1px solid var(--line-strong);border-radius:10px;background:var(--surface);color:var(--text);font-size:10px;font-weight:800;transform:translateY(-180%)}
+.skip-link:focus{transform:none}
+.visually-hidden{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+.message-stack{display:grid;gap:8px;margin:0;padding:14px 28px 0;list-style:none}
+.message-banner{padding:11px 13px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;background:var(--surface);color:var(--text);font-size:10px}
+.message-banner p{margin:0;color:inherit}
+.message-banner--success{border-left-color:var(--success)}
+.message-banner--warning{border-left-color:var(--warning)}
+.message-banner--error{border-left-color:var(--danger)}
+body.navigation-open{overflow:hidden}
