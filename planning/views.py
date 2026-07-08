@@ -1,8 +1,13 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-
+from django.shortcuts import redirect, render
 @login_required
 def index(request):
-    """Temporary planning landing route."""
+    
 
-    return HttpResponse("Planning")
+
+    return  render(request, "planning/calendar.html")
+
+
+
+
