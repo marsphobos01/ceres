@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if mode == "create" %}Create Module{% else %}Edit Module{% endif %} - Ceres
+{% endblock %}
+
+{% block breadcrumb %}
+    {% if mode == "create" %}Create Module{% else %}Edit Module{% endif %}
+{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <div class="page-header-copy">
+        <span class="eyebrow">Academics</span>
+        <h1>{% if mode == "create" %}Create module{% else %}Edit module{% endif %}</h1>
+        <p class="muted">Add the general details for a university module.</p>
+    </div>
+</header>
+
+<form method="post" class="card">
+    {% csrf_token %}
+
+    <div class="card-body">
+        {{ form.non_field_errors }}
+
+        <div class="field">
+            <label for="{{ form.title.id_for_label }}">Title</label>
+            {{ form.title }}
+            {{ form.title.errors }}
+        </div>
+
+        <div class="field">
+            <label for="{{ form.code.id_for_label }}">Code</label>
+            {{ form.code }}
+            {{ form.code.errors }}
+        </div>
+
+        <div class="field">
+            <label for="{{ form.description.id_for_label }}">Description</label>
+            {{ form.description }}
+            {{ form.description.errors }}
+        </div>
+
+        <div class="field">
+            <label for="{{ form.colour.id_for_label }}">Colour</label>
+            {{ form.colour }}
+            <small class="field-help">Use a 6-character hex colour, like 713D5A.</small>
+            {{ form.colour.errors }}
+        </div>
+
+        <div class="field">
+            <label for="{{ form.academic_year.id_for_label }}">Academic year</label>
+            {{ form.academic_year }}
+            <small class="field-help">Example: 2026/2027</small>
+            {{ form.academic_year.errors }}
+        </div>
+
+        <div class="field">
+            <label for="{{ form.semester.id_for_label }}">Semester</label>
+            {{ form.semester }}
+            {{ form.semester.errors }}
+        </div>
+    </div>
+
+    <div class="card-footer">
+        <button class="button primary" type="submit">
+            {% if mode == "create" %}Create module{% else %}Save changes{% endif %}
+        </button>
+
+        {% if mode == "edit" %}
+            <a class="button ghost" href="{% url 'academics:module_detail' module.pk %}">
+                Cancel
+            </a>
+        {% else %}
+            <a class="button ghost" href="{% url 'academics:module_list' %}">
+                Cancel
+            </a>
+        {% endif %}
+    </div>
+</form>
+{% endblock %}

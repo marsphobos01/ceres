@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Delete {{ module.title }} - Ceres{% endblock %}
+{% block breadcrumb %}Delete module{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <div class="page-header-copy">
+        <span class="eyebrow">Academics</span>
+        <h1>Delete module</h1>
+        <p class="muted">
+            This will permanently delete this module and anything that depends on it.
+        </p>
+    </div>
+</header>
+
+<section class="card">
+    <div class="card-header">
+        <h2>{{ module.title }}</h2>
+    </div>
+
+    <div class="card-body">
+        <p>
+            Are you sure you want to delete
+            <strong>{{ module.title }}</strong>?
+        </p>
+
+        <p class="muted">
+            This action cannot be undone.
+        </p>
+    </div>
+
+    <div class="card-footer">
+        <form method="post">
+            {% csrf_token %}
+            <button class="button danger" type="submit">
+                Delete module
+            </button>
+        </form>
+
+        <a class="button ghost" href="{% url 'academics:module_detail' module.pk %}">
+            Cancel
+        </a>
+    </div>
+</section>
+{% endblock %}
