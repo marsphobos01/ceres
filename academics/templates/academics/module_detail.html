@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}{{ module.title }} - Ceres{% endblock %}
+{% block breadcrumb %}{{ module.title }}{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <div class="page-header-copy">
+        <span class="eyebrow">
+            {% if module.code %}
+                {{ module.code }}
+            {% else %}
+                Module
+            {% endif %}
+        </span>
+
+        <h1>{{ module.title }}</h1>
+
+        <p class="muted">
+            {% if module.academic_year %}
+                {{ module.academic_year }}
+            {% endif %}
+
+            {% if module.semester %}
+                · {{ module.get_semester_display }}
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="page-actions">
+        <a class="button" href="{% url 'academics:module_list' %}">
+            Back to modules
+        </a>
+
+        {% if can_edit %}
+            <a class="button primary" href="{% url 'academics:module_edit' module.pk %}">
+                Edit module
+            </a>
+        {% endif %}
+
+        {% if can_delete %}
+            <a class="button danger" href="{% url 'academics:module_delete' module.pk %}">
+                Delete
+            </a>
+        {% endif %}
+    </div>
+</header>
+
+<div class="layout-main-rail">
+    <section class="card">
+        <div class="card-header">
+            <h2>Module details</h2>
+        </div>
+
+        <div class="card-body">
+            {% if module.description %}
+                <p>{{ module.description }}</p>
+            {% else %}
+                <p class="muted">No description has been added yet.</p>
+            {% endif %}
+
+            <dl>
+                <dt>Code</dt>
+                <dd>{{ module.code|default:"Not set" }}</dd>
+
+                <dt>Academic year</dt>
+                <dd>{{ module.academic_year|default:"Not set" }}</dd>
+
+                <dt>Semester</dt>
+                <dd>
+                    {% if module.semester %}
+                        {{ module.get_semester_display }}
+                    {% else %}
+                        Not set
+                    {% endif %}
+                </dd>
+
+                <dt>Colour</dt>
+                <dd>
+                    {% if module.colour %}
+                        #{{ module.colour }}
+                    {% else %}
+                        Not set
+                    {% endif %}
+                </dd>
+            </dl>
+        </div>
+    </section>
+
+    <aside class="card">
+        <div class="card-header">
+            <h2>Coming next</h2>
+        </div>
+
+        <div class="card-body">
+            <p class="muted">
+                Lectures, assignments and resources will appear here once those features are built.
+            </p>
+        </div>
+    </aside>
+</div>
+{% endblock %}

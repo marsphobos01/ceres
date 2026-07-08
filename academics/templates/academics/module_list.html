@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Modules - Ceres{% endblock %}
+{% block breadcrumb %}Modules{% endblock %}
+
+{% block content %}
+<header class="page-header">
+    <div class="page-header-copy">
+        <span class="eyebrow">Academics</span>
+        <h1>Modules</h1>
+        <p class="muted">Manage the university modules you own or have access to.</p>
+    </div>
+
+    <div class="page-actions">
+        <a class="button primary" href="{% url 'academics:module_create' %}">
+            Create module
+        </a>
+    </div>
+</header>
+
+{% if modules %}
+    <div class="grid-3">
+        {% for module in modules %}
+            <article class="card">
+                <div class="card-header">
+                    <div>
+                        <span class="eyebrow">
+                            {% if module.code %}
+                                {{ module.code }}
+                            {% else %}
+                                Module
+                            {% endif %}
+                        </span>
+
+                        <h2>
+                            <a href="{% url 'academics:module_detail' module.pk %}">
+                                {{ module.title }}
+                            </a>
+                        </h2>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    {% if module.description %}
+                        <p>{{ module.description|truncatewords:24 }}</p>
+                    {% else %}
+                        <p class="muted">No description yet.</p>
+                    {% endif %}
+
+                    <p class="subtle">
+                        {% if module.academic_year %}
+                            {{ module.academic_year }}
+                        {% endif %}
+
+                        {% if module.semester %}
+                            · {{ module.get_semester_display }}
+                        {% endif %}
+                    </p>
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <div class="empty-icon" aria-hidden="true">
+            <svg class="icon"><use href="#i-book"></use></svg>
+        </div>
+        <h3>No modules yet</h3>
+        <p>Create your first module to start organising lectures, assignments and resources.</p>
+        <a class="button primary" href="{% url 'academics:module_create' %}">
+            Create module
+        </a>
+    </div>
+{% endif %}
+{% endblock %}

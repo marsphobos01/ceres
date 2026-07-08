@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.test import TestCase
-
+from django.urls import reverse
 from .models import Assignment, AssignmentParticipant, Module, ModuleMembership
 
 
@@ -205,3 +205,452 @@ class AssignmentParticipantTests(TestCase):
                 assignment_id=assignment_id,
             ).exists()
         )
+
+class ModuleViewTests(TestCase):
+    def setUp(self):
+        user_model = get_user_model()
+
+        self.user = user_model.objects.create_user(
+            username="morgan",
+            password="test-password",
+        )
+
+        self.other_user = user_model.objects.create_user(
+            username="tom",
+            password="test-password",
+        )
+
+        self.module = Module.objects.create(
+            owner=self.user,
+            title="Network Security",
+            code="NX101",
+            description="Introductory network security module.",
+            colour="713D5A",
+            academic_year="2026/2027",
+            semester="autumn",
+        )
+
+    def test_module_list_requires_login(self):
+        response = self.client.get(reverse("academics:module_list"))
+
+        self.assertEqual(response.status_code, 302)
+
+    def test_owner_can_see_module_in_list(self):
+        self.client.login(username="morgan", password="test-password")
+
+        response = self.client.get(reverse("academics:module_list"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Network Security")
+
+    def test_other_user_cannot_see_module_in_list(self):
+        self.client.login(username="tom", password="test-password")
+
+        response = self.client.get(reverse("academics:module_list"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, "Network Security")
+
+    def test_owner_can_view_module_detail(self):
+        self.client.login(username="morgan", password="test-password")
+
+        response = self.client.get(
+            reverse("academics:module_detail", kwargs={"pk": self.module.pk})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Network Security")
+        self.assertContains(response, "NX101")
+
+    def test_other_user_gets_404_for_module_detail(self):
+        self.client.login(username="tom", password="test-password")
+
+        response = self.client.get(
+            reverse("academics:module_detail", kwargs={"pk": self.module.pk})
+        )
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_user_can_create_module(self):
+        self.client.login(username="morgan", password="test-password")
+
+        response = self.client.post(
+            reverse("academics:module_create"),
+            {
+                "title": "Databases",
+                "code": "DB101",
+                "description": "Database fundamentals.",
+                "colour": "#123ABC",
+                "academic_year": "2026/2027",
+                "semester": "spring",
+            },
+        )
+
+        module = Module.objects.get(title="Databases")
+
+        self.assertEqual(module.owner, self.user)
+        self.assertEqual(module.colour, "123ABC")
+        self.assertRedirects(
+            response,
+            reverse("academics:module_detail", kwargs={"pk": module.pk}),
+        )
+
+    def test_owner_can_edit_module(self):
+        self.client.login(username="morgan", password="test-password")
+
+        response = self.client.post(
+            reverse("academics:module_edit", kwargs={"pk": self.module.pk}),
+            {
+                "title": "Advanced Network Security",
+                "code": "NX201",
+                "description": "Updated module description.",
+                "colour": "#ABC123",
+                "academic_year": "2026/2027",
+                "semester": "spring",
+            },
+        )
+
+        self.module.refresh_from_db()
+
+        self.assertEqual(self.module.title, "Advanced Network Security")
+        self.assertEqual(self.module.code, "NX201")
+        self.assertEqual(self.module.colour, "ABC123")
+        self.assertRedirects(
+            response,
+            reverse("academics:module_detail", kwargs={"pk": self.module.pk}),
+        )
+
+    def test_other_user_cannot_edit_module(self):
+        self.client.login(username="tom", password="test-password")
+
+        response = self.client.post(
+            reverse("academics:module_edit", kwargs={"pk": self.module.pk}),
+            {
+                "title": "Hacked title",
+                "code": "BAD101",
+                "description": "Should not save.",
+                "colour": "#000000",
+                "academic_year": "2026/2027",
+                "semester": "spring",
+            },
+        )
+
+        self.module.refresh_from_db()
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(self.module.title, "Network Security")
+        self.assertEqual(self.module.code, "NX101")
+
+
+    def test_owner_can_open_delete_confirmation(self):
+        self.client.login(username="morgan", password="test-password")
+
+        response = self.client.get(
+            reverse("academics:module_delete", kwargs={"pk": self.module.pk})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Delete module")
+        self.assertContains(response, "Network Security")
+
+    def test_owner_can_delete_module(self):
+        self.client.login(username="morgan", password="test-password")
+
+        response = self.client.post(
+            reverse("academics:module_delete", kwargs={"pk": self.module.pk})
+        )
+
+        self.assertFalse(Module.objects.filter(pk=self.module.pk).exists())
+        self.assertRedirects(response, reverse("academics:module_list"))
+
+    def test_other_user_cannot_delete_module(self):
+        self.client.login(username="tom", password="test-password")
+
+        response = self.client.post(
+            reverse("academics:module_delete", kwargs={"pk": self.module.pk})
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(Module.objects.filter(pk=self.module.pk).exists())
+
+    def test_get_delete_page_does_not_delete_module(self):
+        self.client.login(username="morgan", password="test-password")
+
+        response = self.client.get(
+            reverse("academics:module_delete", kwargs={"pk": self.module.pk})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Module.objects.filter(pk=self.module.pk).exists())
+
+    def test_module_create_requires_login(self):
+        response = self.client.get(reverse("academics:module_create"))
+
+        self.assertEqual(response.status_code, 302)
+
+    def test_module_detail_requires_login(self):
+        response = self.client.get(
+            reverse("academics:module_detail", kwargs={"pk": self.module.pk})
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+    def test_module_edit_requires_login(self):
+        response = self.client.get(
+            reverse("academics:module_edit", kwargs={"pk": self.module.pk})
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+    def test_module_delete_requires_login(self):
+        response = self.client.get(
+            reverse("academics:module_delete", kwargs={"pk": self.module.pk})
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+    def test_module_create_requires_title(self):
+        self.client.login(username="morgan", password="test-password")
+
+        response = self.client.post(
+            reverse("academics:module_create"),
+            {
+                "title": "",
+                "code": "BAD101",
+                "description": "Missing title.",
+                "colour": "#123ABC",
+                "academic_year": "2026/2027",
+                "semester": "spring",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Module.objects.filter(code="BAD101").exists())
+
+    def test_module_create_rejects_invalid_colour(self):
+        self.client.login(username="morgan", password="test-password")
+
+        response = self.client.post(
+            reverse("academics:module_create"),
+            {
+                "title": "Invalid Colour Module",
+                "code": "BAD102",
+                "description": "Invalid colour test.",
+                "colour": "#ZZZZZZ",
+                "academic_year": "2026/2027",
+                "semester": "spring",
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Module.objects.filter(title="Invalid Colour Module").exists())
+
+    def test_posted_owner_is_ignored_when_creating_module(self):
+        self.client.login(username="morgan", password="test-password")
+
+        response = self.client.post(
+            reverse("academics:module_create"),
+            {
+                "title": "Ownership Test",
+                "code": "OWN101",
+                "description": "Trying to spoof owner.",
+                "colour": "#123ABC",
+                "academic_year": "2026/2027",
+                "semester": "spring",
+                "owner": self.other_user.pk,
+            },
+        )
+
+        module = Module.objects.get(title="Ownership Test")
+
+        self.assertEqual(module.owner, self.user)
+        self.assertNotEqual(module.owner, self.other_user)
+        self.assertRedirects(
+            response,
+            reverse("academics:module_detail", kwargs={"pk": module.pk}),
+        )
+
+    def test_module_does_not_duplicate_in_list_when_user_is_owner_and_member(self):
+        ModuleMembership.objects.create(
+            module=self.module,
+            user=self.user,
+            role=ModuleMembership.Role.OWNER,
+        )
+
+        self.client.login(username="morgan", password="test-password")
+
+        response = self.client.get(reverse("academics:module_list"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Network Security", count=1)
+
+    def test_module_viewer_can_see_shared_module_in_list(self):
+        ModuleMembership.objects.create(
+            module=self.module,
+            user=self.other_user,
+            role=ModuleMembership.Role.VIEWER,
+        )
+
+        self.client.login(username="tom", password="test-password")
+
+        response = self.client.get(reverse("academics:module_list"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Network Security")
+
+    def test_module_viewer_can_view_shared_module_detail(self):
+        ModuleMembership.objects.create(
+            module=self.module,
+            user=self.other_user,
+            role=ModuleMembership.Role.VIEWER,
+        )
+
+        self.client.login(username="tom", password="test-password")
+
+        response = self.client.get(
+            reverse("academics:module_detail", kwargs={"pk": self.module.pk})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Network Security")
+        self.assertContains(response, "NX101")
+
+    def test_module_viewer_cannot_edit_shared_module(self):
+        ModuleMembership.objects.create(
+            module=self.module,
+            user=self.other_user,
+            role=ModuleMembership.Role.VIEWER,
+        )
+
+        self.client.login(username="tom", password="test-password")
+
+        response = self.client.post(
+            reverse("academics:module_edit", kwargs={"pk": self.module.pk}),
+            {
+                "title": "Changed by viewer",
+                "code": "BAD201",
+                "description": "Should not save.",
+                "colour": "#000000",
+                "academic_year": "2026/2027",
+                "semester": "spring",
+            },
+        )
+
+        self.module.refresh_from_db()
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(self.module.title, "Network Security")
+        self.assertEqual(self.module.code, "NX101")
+
+    def test_module_viewer_cannot_delete_shared_module(self):
+        ModuleMembership.objects.create(
+            module=self.module,
+            user=self.other_user,
+            role=ModuleMembership.Role.VIEWER,
+        )
+
+        self.client.login(username="tom", password="test-password")
+
+        response = self.client.post(
+            reverse("academics:module_delete", kwargs={"pk": self.module.pk})
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(Module.objects.filter(pk=self.module.pk).exists())
+
+    def test_invalid_edit_does_not_overwrite_existing_module(self):
+        self.client.login(username="morgan", password="test-password")
+
+        response = self.client.post(
+            reverse("academics:module_edit", kwargs={"pk": self.module.pk}),
+            {
+                "title": "Broken Edit",
+                "code": "BROKEN",
+                "description": "This should not save.",
+                "colour": "#ZZZZZZ",
+                "academic_year": "2026/2027",
+                "semester": "spring",
+            },
+        )
+
+        self.module.refresh_from_db()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.module.title, "Network Security")
+        self.assertEqual(self.module.code, "NX101")
+        self.assertEqual(self.module.colour, "713D5A")
+
+
+    def test_module_member_can_see_shared_module_in_list(self):
+        ModuleMembership.objects.create(
+            module=self.module,
+            user=self.other_user,
+            role=ModuleMembership.Role.MEMBER,
+        )
+
+        self.client.login(username="tom", password="test-password")
+
+        response = self.client.get(reverse("academics:module_list"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Network Security")
+
+    def test_module_member_can_view_shared_module_detail(self):
+        ModuleMembership.objects.create(
+            module=self.module,
+            user=self.other_user,
+            role=ModuleMembership.Role.MEMBER,
+        )
+
+        self.client.login(username="tom", password="test-password")
+
+        response = self.client.get(
+            reverse("academics:module_detail", kwargs={"pk": self.module.pk})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Network Security")
+        self.assertContains(response, "NX101")
+
+    def test_module_member_cannot_edit_shared_module(self):
+        ModuleMembership.objects.create(
+            module=self.module,
+            user=self.other_user,
+            role=ModuleMembership.Role.MEMBER,
+        )
+
+        self.client.login(username="tom", password="test-password")
+
+        response = self.client.post(
+            reverse("academics:module_edit", kwargs={"pk": self.module.pk}),
+            {
+                "title": "Changed by member",
+                "code": "BAD101",
+                "description": "Should not save.",
+                "colour": "#000000",
+                "academic_year": "2026/2027",
+                "semester": "spring",
+            },
+        )
+
+        self.module.refresh_from_db()
+
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(self.module.title, "Network Security")
+        self.assertEqual(self.module.code, "NX101")
+
+    def test_module_member_cannot_delete_shared_module(self):
+        ModuleMembership.objects.create(
+            module=self.module,
+            user=self.other_user,
+            role=ModuleMembership.Role.MEMBER,
+        )
+
+        self.client.login(username="tom", password="test-password")
+
+        response = self.client.post(
+            reverse("academics:module_delete", kwargs={"pk": self.module.pk})
+        )
+
+        self.assertEqual(response.status_code, 404)
+        self.assertTrue(Module.objects.filter(pk=self.module.pk).exists())
