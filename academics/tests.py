@@ -3,8 +3,9 @@ from django.core.exceptions import PermissionDenied, ValidationError
 from django.db import transaction
 from django.test import TestCase
 from django.urls import reverse
-from .models import Assignment, AssignmentParticipant, Module, ModuleMembership
-
+from .models import Assignment, AssignmentParticipant, Module, ModuleMembership, Lecture
+from datetime import timedelta
+from django.utils import timezone
 
 class AssignmentParticipantTests(TestCase):
     def setUp(self):
@@ -654,3 +655,46 @@ class ModuleViewTests(TestCase):
 
         self.assertEqual(response.status_code, 404)
         self.assertTrue(Module.objects.filter(pk=self.module.pk).exists())
+
+
+
+class MoiduleLectureListViewTests(TestCase):
+    def setUp(self):
+        user_model = get_user_model()
+
+        self.owner = user_model.objects.create_user(
+            username="morgan",
+            password="test-password",
+        )
+
+        self.member = user_model.objects.create_user(
+            username="tom",
+            password="test-password",
+        )
+
+        self.outsider = user_model.objects.create_user(
+            username="outsider",
+            password="test-password",
+        )
+
+        self.module = Module.objects.create(
+            owner=self.owner,
+            title="Network Security",
+            code="NX101",
+        )
+
+        ModuleMembership.objects.create(
+            module=self.module,
+            user=self.member,
+            role=ModuleMembership.Role.MEMBER,
+        )
+
+    def test_module_detail_shows_empty_lecture_state(self):
+        self.client.login(username="morgan",password="test-password")
+
+        response = self.client.get(
+            reverse("academics:module_detail", kwargs={"pk": self.module.pk})
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No lectures have been added yet.")

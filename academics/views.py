@@ -71,6 +71,7 @@ def module_detail(request,pk):
         ).distinct(),
         pk=pk
     )
+    lectures = module.lectures.order_by("date","pk")
 
     can_edit = module.owner == request.user
     can_delete = module.owner == request.user
@@ -83,6 +84,7 @@ def module_detail(request,pk):
             "module": module,
             "can_edit": can_edit,
             "can_delete": can_delete,
+            "lectures":lectures,
         },
     )
 

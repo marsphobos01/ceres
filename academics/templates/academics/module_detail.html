@@ -89,7 +89,24 @@
 
     <aside class="card">
         <div class="card-header">
-            <h2>Coming next</h2>
+            {% if lectures %}
+                {% for lecture in lectures %}
+                    <article>
+                        <h3>{{ lecture.title }}</h3>
+
+                        {% if lecture.date %}
+                            <p class="muted">{{ lectrure.date }}</p>
+                        {% endif %}
+
+                        {% if lecture.room %}
+                            <p>Room: {{ lecture.room }}</p>
+                        {% endif %}
+                    </article>
+                {% endfor %}
+            {% else %}
+                <p class="muted">No lectures have been added yet.</p>
+            {% endif %}
+
         </div>
 
         <div class="card-body">
